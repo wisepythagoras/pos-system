@@ -14,6 +14,7 @@ func main() {
 	}
 
 	productHandlers := &ProductHandlers{DB: db}
+	orderHandlers := &OrderHandlers{DB: db}
 
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
@@ -24,16 +25,7 @@ func main() {
 		})
 	})
 
-	router.POST("/api/order/submit", func(c *gin.Context) {
-		apiResponse := ApiResponse{
-			Data: gin.H{
-				"test": 123,
-			},
-			Success: true,
-			Error:   "",
-		}
-		c.JSON(http.StatusOK, apiResponse)
-	})
+	router.POST("/api/order/submit", orderHandlers.CreateOrder)
 
 	router.POST("/api/product", productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)

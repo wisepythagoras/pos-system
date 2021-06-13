@@ -31,3 +31,5 @@ type OrderProduct struct {
 	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
 	Product   Product   `gorm:"foreignKey:ID;"`
 }
+
+// https://gorm.io/docs/has_one.html#Override-Foreign-Key
