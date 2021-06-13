@@ -1,3 +1,4 @@
 *.db
 *.exe
 pos-system
+populate.sh

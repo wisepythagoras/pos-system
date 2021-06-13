@@ -8,26 +8,26 @@ import (
 
 type Product struct {
 	gorm.Model
-	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
-	Name      string    `gorm:"uniqueIndex; index; type:mediumtext not null" json:"name"`
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
+	Name      string    `gorm:"uniqueIndex; index; type:mediumtext not null"`
 	Price     float64   `gorm:"not null" json:"price"`
-	Type      string    `gorm:"not null; default:'food'" json:"type"`
-	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
-	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"updated_at"`
+	Type      string    `gorm:"not null; default:'food'"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
 }
 
 type Order struct {
 	gorm.Model
-	ID            uint64         `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
-	CreatedAt     time.Time      `gorm:"autoCreateTime:milli" json:"created_at"`
-	OrderProducts []OrderProduct `gorm:"foreignKey:OrderID; references:ID" json:"products"`
+	ID            uint64         `gorm:"primaryKey; autoIncrement; not_null;"`
+	CreatedAt     time.Time      `gorm:"autoCreateTime:milli"`
+	OrderProducts []OrderProduct `gorm:"foreignKey:OrderID;references:ID;"`
 }
 
 type OrderProduct struct {
 	gorm.Model
-	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
-	ProductID uint64    `gorm:"index; not_null;" json:"product_id"`
-	OrderID   uint64    `gorm:"index; not_null;" json:"order_id"`
-	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
-	Product   Product   `gorm:"foreignKey:ID; references:ProductID" json:"product"`
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
+	ProductID uint64    `gorm:"index; not_null;"`
+	OrderID   uint64    `gorm:"index; not_null;"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
+	Product   Product   `gorm:"foreignKey:ID;"`
 }

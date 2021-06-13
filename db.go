@@ -13,11 +13,11 @@ func ConnectDB() (*gorm.DB, error) {
 	}
 
 	db.AutoMigrate(&Product{})
-	db.AutoMigrate(&Order{})
 	db.AutoMigrate(&OrderProduct{})
+	db.AutoMigrate(&Order{})
 
-	db.Preload("OrderProducts").Find(&Order{})
-	db.Preload("OrderProducts.Products").Find(&Order{})
+	// db.Preload("OrderProducts").Find(&Order{})
+	// db.Preload("OrderProducts.Products").Find(&Order{})
 
 	return db, nil
 }
