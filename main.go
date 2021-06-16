@@ -26,6 +26,7 @@ func main() {
 	})
 
 	router.POST("/api/order/submit", orderHandlers.CreateOrder)
+	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
 
 	router.POST("/api/product", productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)
