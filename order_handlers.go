@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -12,40 +13,27 @@ type OrderHandlers struct {
 	DB *gorm.DB
 }
 
-func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
-	apiResponse := ApiResponse{
-		Data: gin.H{
-			"test": 123,
-		},
-		Success: true,
-		Error:   "",
-	}
-	c.JSON(http.StatusOK, apiResponse)
-}
-
-func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
+// getOrderIDFromParams parses the order id from the param string.
+func (oh *OrderHandlers) getOrderIDFromParams(c *gin.Context) (int, error) {
 	orderIdStr := c.Param("orderId")
-	response := &ApiResponse{}
 
 	if len(orderIdStr) == 0 {
-		response.Success = false
-		response.Error = "Invalid or no order id"
-		c.JSON(http.StatusOK, response)
-		return
+		return 0, errors.New("Invalid or no order id")
 	}
 
 	orderId, err := strconv.Atoi(orderIdStr)
 
+	if err != nil {
+		return 0, err
+	}
+
+	return orderId, nil
+}
+
+// GetOrderByID retrieves an order by its id.
+func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) {
 	if orderId <= 0 {
-		response.Success = false
-		response.Error = "Invalid order id"
-		c.JSON(http.StatusOK, response)
-		return
-	} else if err != nil {
-		response.Success = false
-		response.Error = err.Error()
-		c.JSON(http.StatusOK, response)
-		return
+		return nil, 0, errors.New("Invalid order id")
 	}
 
 	order := &Order{}
@@ -56,10 +44,7 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 		Find(&order)
 
 	if result.RowsAffected < 0 {
-		response.Success = false
-		response.Error = "No such order"
-		c.JSON(http.StatusOK, response)
-		return
+		return nil, 0, errors.New("No such order")
 	}
 
 	orderJSON := &OrderJSON{
@@ -84,16 +69,45 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 		orderJSON.Products = append(orderJSON.Products, productJSON)
 	}
 
-	order.OrderProducts = nil
+	return orderJSON, totalCost, nil
+}
 
+// CreateOrder handles the creation/placement of an order.
+func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	apiResponse := ApiResponse{
 		Data: gin.H{
-			"order_id": orderId,
-			"order":    orderJSON,
-			"total":    totalCost,
+			"test": 123,
 		},
 		Success: true,
 		Error:   "",
 	}
 	c.JSON(http.StatusOK, apiResponse)
+}
+
+// PrintOrder is supposed to return the order and also print the receipt for it.
+func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
+	response := &ApiResponse{}
+	orderId, err := oh.getOrderIDFromParams(c)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	orderJSON, totalCost, err := oh.GetOrderByID(orderId)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+	}
+
+	response.Data = gin.H{
+		"order_id": orderId,
+		"order":    orderJSON,
+		"total":    totalCost,
+	}
+	response.Success = true
+	c.JSON(http.StatusOK, response)
 }
