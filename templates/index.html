@@ -8,6 +8,10 @@
 </head>
 <body>
     <div id="root"></div>
+    {{ if not .admin }}
     <script src="/js/main.3912f9e608ee825a59fcdabe51990ac33e0c776bad6c8ec0ab899eb782890aaf.js"></script>
+    {{ else }}
+    <h1>Admin</h1>
+    {{ end }}
 </body>
 </html>

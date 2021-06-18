@@ -78,12 +78,23 @@ func main() {
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Main website",
+			"admin": false,
 		})
 	})
 
 	router.GET("/admin", func(c *gin.Context) {
+		session := sessions.Default(c)
+		user := session.Get("user").(*UserStruct)
+
+		// Prevent anyone who is not logged in to view this page.
+		if user == nil {
+			c.JSON(http.StatusForbidden, gin.H{})
+			return
+		}
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Admin",
+			"admin": true,
 		})
 	})
 
@@ -112,7 +123,12 @@ func main() {
 		passwordHash := crypto.ByteArrayToHex(hash)
 
 		if username == config.Admin.Username && passwordHash == config.Admin.Password {
-			session.Set("user", "admin")
+			newUser := &UserStruct{
+				ID:       0,
+				Username: "admin",
+				IsAdmin:  true,
+			}
+			session.Set("user", newUser)
 			session.Save()
 			c.Redirect(http.StatusPermanentRedirect, "/?m=Logged in!")
 			fmt.Println(session.Get("user"))
