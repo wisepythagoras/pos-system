@@ -2,7 +2,8 @@
 populate.sh
 bin/pos-*
 yarn.lock
-ui/dist/
+ui/app/dist/
+ui/admin/dist/
 public/js/main.*.js
-public/js/.js.LICENSE.txt
+public/js/*.js.LICENSE.txt
 node_modules/

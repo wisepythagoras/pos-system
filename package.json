@@ -4,8 +4,8 @@
   "description": "",
   "main": "ui/index.tsx",
   "scripts": {
-    "build": "cd ui && ../node_modules/webpack-cli/bin/cli.js --mode=production",
-    "build-dev": "cd ui && ../node_modules/webpack-cli/bin/cli.js --mode=development"
+    "build": "cd ui/app && ../../node_modules/webpack-cli/bin/cli.js --mode=production",
+    "build-dev": "cd ui/app && ../../node_modules/webpack-cli/bin/cli.js --mode=development"
   },
   "repository": {
     "type": "git",

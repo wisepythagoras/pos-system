@@ -17,7 +17,7 @@ const getConfig = (mode = 'development') => ({
     // Define the output.
     output: {
         filename: 'main.3912f9e608ee825a59fcdabe51990ac33e0c776bad6c8ec0ab899eb782890aaf.js',
-        path: path.resolve('../public/js'),
+        path: path.resolve('../../public/js'),
     },
 
     resolve: {
@@ -42,7 +42,7 @@ const getConfig = (mode = 'development') => ({
                 test: /\.js$/,
                 loader: 'source-map-loader',
                 exclude: [
-                    path.resolve('../node_modules')
+                    path.resolve('../../node_modules')
                 ],
             },
             {

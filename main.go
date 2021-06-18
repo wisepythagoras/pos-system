@@ -28,7 +28,13 @@ func main() {
 		})
 	})
 
-	router.POST("/api/order/submit", orderHandlers.CreateOrder)
+	router.GET("/admin", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "Admin",
+		})
+	})
+
+	router.POST("/api/order", orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
 
 	router.POST("/api/product", productHandlers.CreateProduct)
