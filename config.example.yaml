@@ -1,4 +1,12 @@
 server:
     port: 8088
 
+admin:
+    username: test
+
+    # Generate the password like this:
+    # echo -n 'your-password-here' | openssl dgst -sha3-512
+    password: "SHA3-512 of the password"
+
+# Ideally, pick a secret, get its SHA hash and put that here.
 secret: "this is a test"
