@@ -1,0 +1,30 @@
+{
+  "name": "pos-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ui/index.tsx",
+  "scripts": {
+    "build": "cd ui && ../node_modules/webpack-cli/bin/cli.js --mode=production",
+    "build-dev": "cd ui && ../node_modules/webpack-cli/bin/cli.js --mode=development"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wisepythagoras/pos-system.git"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/wisepythagoras/pos-system/issues"
+  },
+  "homepage": "https://github.com/wisepythagoras/pos-system#readme",
+  "dependencies": {
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.4",
+    "webpack": "^5.39.1",
+    "webpack-cli": "^4.7.2"
+  }
+}

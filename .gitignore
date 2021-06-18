@@ -1,3 +1,8 @@
 *.db
 populate.sh
 bin/pos-*
+yarn.lock
+ui/dist/
+public/js/main.*.js
+public/js/.js.LICENSE.txt
+node_modules/
