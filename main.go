@@ -87,7 +87,7 @@ func main() {
 		user := session.Get("user").(*UserStruct)
 
 		// Prevent anyone who is not logged in to view this page.
-		if user == nil {
+		if user == nil || !user.IsAdmin {
 			c.JSON(http.StatusForbidden, gin.H{})
 			return
 		}
@@ -122,6 +122,7 @@ func main() {
 
 		passwordHash := crypto.ByteArrayToHex(hash)
 
+		// Check for an admin user.
 		if username == config.Admin.Username && passwordHash == config.Admin.Password {
 			newUser := &UserStruct{
 				ID:       0,
@@ -134,6 +135,8 @@ func main() {
 			fmt.Println(session.Get("user"))
 			return
 		}
+
+		// Check here users that are stored in the DB.
 
 		c.Redirect(http.StatusPermanentRedirect, "/?e=Invalid username or password")
 	})
