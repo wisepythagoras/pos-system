@@ -7,3 +7,4 @@ ui/admin/dist/
 public/js/main.*.js
 public/js/*.js.LICENSE.txt
 node_modules/
+config.yaml
