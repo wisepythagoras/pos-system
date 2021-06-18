@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -65,6 +67,11 @@ func main() {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
 
+	// Apply the sessions middleware.
+	store := cookie.NewStore([]byte(config.Secret))
+	router.Use(sessions.Sessions("pos-sessions", store))
+
+	// Set the static/public path.
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
 
 	router.GET("/", func(c *gin.Context) {

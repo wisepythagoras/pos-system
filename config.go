@@ -6,4 +6,5 @@ type ServerConfig struct {
 
 type Config struct {
 	Server ServerConfig
+	Secret string
 }

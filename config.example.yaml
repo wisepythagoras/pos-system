@@ -1,2 +1,4 @@
 server:
     port: 8088
+
+secret: "this is a test"
