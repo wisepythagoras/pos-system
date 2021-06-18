@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -10,18 +11,28 @@ import (
 	"github.com/spf13/viper"
 )
 
-func parseConfig() (*Config, error) {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	var config Config
-
-	if err := viper.ReadInConfig(); err != nil {
-		fmt.Printf("Error reading config file, %s", err)
+// parseConfig parses the configuration either from the same folder, or
+// from an explicit path.
+func parseConfig(customConfig *string) (*Config, error) {
+	if customConfig == nil || len(*customConfig) == 0 {
+		viper.SetConfigName("config")
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath(".")
+	} else {
+		viper.SetConfigFile(*customConfig)
 	}
 
+	var config Config
+
+	// Try to read the configuration file.
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
+
+	// Default config.
 	viper.SetDefault("server.port", 8088)
 
+	// Parse the configuration into the config object.
 	err := viper.Unmarshal(&config)
 
 	if err != nil {
@@ -32,13 +43,16 @@ func parseConfig() (*Config, error) {
 }
 
 func main() {
+	customConfig := flag.String("config", "", "The path to a custom config file")
+	flag.Parse()
+
 	db, err := ConnectDB()
 
 	if err != nil {
 		panic(err)
 	}
 
-	config, err := parseConfig()
+	config, err := parseConfig(customConfig)
 
 	if err != nil {
 		fmt.Println(err.Error())
