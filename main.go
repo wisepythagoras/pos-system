@@ -11,7 +11,6 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/wisepythagoras/pos-system/crypto"
 )
 
 // parseConfig parses the configuration either from the same folder, or
@@ -62,8 +61,13 @@ func main() {
 		return
 	}
 
+	// Instanciate all of the route handlers here.
 	productHandlers := &ProductHandlers{DB: db}
 	orderHandlers := &OrderHandlers{DB: db}
+	userHandlers := &UserHandlers{
+		DB:     db,
+		Config: config,
+	}
 
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
@@ -98,48 +102,7 @@ func main() {
 		})
 	})
 
-	router.POST("/login", func(c *gin.Context) {
-		// Extend this to auth users from the DB (pos users) and break
-		// into its own handler.
-
-		session := sessions.Default(c)
-
-		username := c.PostForm("username")
-		password := c.PostForm("password")
-
-		if len(username) == 0 || len(password) == 0 {
-			c.Redirect(http.StatusPermanentRedirect, "/?e=Unable to log in")
-			return
-		}
-
-		// Hash the password.
-		hash, err := crypto.GetSHA3512Hash([]byte(password))
-
-		if err != nil {
-			c.Redirect(http.StatusPermanentRedirect, "/?e=Unable to log in")
-			return
-		}
-
-		passwordHash := crypto.ByteArrayToHex(hash)
-
-		// Check for an admin user.
-		if username == config.Admin.Username && passwordHash == config.Admin.Password {
-			newUser := &UserStruct{
-				ID:       0,
-				Username: "admin",
-				IsAdmin:  true,
-			}
-			session.Set("user", newUser)
-			session.Save()
-			c.Redirect(http.StatusPermanentRedirect, "/?m=Logged in!")
-			fmt.Println(session.Get("user"))
-			return
-		}
-
-		// Check here users that are stored in the DB.
-
-		c.Redirect(http.StatusPermanentRedirect, "/?e=Invalid username or password")
-	})
+	router.POST("/login", userHandlers.Login)
 
 	router.POST("/api/order", orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)

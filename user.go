@@ -2,7 +2,7 @@ package main
 
 // UserStruct defines the user object type.
 type UserStruct struct {
-	ID       int64  `json:"id"`
+	ID       uint64 `json:"id"`
 	Username string `json:"username"`
 	IsAdmin  bool   `json:"is_admin"`
 	user     *User  `json:"-"`
