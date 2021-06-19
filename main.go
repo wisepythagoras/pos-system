@@ -79,7 +79,7 @@ func main() {
 	// Set the static/public path.
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
 
-	router.GET("/", func(c *gin.Context) {
+	router.Any("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Main website",
 			"admin": false,
@@ -88,10 +88,10 @@ func main() {
 
 	router.GET("/admin", func(c *gin.Context) {
 		session := sessions.Default(c)
-		user := session.Get("user").(*UserStruct)
+		user := session.Get("user")
 
 		// Prevent anyone who is not logged in to view this page.
-		if user == nil || !user.IsAdmin {
+		if user == nil || !user.(*UserStruct).IsAdmin {
 			c.JSON(http.StatusForbidden, gin.H{})
 			return
 		}
@@ -103,6 +103,7 @@ func main() {
 	})
 
 	router.POST("/login", userHandlers.Login)
+	router.GET("/login", userHandlers.LoginPage)
 
 	router.POST("/api/order", orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)

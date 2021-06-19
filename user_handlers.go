@@ -15,6 +15,20 @@ type UserHandlers struct {
 	Config *Config
 }
 
+// LoginPage renders the login page.
+func (uh *UserHandlers) LoginPage(c *gin.Context) {
+	session := sessions.Default(c)
+	user := session.Get("user")
+
+	// Prevent anyone who is not logged in to view this page.
+	if user != nil {
+		c.Redirect(301, "/#")
+		return
+	}
+
+	c.HTML(http.StatusOK, "login.html", gin.H{})
+}
+
 // Login will check the password and username against the DB and
 // create a session for valid users.
 func (uh *UserHandlers) Login(c *gin.Context) {
