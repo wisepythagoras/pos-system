@@ -1,9 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -74,14 +76,70 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 
 // CreateOrder handles the creation/placement of an order.
 func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
-	apiResponse := ApiResponse{
-		Data: gin.H{
-			"test": 123,
-		},
-		Success: true,
-		Error:   "",
+	var productIds []uint64
+	response := &ApiResponse{}
+
+	products := c.PostForm("products")
+	err := json.Unmarshal([]byte(products), &productIds)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusBadRequest, response)
+		return
 	}
-	c.JSON(http.StatusOK, apiResponse)
+
+	if len(productIds) == 0 {
+		response.Success = false
+		response.Error = "Can't make an empty order"
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	var dbProducts []Product
+	var jsonProducts *[]ProductJSON
+	newOrder := &Order{
+		CreatedAt: time.Now(),
+	}
+
+	// Create the new order.
+	oh.DB.Create(newOrder).Commit()
+
+	result := oh.DB.
+		Where("id in (?)", productIds).
+		Find(&dbProducts)
+
+	if result.RowsAffected == 0 {
+		response.Success = false
+		response.Error = "Invalid product ids"
+
+		c.JSON(http.StatusBadRequest, response)
+
+		return
+	}
+
+	// Create all order products.
+	for _, product := range dbProducts {
+		oh.DB.Create(&OrderProduct{
+			ProductID: product.ID,
+			OrderID:   newOrder.ID,
+		}).Commit()
+	}
+
+	// With the products that were find, create a new set of order products,
+	// and use the order that was created earlier, to create the association.
+
+	jsonProducts = ProductsToJSONFormat(dbProducts)
+	orderJSON := &OrderJSON{
+		ID:        newOrder.ID,
+		CreatedAt: newOrder.CreatedAt,
+		Products:  *jsonProducts,
+	}
+
+	response.Success = true
+	response.Data = orderJSON
+
+	c.JSON(http.StatusOK, response)
 }
 
 // PrintOrder is supposed to return the order and also print the receipt for it.

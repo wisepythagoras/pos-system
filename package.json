@@ -5,7 +5,9 @@
   "main": "ui/index.tsx",
   "scripts": {
     "build": "cd ui/app && ../../node_modules/webpack-cli/bin/cli.js --mode=production",
-    "build-dev": "cd ui/app && ../../node_modules/webpack-cli/bin/cli.js --mode=development"
+    "build-dev": "cd ui/app && ../../node_modules/webpack-cli/bin/cli.js --mode=development",
+    "build-admin": "cd ui/admin && ../../node_modules/webpack-cli/bin/cli.js --mode=production",
+    "build-admin-dev": "cd ui/admin && ../../node_modules/webpack-cli/bin/cli.js --mode=development"
   },
   "repository": {
     "type": "git",
