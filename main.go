@@ -63,7 +63,6 @@ func authMiddleware(isAdmin bool) gin.HandlerFunc {
 					return
 				}
 			}
-			fmt.Println(userCookie)
 
 			c.Next()
 		}
