@@ -45,15 +45,18 @@ func parseConfig(customConfig *string) (*Config, error) {
 	return &config, nil
 }
 
-func authMiddleware(isAdmin bool) gin.HandlerFunc {
+func authHandler(isAdmin bool, configAuthToken string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
 		userCookie := session.Get("user")
+		xAuthToken := c.GetHeader("x-auth-token")
 
-		if userCookie == nil || userCookie == "" {
+		fmt.Println(xAuthToken == configAuthToken)
+
+		if (userCookie == nil || userCookie == "") && xAuthToken != configAuthToken {
 			c.AbortWithStatus(http.StatusForbidden)
 		} else {
-			if isAdmin {
+			if isAdmin && xAuthToken != configAuthToken {
 				user := &UserStruct{}
 				json.Unmarshal([]byte(userCookie.(string)), &user)
 
@@ -94,6 +97,8 @@ func main() {
 		Config: config,
 	}
 
+	adminAuthToken := config.Admin.Token
+
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*")
 
@@ -111,7 +116,7 @@ func main() {
 		})
 	})
 
-	router.GET("/admin", authMiddleware(true), func(c *gin.Context) {
+	router.GET("/admin", authHandler(true, adminAuthToken), func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Admin",
 			"admin": true,
@@ -121,10 +126,10 @@ func main() {
 	router.POST("/login", userHandlers.Login)
 	router.GET("/login", userHandlers.LoginPage)
 
-	router.POST("/api/order", authMiddleware(false), orderHandlers.CreateOrder)
+	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
 
-	router.POST("/api/product", authMiddleware(true), productHandlers.CreateProduct)
+	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))

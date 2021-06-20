@@ -8,5 +8,8 @@ admin:
     # echo -n 'your-password-here' | openssl dgst -sha3-512
     password: "SHA3-512 of the password"
 
+    # Generate a random token for the admin.
+    token: "Preferably a SHA256 digest"
+
 # Ideally, pick a secret, get its SHA hash and put that here.
 secret: "this is a test"

@@ -7,6 +7,7 @@ type ServerConfig struct {
 type AdminUser struct {
 	Username string
 	Password string
+	Token    string
 }
 
 type Config struct {
