@@ -59,13 +59,11 @@ func (ph *ProductHandlers) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	txn := ph.DB.Create(&Product{
+	ph.DB.Create(&Product{
 		Name:  name,
 		Price: price,
 		Type:  productType,
-	})
-
-	txn.Commit()
+	}).Commit()
 
 	apiResponse.Success = true
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -44,6 +45,28 @@ func parseConfig(customConfig *string) (*Config, error) {
 	return &config, nil
 }
 
+func authMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		session := sessions.Default(c)
+		userCookie := session.Get("user").(string)
+
+		if userCookie == "" {
+			c.JSON(http.StatusForbidden, gin.H{})
+		} else {
+			user := &UserStruct{}
+			json.Unmarshal([]byte(userCookie), &user)
+
+			// Prevent anyone who is not logged in to view this page.
+			if user == nil || !user.IsAdmin {
+				c.JSON(http.StatusForbidden, gin.H{})
+				return
+			}
+
+			c.Next()
+		}
+	}
+}
+
 func main() {
 	customConfig := flag.String("config", "", "The path to a custom config file")
 	flag.Parse()
@@ -74,7 +97,7 @@ func main() {
 
 	// Apply the sessions middleware.
 	store := cookie.NewStore([]byte(config.Secret))
-	router.Use(sessions.Sessions("pos-sessions", store))
+	router.Use(sessions.Sessions("mysession", store))
 
 	// Set the static/public path.
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
@@ -86,16 +109,7 @@ func main() {
 		})
 	})
 
-	router.GET("/admin", func(c *gin.Context) {
-		session := sessions.Default(c)
-		user := session.Get("user")
-
-		// Prevent anyone who is not logged in to view this page.
-		if user == nil || !user.(*UserStruct).IsAdmin {
-			c.JSON(http.StatusForbidden, gin.H{})
-			return
-		}
-
+	router.GET("/admin", authMiddleware(), func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Admin",
 			"admin": true,

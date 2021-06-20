@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -21,8 +23,8 @@ func (uh *UserHandlers) LoginPage(c *gin.Context) {
 	user := session.Get("user")
 
 	// Prevent anyone who is not logged in to view this page.
-	if user != nil {
-		c.Redirect(301, "/#")
+	if user != nil || user == "" {
+		c.Redirect(http.StatusMovedPermanently, "/#")
 		return
 	}
 
@@ -41,7 +43,7 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 	password := c.PostForm("password")
 
 	if len(username) == 0 || len(password) == 0 {
-		c.Redirect(http.StatusPermanentRedirect, "/?e=Unable to log in")
+		c.Redirect(http.StatusMovedPermanently, "/?e=Unable to log in")
 		return
 	}
 
@@ -49,7 +51,7 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 	hash, err := crypto.GetSHA3512Hash([]byte(password))
 
 	if err != nil {
-		c.Redirect(http.StatusPermanentRedirect, "/?e=Unable to log in")
+		c.Redirect(http.StatusMovedPermanently, "/?e=Unable to log in")
 		return
 	}
 
@@ -65,12 +67,15 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 			Username: "admin",
 			IsAdmin:  true,
 		}
+		newUserJSON, _ := json.Marshal(newUser)
 
 		// Create the new session.
-		session.Set("user", newUser)
-		session.Save()
+		session.Set("user", string(newUserJSON))
+		err := session.Save()
 
-		c.Redirect(http.StatusPermanentRedirect, "/?m=Logged in!")
+		fmt.Println(err)
+
+		c.Redirect(http.StatusMovedPermanently, "/?m=Logged in!")
 
 		return
 	}
@@ -86,15 +91,16 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 			IsAdmin:  false,
 		}
 		newUser.SetUser(user)
+		newUserJSON, _ := json.Marshal(newUser)
 
 		// Create the new session.
-		session.Set("user", newUser)
+		session.Set("user", string(newUserJSON))
 		session.Save()
 
-		c.Redirect(http.StatusPermanentRedirect, "/?m=Logged in!")
+		c.Redirect(http.StatusMovedPermanently, "/?m=Logged in!")
 
 		return
 	}
 
-	c.Redirect(http.StatusPermanentRedirect, "/?e=Invalid username or password")
+	c.Redirect(http.StatusMovedPermanently, "/?e=Invalid username or password")
 }
