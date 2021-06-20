@@ -20,7 +20,7 @@ export const ProductCard = (props: IProductProps) => {
                     {product.name}
                 </Typography>
                 <Typography color="textSecondary" component="h3" gutterBottom>
-                    ${product.price}
+                    ${product.price.toFixed(2)}
                 </Typography>
             </CardContent>
         </Card>

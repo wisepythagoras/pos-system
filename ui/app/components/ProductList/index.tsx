@@ -8,9 +8,10 @@ const ProductCardList = styled.div`
 
     & > div {
         width: 200px;
-        height: 200px;
+        height: 101px;
         margin: 6px;
         cursor: pointer;
+        user-select: none;
     }
 `;
 
