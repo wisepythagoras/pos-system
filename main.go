@@ -45,22 +45,25 @@ func parseConfig(customConfig *string) (*Config, error) {
 	return &config, nil
 }
 
-func authMiddleware() gin.HandlerFunc {
+func authMiddleware(isAdmin bool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session := sessions.Default(c)
-		userCookie := session.Get("user").(string)
+		userCookie := session.Get("user")
 
-		if userCookie == "" {
-			c.JSON(http.StatusForbidden, gin.H{})
+		if userCookie == nil || userCookie == "" {
+			c.AbortWithStatus(http.StatusForbidden)
 		} else {
-			user := &UserStruct{}
-			json.Unmarshal([]byte(userCookie), &user)
+			if isAdmin {
+				user := &UserStruct{}
+				json.Unmarshal([]byte(userCookie.(string)), &user)
 
-			// Prevent anyone who is not logged in to view this page.
-			if user == nil || !user.IsAdmin {
-				c.JSON(http.StatusForbidden, gin.H{})
-				return
+				// Prevent anyone who is not logged in to view this page.
+				if user == nil || !user.IsAdmin {
+					c.AbortWithStatus(http.StatusForbidden)
+					return
+				}
 			}
+			fmt.Println(userCookie)
 
 			c.Next()
 		}
@@ -109,7 +112,7 @@ func main() {
 		})
 	})
 
-	router.GET("/admin", authMiddleware(), func(c *gin.Context) {
+	router.GET("/admin", authMiddleware(true), func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Admin",
 			"admin": true,
@@ -119,10 +122,10 @@ func main() {
 	router.POST("/login", userHandlers.Login)
 	router.GET("/login", userHandlers.LoginPage)
 
-	router.POST("/api/order", orderHandlers.CreateOrder)
+	router.POST("/api/order", authMiddleware(false), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
 
-	router.POST("/api/product", productHandlers.CreateProduct)
+	router.POST("/api/product", authMiddleware(true), productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
