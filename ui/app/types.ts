@@ -15,3 +15,9 @@ export type ProductAggregateT = {
 export type ProductMapT = {
     [key: string]: ProductAggregateT;
 };
+
+export type OrderT = {
+    id: number;
+    created_at: string;
+    products: ProductT[];
+};

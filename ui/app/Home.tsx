@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { Button, Typography, CircularProgress } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from './types';
-import { useGetProducts } from './hooks';
+import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
 import { SmallProductCard } from './components/SmallProductCard';
 
@@ -75,6 +75,7 @@ const TotalProductList = styled.div`
 export const Home = () => {
     const [selectedProducts, setSelectedProducts] = useState<ProductT[]>([]);
     const { loading, products } = useGetProducts();
+    const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -169,8 +170,21 @@ export const Home = () => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        disabled={selectedProducts.length === 0}
-                        onClick={() => alert('Place order!')}
+                        disabled={selectedProducts.length === 0 || loadingCreation}
+                        onClick={async () => {
+                            const productIds = selectedProducts.map((p) => p.id);
+                            const order = await createOrder(productIds);
+
+                            if (!order) {
+                                alert('Unable to create order');
+                                return;
+                            }
+
+                            alert(`Order ${order.id} was created`);
+
+                            // Since the order was created, empty 
+                            setSelectedProducts([]);
+                        }}
                     >
                         Place
                     </Button>
@@ -178,7 +192,7 @@ export const Home = () => {
                         variant="contained"
                         color="secondary"
                         size="large"
-                        disabled={selectedProducts.length === 0}
+                        disabled={selectedProducts.length === 0 || loadingCreation}
                         onClick={() => setSelectedProducts([])}
                     >
                         Cancel
