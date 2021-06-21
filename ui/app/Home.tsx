@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Typography, Button } from '@material-ui/core';
-import { ProductT } from './types';
+import { Button, Typography, CircularProgress } from '@material-ui/core';
+import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts } from './hooks';
 import { ProductList } from './components/ProductList';
 import { SmallProductCard } from './components/SmallProductCard';
@@ -35,6 +35,10 @@ const DisplayGrid = styled.div`
             text-align: center;
             border-top: 1px solid #b3b3b3;
             background-color: #fff;
+
+            @media screen and (max-width: 1024px) {
+                padding-top: 1vh;
+            }
         }
 
         & > div:last-child {
@@ -43,6 +47,10 @@ const DisplayGrid = styled.div`
 
             & > button.MuiButton-containedPrimary {
                 background-color: #31952e;
+            }
+
+            & > button.MuiButton-containedPrimary:disabled {
+                background-color: darkgray;
             }
 
             & > button {
@@ -57,6 +65,7 @@ const TotalProductList = styled.div`
     & > div {
         cursor: pointer;
         margin-bottom: 5px;
+        user-select: none;
     }
 `;
 
@@ -65,7 +74,7 @@ const TotalProductList = styled.div`
  */
 export const Home = () => {
     const [selectedProducts, setSelectedProducts] = useState<ProductT[]>([]);
-    const products = useGetProducts();
+    const { loading, products } = useGetProducts();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -74,10 +83,41 @@ export const Home = () => {
 
     // Compute the total price of all products that were selected.
     const total = selectedProducts.map((p) => p.price).reduce((a, b) => a + b, 0);
+    const aggregates: ProductAggregateT[] = [];
+
+    for (let i in selectedProducts) {
+        const product = selectedProducts[i];
+        const index = aggregates.findIndex((p) => p.product.id === product.id);
+
+        if (index < 0) {
+            aggregates.push({
+                product,
+                amount: 1,
+            });
+        } else {
+            aggregates[index].amount += 1;
+        }
+    }
 
     return (
         <DisplayGrid>
             <div className="product-list">
+                {loading ? (
+                    <div style={{ textAlign: 'center' }}>
+                        <CircularProgress
+                            variant="indeterminate"
+                            disableShrink
+                            style={{
+                                strokeLinecap: 'round',
+                                color: '#1a90ff',
+                                animationDuration: '550ms',
+                                marginTop: '20px',
+                            }}
+                            size={40}
+                            thickness={4}
+                        />
+                    </div>
+                ) : null}
                 <ProductList
                     products={products}
                     onClick={(product) => {
@@ -87,8 +127,9 @@ export const Home = () => {
             </div>
             <div className="total-column">
                 <TotalProductList>
-                    {selectedProducts.map((product, i) => {
-                        const isLast = selectedProducts.length - 1 == i;
+                    {aggregates.map((aggregate, i) => {
+                        const isLast = aggregates.length - 1 == i;
+                        const { amount, product } = aggregate;
 
                         return (
                             <div
@@ -96,11 +137,14 @@ export const Home = () => {
                                 ref={isLast ? lastSelectedProduct : undefined}
                                 onClick={() => {
                                     const selected = [...selectedProducts];
-                                    selected.splice(i, 1);
+                                    const index = selected.findIndex((product) => {
+                                        return aggregate.product.id == product.id;
+                                    });
+                                    selected.splice(index, 1);
                                     setSelectedProducts(selected);
                                 }}
                             >
-                                <SmallProductCard product={product} />
+                                <SmallProductCard product={product} amount={amount} />
                             </div>
                         );
                     })}

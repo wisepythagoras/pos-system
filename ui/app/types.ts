@@ -6,3 +6,12 @@ export type ProductT = {
     price: number;
     type: ProductTypeT;
 };
+
+export type ProductAggregateT = {
+    product: ProductT;
+    amount: number;
+}
+
+export type ProductMapT = {
+    [key: string]: ProductAggregateT;
+};

@@ -14,6 +14,7 @@ const GridContents = styled.div`
 
 export interface ISmallProductCardProps {
     product: ProductT;
+    amount: number;
 };
 
 /**
@@ -21,7 +22,7 @@ export interface ISmallProductCardProps {
  * @param props The props.
  */
 export const SmallProductCard = (props: ISmallProductCardProps) => {
-    const { product } = props;
+    const { product, amount } = props;
 
     return (
         <Card variant="outlined">
@@ -29,6 +30,9 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
                 <GridContents>
                     <div>
                         <Typography variant="h5" component="h2">
+                            <Typography color="textSecondary" component="span">
+                                {amount}&times;
+                            </Typography>
                             {product.name}
                         </Typography>
                     </div>

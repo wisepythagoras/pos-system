@@ -14,6 +14,10 @@ const ProductCardList = styled.div`
         cursor: pointer;
         user-select: none;
 
+        @media screen and (max-width: 1024px) {
+            width: 280px;
+        }
+
         &.food > div {
             background-color: #65a6a8;
         }
