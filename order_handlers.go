@@ -119,11 +119,16 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	}
 
 	// Create all order products.
+	// TODO: Replace with a bulk insert.
 	for _, product := range dbProducts {
-		oh.DB.Create(&OrderProduct{
-			ProductID: product.ID,
-			OrderID:   newOrder.ID,
-		}).Commit()
+		for _, productId := range productIds {
+			if productId == product.ID {
+				oh.DB.Create(&OrderProduct{
+					ProductID: product.ID,
+					OrderID:   newOrder.ID,
+				}).Commit()
+			}
+		}
 	}
 
 	// With the products that were find, create a new set of order products,
@@ -167,5 +172,34 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 		"total":    totalCost,
 	}
 	response.Success = true
+	c.JSON(http.StatusOK, response)
+}
+
+// GetOrders returns a list of orders.
+func (oh *OrderHandlers) GetOrders(c *gin.Context) {
+	pageStr, exists := c.GetQuery("p")
+	page := 1
+	response := &ApiResponse{}
+
+	if exists {
+		page, _ = strconv.Atoi(pageStr)
+
+		if page < 1 {
+			page = 1
+		}
+	}
+
+	var orders []Order
+
+	oh.DB.
+		Preload("OrderProducts.Product").
+		Order("id desc").
+		Limit(50).
+		Offset((page - 1) * 30).
+		Find(&orders)
+
+	response.Success = true
+	response.Data = orders
+
 	c.JSON(http.StatusOK, response)
 }
