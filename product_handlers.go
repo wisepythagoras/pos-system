@@ -75,7 +75,7 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	var productObjs []*Product
 	var products []interface{}
 
-	ph.DB.Order("name asc").Find(&productObjs)
+	ph.DB.Order("type asc").Find(&productObjs)
 
 	for _, product := range productObjs {
 		products = append(products, ProductFormatter(product))
