@@ -127,6 +127,16 @@ export const Home = () => {
             </div>
             <div className="total-column">
                 <TotalProductList>
+                    {/* Show this label only when no products are selected. */}
+                    {aggregates.length === 0 ? (
+                        <div style={{ textAlign: 'center', paddingTop: '10px' }}>
+                            <Typography color="textSecondary" component="h3">
+                                To create a new order select products from the left.
+                            </Typography>
+                        </div>
+                    ) : null}
+
+                    {/* Show the list of selected products. */}
                     {aggregates.map((aggregate, i) => {
                         const isLast = aggregates.length - 1 == i;
                         const { amount, product } = aggregate;
