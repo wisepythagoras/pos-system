@@ -110,8 +110,16 @@ func main() {
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
 
 	router.Any("/", func(c *gin.Context) {
+		session := sessions.Default(c)
+		userCookie := session.Get("user")
+
+		if userCookie == nil || userCookie == "" {
+			c.Redirect(http.StatusMovedPermanently, "/login")
+			return
+		}
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Main website",
+			"title": "POS",
 			"admin": false,
 		})
 	})
