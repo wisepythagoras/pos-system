@@ -1,32 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Typography } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import { ProductT } from './types';
+import { useGetProducts } from './hooks';
 import { ProductList } from './components/ProductList';
 import { SmallProductCard } from './components/SmallProductCard';
-
-/**
- * A hook that gets and returns the list of available products.
- * @returns The list of available products.
- */
-const useGetProducts = () => {
-    const [products, setProducts] = useState<ProductT[]>([]);
-
-    useEffect(() => {
-        const getProducts = async () => {
-            const req = await fetch('/api/products');
-            const resp = await req.json();
-
-            if (resp.success) {
-                setProducts(resp.data);
-            }
-        }
-
-        getProducts();
-    }, []);
-
-    return products;
-};
 
 const DisplayGrid = styled.div`
     display: grid;
@@ -42,7 +20,7 @@ const DisplayGrid = styled.div`
     & > .total-column {
         display: grid;
         overflow: none;
-        grid-template-rows: 80vh 20vh;
+        grid-template-rows: calc(80vh - 50px) calc(20vh - 50px) 100px;
 
         & > div:first-child {
             padding: 10px;
@@ -51,12 +29,26 @@ const DisplayGrid = styled.div`
             background-color: #f0f0f0;
         }
 
-        & > div:last-child {
+        & > div:nth-child(2) {
             padding: 20px;
-            padding-top: 4vh;
+            padding-top: 3vh;
             text-align: center;
             border-top: 1px solid #b3b3b3;
             background-color: #fff;
+        }
+
+        & > div:last-child {
+            display: flex;
+            width: 100%;
+
+            & > button.MuiButton-containedPrimary {
+                background-color: #31952e;
+            }
+
+            & > button {
+                width: 50%;
+                border-radius: 0;
+            }
         }
     }
 `;
@@ -99,7 +91,15 @@ export const Home = () => {
                         const isLast = selectedProducts.length - 1 == i;
 
                         return (
-                            <div key={i} ref={isLast ? lastSelectedProduct : undefined}>
+                            <div
+                                key={i}
+                                ref={isLast ? lastSelectedProduct : undefined}
+                                onClick={() => {
+                                    const selected = [...selectedProducts];
+                                    selected.splice(i, 1);
+                                    setSelectedProducts(selected);
+                                }}
+                            >
                                 <SmallProductCard product={product} />
                             </div>
                         );
@@ -109,6 +109,26 @@ export const Home = () => {
                     <Typography variant="h1" component="h2" gutterBottom>
                         ${total.toFixed(2)}
                     </Typography>
+                </div>
+                <div>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        disabled={selectedProducts.length === 0}
+                        onClick={() => alert('Place order!')}
+                    >
+                        Place
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        size="large"
+                        disabled={selectedProducts.length === 0}
+                        onClick={() => setSelectedProducts([])}
+                    >
+                        Cancel
+                    </Button>
                 </div>
             </div>
         </DisplayGrid>
