@@ -1,5 +1,16 @@
 import React from 'react';
+import styled from 'styled-components';
+import { Chip } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from '../../../app/types';
+
+const PillContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+
+    & > * {
+        margin-right: 3px;
+    }
+`;
 
 export interface IOrderProductsProps {
     products: ProductT[];
@@ -30,12 +41,14 @@ export const OrderProducts = (props: IOrderProductsProps) => {
     }
 
     aggregateProducts.forEach((pa) => {
-        productPills.push(<span>{pa.amount}&times;{pa.product.name}</span>);
+        productPills.push(
+            <Chip label={<span>{pa.amount}&times;{pa.product.name}</span>} />
+        );
     });
 
     return (
-        <div>
+        <PillContainer>
             {productPills}
-        </div>
+        </PillContainer>
     );
 };
