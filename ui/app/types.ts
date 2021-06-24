@@ -21,3 +21,9 @@ export type OrderT = {
     created_at: string;
     products: ProductT[];
 };
+
+export type RichOrderT = {
+    order_id: number;
+    total: number;
+    order: OrderT;
+};
