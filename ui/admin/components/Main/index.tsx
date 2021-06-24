@@ -5,6 +5,7 @@ import {
     Container,
     Typography,
 } from '@material-ui/core';
+import { RichOrder } from '../RichOrder';
 import { RichOrderT } from '../../../app/types';
 
 interface IGetOrdersListState {
@@ -106,14 +107,9 @@ export const Main = (props: IMainProps) => {
                     </div>
                 ) : null}
 
-                {orders.map((order) => {
-                    return (
-                        <div>
-                            {order.order_id}
-                        </div>
-                    );
-                })}
+                {orders.map((order) => <RichOrder order={order} />)}
             </div>
+            <br />
         </Container>
     );
 };
