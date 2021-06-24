@@ -193,6 +193,8 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 	}
 
 	var orders []Order
+	// var ordersJSON []OrderJSON
+	var dataOrders []interface{}
 
 	oh.DB.
 		Preload("OrderProducts.Product").
@@ -201,8 +203,41 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 		Offset((page - 1) * 30).
 		Find(&orders)
 
+	// Convert all orders to the JSON format.
+	for _, order := range orders {
+		orderJSON := OrderJSON{
+			ID:        order.ID,
+			CreatedAt: order.CreatedAt,
+		}
+		totalCost := 0.0
+
+		for _, orderProduct := range order.OrderProducts {
+			if orderProduct.Product.ID == 0 {
+				continue
+			}
+
+			totalCost += orderProduct.Product.Price
+
+			productJSON := ProductJSON{
+				ID:    orderProduct.Product.ID,
+				Name:  orderProduct.Product.Name,
+				Type:  orderProduct.Product.Type,
+				Price: orderProduct.Product.Price,
+			}
+
+			orderJSON.Products = append(orderJSON.Products, productJSON)
+		}
+
+		// ordersJSON = append(ordersJSON, orderJSON)
+		dataOrders = append(dataOrders, gin.H{
+			"order_id": order.ID,
+			"order":    orderJSON,
+			"total":    totalCost,
+		})
+	}
+
 	response.Success = true
-	response.Data = orders
+	response.Data = dataOrders
 
 	c.JSON(http.StatusOK, response)
 }
