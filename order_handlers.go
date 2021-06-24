@@ -241,3 +241,8 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 
 	c.JSON(http.StatusOK, response)
 }
+
+// GetTotalEarnings returns the total earnings for day or year to date.
+func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
+	// Get total earnings for day or year to date.
+}
