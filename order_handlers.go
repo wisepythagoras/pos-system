@@ -118,18 +118,21 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 		return
 	}
 
-	// Create all order products.
-	// TODO: Replace with a bulk insert.
+	var orderProducts []OrderProduct
+
 	for _, product := range dbProducts {
 		for _, productId := range productIds {
 			if productId == product.ID {
-				oh.DB.Create(&OrderProduct{
+				orderProducts = append(orderProducts, OrderProduct{
 					ProductID: product.ID,
 					OrderID:   newOrder.ID,
-				}).Commit()
+				})
 			}
 		}
 	}
+
+	// Batch-create all order products.
+	oh.DB.Create(&orderProducts).Commit()
 
 	// With the products that were find, create a new set of order products,
 	// and use the order that was created earlier, to create the association.
