@@ -59,7 +59,7 @@ export const RichOrder = (props: IRichOrderProps) => {
                             />
                         )}
                     </div>
-                    <div>${order.total}</div>
+                    <div>${order.total.toFixed(2)}</div>
                     <div>
                         {dayjs(order.order.created_at).format('HH:mm MM-DD-YYYY')}
                     </div>
