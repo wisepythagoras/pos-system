@@ -51,6 +51,7 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 
 	orderJSON := &OrderJSON{
 		ID:        order.ID,
+		Cancelled: order.Cancelled == 1,
 		CreatedAt: order.CreatedAt,
 	}
 	totalCost := 0.0
@@ -140,6 +141,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	jsonProducts = ProductsToJSONFormat(dbProducts)
 	orderJSON := &OrderJSON{
 		ID:        newOrder.ID,
+		Cancelled: false,
 		CreatedAt: newOrder.CreatedAt,
 		Products:  *jsonProducts,
 	}
@@ -167,6 +169,7 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 	if err != nil {
 		response.Success = false
 		response.Error = err.Error()
+		return
 	}
 
 	response.Data = gin.H{
@@ -193,7 +196,6 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 	}
 
 	var orders []Order
-	// var ordersJSON []OrderJSON
 	var dataOrders []interface{}
 
 	oh.DB.
@@ -207,6 +209,7 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 	for _, order := range orders {
 		orderJSON := OrderJSON{
 			ID:        order.ID,
+			Cancelled: order.Cancelled == 1,
 			CreatedAt: order.CreatedAt,
 		}
 		totalCost := 0.0
@@ -228,7 +231,6 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 			orderJSON.Products = append(orderJSON.Products, productJSON)
 		}
 
-		// ordersJSON = append(ordersJSON, orderJSON)
 		dataOrders = append(dataOrders, gin.H{
 			"order_id": order.ID,
 			"order":    orderJSON,
@@ -245,4 +247,52 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 // GetTotalEarnings returns the total earnings for day or year to date.
 func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
+}
+
+// ToggleOrder toggles the cancelled field of an order.
+func (oh *OrderHandlers) ToggleOrder(c *gin.Context) {
+	response := &ApiResponse{}
+	orderId, err := oh.getOrderIDFromParams(c)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	orderJSON, _, err := oh.GetOrderByID(orderId)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		return
+	}
+
+	if orderJSON.ID == 0 {
+		response.Success = false
+		response.Error = "Invalid order id"
+		return
+	}
+
+	var cancelled uint8 = 0
+
+	if orderJSON.Cancelled {
+		cancelled = 1
+	}
+
+	// Invert it.
+	cancelled = (cancelled + 1) % 2
+
+	order := &Order{
+		ID:        orderJSON.ID,
+		Cancelled: cancelled,
+		CreatedAt: orderJSON.CreatedAt,
+	}
+
+	// Delete the order by the primary key (the id).
+	oh.DB.Save(order).Commit()
+
+	response.Success = true
+	c.JSON(http.StatusOK, response)
 }

@@ -19,6 +19,7 @@ type Product struct {
 type Order struct {
 	gorm.Model
 	ID            uint64         `gorm:"primaryKey; autoIncrement; not_null;"`
+	Cancelled     uint8          `gorm:"not_null; default 0"`
 	CreatedAt     time.Time      `gorm:"autoCreateTime:milli"`
 	OrderProducts []OrderProduct `gorm:"foreignKey:OrderID;references:ID;"`
 	Products      []Product      `gorm:"-"`

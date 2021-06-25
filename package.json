@@ -21,6 +21,7 @@
   "homepage": "https://github.com/wisepythagoras/pos-system#readme",
   "dependencies": {
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@types/react": "^17.0.11",
     "@types/react-dom": "^17.0.8",
     "@types/styled-components": "^5.1.10",

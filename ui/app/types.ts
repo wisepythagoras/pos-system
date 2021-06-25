@@ -18,6 +18,7 @@ export type ProductMapT = {
 
 export type OrderT = {
     id: number;
+    cancelled: boolean;
     created_at: string;
     products: ProductT[];
 };

@@ -138,6 +138,7 @@ func main() {
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
+	router.DELETE("/api/order/:orderId", authHandler(true, adminAuthToken), orderHandlers.ToggleOrder)
 
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)

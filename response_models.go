@@ -45,6 +45,7 @@ func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 // OrderJSON describes the Order DB model, but in a JSON-ifiable format.
 type OrderJSON struct {
 	ID        uint64        `json:"id"`
+	Cancelled bool          `json:"cancelled"`
 	CreatedAt time.Time     `json:"created_at"`
 	Products  []ProductJSON `json:"products"`
 }
