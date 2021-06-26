@@ -12,8 +12,14 @@ const GridContents = styled.div`
     grid-template-columns: 75px auto 125px 75px 150px;
 
     & > div:first-child,
+    & > div:nth-child(4),
     & > div:last-child {
         text-align: center;
+    }
+
+    & > div:nth-child(4) {
+        text-decoration: underline;
+        font-weight: 900;
     }
 `;
 
