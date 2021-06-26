@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -247,6 +248,20 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 // GetTotalEarnings returns the total earnings for day or year to date.
 func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
+	response := &ApiResponse{}
+	var orders []Order
+
+	oh.DB.
+		Where("created_at > DATE('now', 'start of year')").
+		Where("cancelled = 0").
+		Preload("OrderProducts.Product").
+		Find(&orders)
+
+	for _, order := range orders {
+		fmt.Println(order.ID)
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // ToggleOrder toggles the cancelled field of an order.
