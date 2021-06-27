@@ -3,11 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -249,17 +249,39 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
 	response := &ApiResponse{}
+	xlsx := excelize.NewFile()
 	var orders []Order
+	var products []Product
 
+	// Get the list of products.
+	oh.DB.Find(&products)
+
+	// Get the list of orders.
 	oh.DB.
 		Where("created_at > DATE('now', 'start of year')").
 		Where("cancelled = 0").
 		Preload("OrderProducts.Product").
 		Find(&orders)
 
-	for _, order := range orders {
-		fmt.Println(order.ID)
+	xlsx.NewSheet("Sheet2")
+
+	for idx, order := range orders {
+		where := strconv.Itoa(idx + 1)
+		orderTotal := 0.0
+
+		for _, orderProduct := range order.OrderProducts {
+			orderTotal += orderProduct.Product.Price
+
+			xlsx.SetCellValue("Sheet2", "A"+where, order.ID)
+			xlsx.SetCellValue("Sheet2", "B"+where, orderProduct.Product.Name)
+		}
+
+		xlsx.SetCellValue("Sheet1", "A"+where, order.ID)
+		xlsx.SetCellValue("Sheet1", "B"+where, orderTotal)
+		xlsx.SetCellValue("Sheet1", "C"+where, order.CreatedAt)
 	}
+
+	xlsx.SetCellFormula("Sheet1", "D2", "SUM(Sheet1!D2,Sheet1!D11)")
 
 	c.JSON(http.StatusOK, response)
 }
