@@ -51,8 +51,6 @@ func authHandler(isAdmin bool, configAuthToken string) gin.HandlerFunc {
 		userCookie := session.Get("user")
 		xAuthToken := c.GetHeader("x-auth-token")
 
-		fmt.Println(xAuthToken == configAuthToken)
-
 		if (userCookie == nil || userCookie == "") && xAuthToken != configAuthToken {
 			c.AbortWithStatus(http.StatusForbidden)
 		} else {

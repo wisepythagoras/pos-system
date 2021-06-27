@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -265,23 +266,45 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 
 	xlsx.NewSheet("Sheet2")
 
+	for idx, product := range products {
+		col := IntToColumnString(int64(idx) + 1)
+		xlsx.SetCellValue("Sheet2", col+"1", product.Name)
+	}
+
+	xlsx.SetCellValue("Sheet1", "A1", "ID")
+	xlsx.SetCellValue("Sheet1", "B1", "Order Total")
+	xlsx.SetCellValue("Sheet1", "C1", "Created At")
+
+	// dateExp := `{"custom_number_format": "[$-380A]dddd\\,\\ dd\" de \"mmmm\" de \"yyyy;@"}`
+	// dateStyle, _ := xlsx.NewStyle(dateExp)
+	dollarExp := `{"number_format": 166}`
+	dollarStyle, err := xlsx.NewStyle(dollarExp)
+
+	fmt.Println(err)
+
 	for idx, order := range orders {
-		where := strconv.Itoa(idx + 1)
+		where := strconv.Itoa(idx + 2)
 		orderTotal := 0.0
 
 		for _, orderProduct := range order.OrderProducts {
 			orderTotal += orderProduct.Product.Price
 
-			xlsx.SetCellValue("Sheet2", "A"+where, order.ID)
-			xlsx.SetCellValue("Sheet2", "B"+where, orderProduct.Product.Name)
+			// xlsx.SetCellValue("Sheet2", "A"+where, order.ID)
+			// xlsx.SetCellValue("Sheet2", "B"+where, orderProduct.Product.Name)
 		}
 
 		xlsx.SetCellValue("Sheet1", "A"+where, order.ID)
 		xlsx.SetCellValue("Sheet1", "B"+where, orderTotal)
 		xlsx.SetCellValue("Sheet1", "C"+where, order.CreatedAt)
+
+		xlsx.SetCellStyle("Sheet1", "B"+where, "B"+where, dollarStyle)
+		// xlsx.SetCellStyle("Sheet1", "C"+where, "C"+where, dateStyle)
 	}
 
-	xlsx.SetCellFormula("Sheet1", "D2", "SUM(Sheet1!D2,Sheet1!D11)")
+	xlsx.SetCellFormula("Sheet1", "E2", "Total")
+	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+strconv.Itoa(len(orders)+1)+")")
+	xlsx.SetCellStyle("Sheet1", "F2", "F2", dollarStyle)
+	xlsx.SaveAs("./Book1.xlsx")
 
 	c.JSON(http.StatusOK, response)
 }

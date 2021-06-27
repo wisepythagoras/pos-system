@@ -9,6 +9,7 @@ const PillContainer = styled.div`
 
     & > * {
         margin-right: 3px;
+        margin-bottom: 3px;
     }
 `;
 
