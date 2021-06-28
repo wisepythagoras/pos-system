@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -267,7 +266,7 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	xlsx.NewSheet("Sheet2")
 
 	for idx, product := range products {
-		col := IntToColumnString(int64(idx) + 1)
+		col := IntToColumnString(int64(idx) + 2)
 		xlsx.SetCellValue("Sheet2", col+"1", product.Name)
 	}
 
@@ -275,12 +274,10 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	xlsx.SetCellValue("Sheet1", "B1", "Order Total")
 	xlsx.SetCellValue("Sheet1", "C1", "Created At")
 
-	// dateExp := `{"custom_number_format": "[$-380A]dddd\\,\\ dd\" de \"mmmm\" de \"yyyy;@"}`
-	// dateStyle, _ := xlsx.NewStyle(dateExp)
-	dollarExp := `{"number_format": 166}`
-	dollarStyle, err := xlsx.NewStyle(dollarExp)
-
-	fmt.Println(err)
+	dateExp := `{"custom_number_format": "m/d/yy h:mm AM/PM;@"}`
+	dateStyle, _ := xlsx.NewStyle(dateExp)
+	dollarExp := `{"number_format": 166,"font":{"bold":true}}`
+	dollarStyle, _ := xlsx.NewStyle(dollarExp)
 
 	for idx, order := range orders {
 		where := strconv.Itoa(idx + 2)
@@ -298,10 +295,10 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 		xlsx.SetCellValue("Sheet1", "C"+where, order.CreatedAt)
 
 		xlsx.SetCellStyle("Sheet1", "B"+where, "B"+where, dollarStyle)
-		// xlsx.SetCellStyle("Sheet1", "C"+where, "C"+where, dateStyle)
+		xlsx.SetCellStyle("Sheet1", "C"+where, "C"+where, dateStyle)
 	}
 
-	xlsx.SetCellFormula("Sheet1", "E2", "Total")
+	xlsx.SetCellValue("Sheet1", "E2", "Total=")
 	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+strconv.Itoa(len(orders)+1)+")")
 	xlsx.SetCellStyle("Sheet1", "F2", "F2", dollarStyle)
 	xlsx.SaveAs("./Book1.xlsx")

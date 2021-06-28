@@ -9,3 +9,4 @@ public/js/*.js.LICENSE.txt
 node_modules/
 config.yaml
 *.xlsx
+.~lock.*
