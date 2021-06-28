@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -248,8 +249,9 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 // GetTotalEarnings returns the total earnings for day or year to date.
 func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
-	response := &ApiResponse{}
 	xlsx := excelize.NewFile()
+	dt := time.Now()
+	fileName := "ytd-export_" + dt.String() + ".xlsx"
 	var orders []Order
 	var products []Product
 	var productCols map[string]string = make(map[string]string)
@@ -330,9 +332,16 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	xlsx.SetCellValue("Sheet1", "E2", "Total=")
 	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+totalOrders+")")
 	xlsx.SetCellStyle("Sheet1", "F2", "F2", dollarStyle)
-	xlsx.SaveAs("./Book1.xlsx")
+	xlsx.SaveAs("exports/" + fileName)
 
-	c.JSON(http.StatusOK, response)
+	targetPath := filepath.Join("exports/", fileName)
+
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", "attachment; filename="+fileName)
+	c.Header("Content-Type", "application/octet-stream")
+
+	c.File(targetPath)
 }
 
 // ToggleOrder toggles the cancelled field of an order.
