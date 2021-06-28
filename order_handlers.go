@@ -246,8 +246,33 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// GetTotalEarnings returns the total earnings for day or year to date.
+// GetTotalEarnings just returns the total earnings year-to-date.
 func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
+	response := ApiResponse{}
+	totalSales := 0.0
+	var orders []Order
+
+	// Get the list of orders.
+	oh.DB.
+		Where("created_at > DATE('now', 'start of year')").
+		Where("cancelled = 0").
+		Preload("OrderProducts.Product").
+		Find(&orders)
+
+	for _, order := range orders {
+		for _, orderProduct := range order.OrderProducts {
+			totalSales += orderProduct.Product.Price
+		}
+	}
+
+	response.Success = true
+	response.Data = totalSales
+
+	c.JSON(http.StatusOK, response)
+}
+
+// ExportTotalEarnings returns the total earnings for day or year to date.
+func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
 	xlsx := excelize.NewFile()
 	dt := time.Now()

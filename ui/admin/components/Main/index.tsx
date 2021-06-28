@@ -67,6 +67,27 @@ const useGetOrdersList = (page: number) => {
     return { ...state, fetchOrders };
 };
 
+/**
+ * A hook that gets the total earnings year-to-date.
+ * @returns The total earnings.
+ */
+const useGetTotalEarnings = () => {
+    const [earnings, setEarnings] = useState(0);
+
+    useEffect(() => {
+        const getEarnings = async () => {
+            const req = await fetch('/api/orders/earnings');
+            const resp = await req.json();
+
+            setEarnings(resp.data);
+        };
+
+        getEarnings();
+    });
+
+    return earnings;
+}
+
 export interface IMainProps {};
 
 /**
@@ -77,12 +98,26 @@ export interface IMainProps {};
 export const Main = (props: IMainProps) => {
     const [page, setPage] = useState(1);
     const { loading, error, orders, fetchOrders } = useGetOrdersList(page);
+    const earnings = useGetTotalEarnings();
+
+    const exportTotals = () => {
+        const link = document.createElement('a');
+        link.download = '';
+        link.href = '/api/orders/totals/export';
+        link.click();
+    };
 
     return (
         <Container>
+            <br />
             <Typography variant="h3" component="h3" gutterBottom>
-                Admin 
+                Total Earnings: ${earnings.toFixed(2)}
             </Typography>
+            <div style={{ marginBottom: '15px' }}>
+                <Button onClick={exportTotals} variant="contained" color="primary">
+                    Export
+                </Button>
+            </div>
             <div>
                 {error ? (
                     <Typography variant="h4" component="h4">
