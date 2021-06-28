@@ -252,6 +252,7 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	xlsx := excelize.NewFile()
 	var orders []Order
 	var products []Product
+	var productCols map[string]string = make(map[string]string)
 
 	// Get the list of products.
 	oh.DB.Find(&products)
@@ -268,12 +269,17 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 	for idx, product := range products {
 		col := IntToColumnString(int64(idx) + 2)
 		xlsx.SetCellValue("Sheet2", col+"1", product.Name)
+		productCols[product.Name] = col
 	}
 
 	xlsx.SetCellValue("Sheet1", "A1", "ID")
 	xlsx.SetCellValue("Sheet1", "B1", "Order Total")
 	xlsx.SetCellValue("Sheet1", "C1", "Created At")
 
+	totalOrders := strconv.Itoa(len(orders) + 1)
+	totalPos := strconv.Itoa(len(orders) + 2)
+
+	// Styles for specific columns.
 	dateExp := `{"custom_number_format": "m/d/yy h:mm AM/PM;@"}`
 	dateStyle, _ := xlsx.NewStyle(dateExp)
 	dollarExp := `{"number_format": 166,"font":{"bold":true}}`
@@ -284,11 +290,23 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 		orderTotal := 0.0
 
 		for _, orderProduct := range order.OrderProducts {
-			orderTotal += orderProduct.Product.Price
+			product := orderProduct.Product
+			productCell := productCols[product.Name]
+			typeTotal := 1
 
-			// xlsx.SetCellValue("Sheet2", "A"+where, order.ID)
-			// xlsx.SetCellValue("Sheet2", "B"+where, orderProduct.Product.Name)
+			orderTotal += product.Price
+
+			val := xlsx.GetCellValue("Sheet2", productCell+where)
+
+			if len(val) > 0 {
+				intVal, _ := strconv.Atoi(val)
+				typeTotal += intVal
+			}
+
+			xlsx.SetCellValue("Sheet2", productCell+where, typeTotal)
 		}
+
+		xlsx.SetCellValue("Sheet2", "A"+where, order.ID)
 
 		xlsx.SetCellValue("Sheet1", "A"+where, order.ID)
 		xlsx.SetCellValue("Sheet1", "B"+where, orderTotal)
@@ -298,8 +316,19 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 		xlsx.SetCellStyle("Sheet1", "C"+where, "C"+where, dateStyle)
 	}
 
+	xlsx.SetCellValue("Sheet2", "A1", "Order ID")
+	xlsx.SetCellValue("Sheet2", "A"+totalPos, "Totals=")
+
+	for _, product := range products {
+		col := productCols[product.Name]
+		target := col + totalPos
+		formula := "SUM(" + col + "2:" + col + totalOrders + ")"
+
+		xlsx.SetCellFormula("Sheet2", target, formula)
+	}
+
 	xlsx.SetCellValue("Sheet1", "E2", "Total=")
-	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+strconv.Itoa(len(orders)+1)+")")
+	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+totalOrders+")")
 	xlsx.SetCellStyle("Sheet1", "F2", "F2", dollarStyle)
 	xlsx.SaveAs("./Book1.xlsx")
 
