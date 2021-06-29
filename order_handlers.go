@@ -303,6 +303,7 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 	xlsx.SetCellValue("Sheet1", "B1", "Order Total")
 	xlsx.SetCellValue("Sheet1", "C1", "Created At")
 
+	lastTotalCol := IntToColumnString(int64(len(products)) + 2)
 	totalOrders := strconv.Itoa(len(orders) + 1)
 	totalPos := strconv.Itoa(len(orders) + 2)
 
@@ -311,6 +312,12 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 	dateStyle, _ := xlsx.NewStyle(dateExp)
 	dollarExp := `{"number_format": 166,"font":{"bold":true}}`
 	dollarStyle, _ := xlsx.NewStyle(dollarExp)
+	totalStyle, _ := xlsx.NewStyle(`{
+		"font": {
+			"bold": true,
+			"size": 10
+		}
+	}`)
 
 	for idx, order := range orders {
 		where := strconv.Itoa(idx + 2)
@@ -353,6 +360,11 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 
 		xlsx.SetCellFormula("Sheet2", target, formula)
 	}
+
+	xlsx.SetColWidth("Sheet1", "B", "B", 12)
+	xlsx.SetColWidth("Sheet1", "C", "C", 20)
+	xlsx.SetColWidth("Sheet1", "F", "F", 20)
+	xlsx.SetCellStyle("Sheet2", "A"+totalPos, lastTotalCol+totalPos, totalStyle)
 
 	xlsx.SetCellValue("Sheet1", "E2", "Total=")
 	xlsx.SetCellFormula("Sheet1", "F2", "SUM(B2:B"+totalOrders+")")
