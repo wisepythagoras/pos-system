@@ -81,16 +81,16 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 	}
 
 	// Check here users that are stored in the DB.
-	user := &User{}
-	uh.DB.Where("username = ?", username).First(user)
+	user := User{}
+	uh.DB.First(&user, "username = ?", username)
 
-	if user.ID > 0 {
+	if user.ID > 0 && user.Password == passwordHash {
 		newUser := &UserStruct{
 			ID:       user.ID,
 			Username: user.Username,
 			IsAdmin:  false,
 		}
-		newUser.SetUser(user)
+		newUser.SetUser(&user)
 		newUserJSON, _ := json.Marshal(newUser)
 
 		// Create the new session.

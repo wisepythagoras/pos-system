@@ -15,9 +15,7 @@ func ConnectDB() (*gorm.DB, error) {
 	db.AutoMigrate(&Product{})
 	db.AutoMigrate(&OrderProduct{})
 	db.AutoMigrate(&Order{})
-
-	// db.Preload("OrderProducts").Find(&Order{})
-	// db.Preload("OrderProducts.Products").Find(&Order{})
+	db.AutoMigrate(&User{})
 
 	return db, nil
 }
