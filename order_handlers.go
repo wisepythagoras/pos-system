@@ -428,3 +428,49 @@ func (oh *OrderHandlers) ToggleOrder(c *gin.Context) {
 	response.Success = true
 	c.JSON(http.StatusOK, response)
 }
+
+// EarningsPerDay returns the total dollar earnings for each day. "0" is for the current
+// day, "1" is for yesterday, "2" is 2 days ago, and so forth.
+func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
+	type PerDayEarnings struct {
+		Earnings float64
+	}
+
+	var results PerDayEarnings
+	response := ApiResponse{}
+	dayParam := c.Param("day")
+	day, err := strconv.Atoi(dayParam)
+
+	if err != nil || day < 0 {
+		response.Success = false
+		response.Error = "Invalid day"
+
+		c.JSON(http.StatusBadRequest, response)
+
+		return
+	}
+
+	if day == 0 {
+		oh.DB.Raw(`
+			select sum(p.price) earnings from order_products op
+			left join products p on p.id = op.product_id
+			where op.created_at >= date('now', '-1 day', 'start of day')
+			order by op.id desc;
+		`).Scan(&results)
+	} else {
+		oh.DB.Raw(`
+			select sum(p.price) earnings from order_products op
+			left join products p on p.id = op.product_id
+			where
+				op.created_at >=
+					date('now', '-` + strconv.Itoa(day+1) + ` day', 'start of day') and
+				op.created_at <= date('now', '-` + dayParam + ` day', 'start of day')
+			order by op.id desc;
+		`).Scan(&results)
+	}
+
+	response.Success = true
+	response.Data = results
+
+	c.JSON(http.StatusOK, response)
+}

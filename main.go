@@ -133,6 +133,7 @@ func main() {
 	router.GET("/login", userHandlers.LoginPage)
 
 	router.GET("/api/orders/earnings", authHandler(true, adminAuthToken), orderHandlers.GetTotalEarnings)
+	router.GET("/api/orders/earnigns/:day", orderHandlers.EarningsPerDay)
 	router.GET("/api/orders/totals/export", authHandler(true, adminAuthToken), orderHandlers.ExportTotalEarnings)
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
