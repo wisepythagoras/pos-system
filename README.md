@@ -1,6 +1,6 @@
 # Point-of-Sale App
 
-This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops and .
+This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops and neighborhood festivals.
 
 ## Building
 
