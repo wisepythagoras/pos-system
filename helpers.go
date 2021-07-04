@@ -1,5 +1,10 @@
 package main
 
+import (
+	"log"
+	"net"
+)
+
 func DivMod(numerator, denominator int64) (quotient, remainder int64) {
 	quotient = numerator / denominator
 	remainder = numerator % denominator
@@ -16,4 +21,18 @@ func IntToColumnString(col int64) string {
 	}
 
 	return str
+}
+
+func GetOutboundIP() net.IP {
+	conn, err := net.Dial("udp", "1.1.1.1:53")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer conn.Close()
+
+	localAddr := conn.LocalAddr().(*net.UDPAddr)
+
+	return localAddr.IP
 }

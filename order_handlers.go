@@ -492,10 +492,14 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 		return
 	}
 
+	outboundIP := GetOutboundIP()
 	objJSON, _ := json.Marshal(gin.H{
-		"order_id": orderId,
-		"order":    orderJSON,
-		"total":    totalCost,
+		"order_id":      orderJSON.ID,
+		"cancelled":     orderJSON.Cancelled,
+		"created_at":    orderJSON.CreatedAt,
+		"product_count": len(orderJSON.Products),
+		"link":          "http://" + outboundIP.String() + "/api/order/" + strconv.Itoa(orderId),
+		"total":         totalCost,
 	})
 
 	png, err := qrcode.Encode(string(objJSON), qrcode.Medium, 256)
