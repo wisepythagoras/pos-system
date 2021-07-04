@@ -137,7 +137,8 @@ func main() {
 	router.GET("/api/orders/totals/export", authHandler(true, adminAuthToken), orderHandlers.ExportTotalEarnings)
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
-	router.GET("/api/order/:orderId", orderHandlers.PrintOrder)
+	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.PrintOrder)
+	router.GET("/api/order/:orderId/qrcode", authHandler(false, adminAuthToken), orderHandlers.OrderQRCode)
 	router.DELETE("/api/order/:orderId", authHandler(true, adminAuthToken), orderHandlers.ToggleOrder)
 
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)

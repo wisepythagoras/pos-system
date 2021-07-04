@@ -10,6 +10,7 @@ import (
 
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/gin-gonic/gin"
+	"github.com/skip2/go-qrcode"
 	"gorm.io/gorm"
 )
 
@@ -473,4 +474,41 @@ func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
 	response.Data = results
 
 	c.JSON(http.StatusOK, response)
+}
+
+// OrderQRCode returns the QR code for a specific order.
+func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
+	orderId, err := oh.getOrderIDFromParams(c)
+
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	orderJSON, totalCost, err := oh.GetOrderByID(orderId)
+
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	objJSON, _ := json.Marshal(gin.H{
+		"order_id": orderId,
+		"order":    orderJSON,
+		"total":    totalCost,
+	})
+
+	png, err := qrcode.Encode(string(objJSON), qrcode.Medium, 256)
+
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.Header("Content-Type", "image/png")
+	c.Header("Content-Length", strconv.Itoa(len(png)))
+
+	if _, err := c.Writer.Write(png); err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
 }
