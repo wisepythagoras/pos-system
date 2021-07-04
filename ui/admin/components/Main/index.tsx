@@ -128,9 +128,9 @@ export const Main = (props: IMainProps) => {
             </AppBar>
             <br />
             <br />
+            <br />
             {state.tab === 0 ? (
                 <Container>
-                    <br />
                     <Typography variant="h3" component="h3" gutterBottom>
                         Total Earnings: ${earnings.toFixed(2)}
                     </Typography>
@@ -163,7 +163,7 @@ export const Main = (props: IMainProps) => {
                             </div>
                         ) : null}
 
-                        {orders.map((order) => <RichOrder order={order} />)}
+                        {orders.map((order, i) => <RichOrder key={i} order={order} />)}
                     </div>
                     <br />
                 </Container>
