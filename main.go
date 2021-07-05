@@ -89,7 +89,10 @@ func main() {
 
 	// Instanciate all of the route handlers here.
 	productHandlers := &ProductHandlers{DB: db}
-	orderHandlers := &OrderHandlers{DB: db}
+	orderHandlers := &OrderHandlers{
+		DB:     db,
+		Config: config,
+	}
 	userHandlers := &UserHandlers{
 		DB:     db,
 		Config: config,
@@ -138,6 +141,7 @@ func main() {
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.PrintOrder)
+	router.GET("/api/order/:orderId/pub", orderHandlers.PublicOrder)
 	router.GET("/api/order/:orderId/qrcode", authHandler(false, adminAuthToken), orderHandlers.OrderQRCode)
 	router.DELETE("/api/order/:orderId", authHandler(true, adminAuthToken), orderHandlers.ToggleOrder)
 

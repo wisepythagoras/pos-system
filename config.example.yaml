@@ -13,3 +13,8 @@ admin:
 
 # Ideally, pick a secret, get its SHA hash and put that here.
 secret: "this is a test"
+
+# This is the AES GCM key that will be used to encrypt and decrpyt ids (must be 32 bytes).
+# You can generate this with this command:
+# cat /dev/urandom | tr -dc '(\&\_a-zA-Z0-9\^\*\@' | fold -w ${1:-32} | head -n 1
+key: "Am0vtdUOTCpU43aS7_3v34*1xm(evGh_"

@@ -14,4 +14,5 @@ type Config struct {
 	Server ServerConfig
 	Admin  AdminUser
 	Secret string
+	Key    string
 }

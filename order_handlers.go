@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -11,11 +12,13 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
+	"github.com/wisepythagoras/pos-system/crypto"
 	"gorm.io/gorm"
 )
 
 type OrderHandlers struct {
-	DB *gorm.DB
+	DB     *gorm.DB
+	Config *Config
 }
 
 // getOrderIDFromParams parses the order id from the param string.
@@ -175,8 +178,12 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 		return
 	}
 
+	encryptJSON := `{"order_id": ` + strconv.Itoa(orderId) + `}`
+	encryptedId, _ := crypto.EncryptGCM([]byte(encryptJSON), []byte(oh.Config.Key))
+
 	response.Data = gin.H{
 		"order_id": orderId,
+		"e_id":     hex.EncodeToString(encryptedId),
 		"order":    orderJSON,
 		"total":    totalCost,
 	}
@@ -473,6 +480,64 @@ func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
 	response.Success = true
 	response.Data = results
 
+	c.JSON(http.StatusOK, response)
+}
+
+// PublicOrder takes in an encrypted order id and retrieves the order.
+func (oh *OrderHandlers) PublicOrder(c *gin.Context) {
+	response := &ApiResponse{}
+	orderIdBin, err := hex.DecodeString(c.Param("orderId"))
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+
+		c.JSON(http.StatusBadRequest, response)
+
+		return
+	}
+
+	orderIdData, err := crypto.DecryptGCM(orderIdBin, []byte(oh.Config.Key))
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+
+		c.JSON(http.StatusBadRequest, response)
+
+		return
+	}
+
+	type OrderIdData struct {
+		OrderId int `json:"order_id"`
+	}
+	orderIdJSONData := &OrderIdData{}
+
+	json.Unmarshal(orderIdData, orderIdJSONData)
+
+	if orderIdJSONData.OrderId <= 0 {
+		response.Success = false
+		response.Error = "Invalid order id"
+
+		c.JSON(http.StatusBadRequest, response)
+
+		return
+	}
+
+	orderJSON, totalCost, err := oh.GetOrderByID(orderIdJSONData.OrderId)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		return
+	}
+
+	response.Data = gin.H{
+		"order_id": orderIdJSONData.OrderId,
+		"order":    orderJSON,
+		"total":    totalCost,
+	}
+	response.Success = true
 	c.JSON(http.StatusOK, response)
 }
 
