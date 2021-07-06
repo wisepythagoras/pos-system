@@ -31,7 +31,7 @@ sudo apt install wkhtmltopdf
 
 If you wish to deploy the app, you can use a $35 [Raspberry Pi](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) running [Raspberry Pi OS Lite](https://www.raspberrypi.org/software/operating-systems/#raspberry-pi-os-32-bit) or [Ubuntu Server](https://ubuntu.com/download/raspberry-pi), if you wish to have a 64-bit version.
 
-You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly to the router. Then direct your tablet(s) to `http://localhost:8088`. That's it!
+You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly to the router. After that, you'll have to drop this source directory somewhere (see the [Building] section) and create a `config.yaml` file following the example in `config.example.yaml`. Then direct your tablet(s) to `http://localhost:8088`. That's it!
 
 ## What's missing
 
