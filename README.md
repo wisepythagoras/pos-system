@@ -21,7 +21,7 @@ Now you can access the POS app via `http://localhost:8088`.
 
 ## Runtime Dependencies
 
-The only dependency that this application has is `wkhtmltopdf` (you can find information about it [here](https://wkhtmltopdf.org/)), if you want to be able to print receipts (which you should). The website provides [downloadable](https://wkhtmltopdf.org/downloads.html) packages for any system. However, if you are using Ubuntu or Debian, you can install it by running the following command:
+The only dependency that this application has is `wkhtmltopdf` (you can find information about it [here](https://wkhtmltopdf.org/)), if you want to be able to print receipts (which you should). The website provides [downloadable](https://wkhtmltopdf.org/downloads.html) packages for many systems. However, if you are using Ubuntu or Debian, you can install it by running the following command:
 
 ``` sh
 sudo apt install wkhtmltopdf
