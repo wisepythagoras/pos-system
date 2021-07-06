@@ -19,6 +19,14 @@ If the build completes without any issues, you should have an executable file in
 
 Now you can access the POS app via `http://localhost:8088`.
 
+## Runtime Dependencies
+
+The only dependency that this application has is `wkhtmltopdf` (you can find information about it [here](https://wkhtmltopdf.org/)), if you want to be able to print receipts (which you should). The website provides [downloadable](https://wkhtmltopdf.org/downloads.html) packages for any system. However, if you are using Ubuntu or Debian, you can install it by running the following command:
+
+``` sh
+sudo apt install wkhtmltopdf
+```
+
 ## Deploying
 
 If you wish to deploy the app, you can use a $35 [Raspberry Pi](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/) running [Raspberry Pi OS Lite](https://www.raspberrypi.org/software/operating-systems/#raspberry-pi-os-32-bit) or [Ubuntu Server](https://ubuntu.com/download/raspberry-pi), if you wish to have a 64-bit version.
