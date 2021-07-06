@@ -180,7 +180,10 @@ export const Home = () => {
                                 return;
                             }
 
-                            alert(`Order ${order.id} was created`);
+                            // Now print the order's receipt.
+                            await fetch(`/api/order/${order.id}/receipt`);
+
+                            alert(`Order ${order.id} was created, extract the receipt`);
 
                             // Since the order was created, empty 
                             setSelectedProducts([]);
