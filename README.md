@@ -35,6 +35,6 @@ You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly t
 
 ## What's missing
 
-1. Receipt printer support.
-2. Manage products from the admin panel.
-3. Manage users through the admin panel.
+1. [x] Receipt printer support.
+2. [ ] Manage products from the admin panel.
+3. [ ] Manage users through the admin panel.
