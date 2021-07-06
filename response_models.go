@@ -42,6 +42,14 @@ func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 	return nil
 }
 
+type AggregateProduct struct {
+	ID       uint64  `json:"id"`
+	Name     string  `json:"name"`
+	Price    float64 `json:"price"`
+	Type     string  `json:"type"`
+	Quantity uint    `json:"quantity"`
+}
+
 // OrderJSON describes the Order DB model, but in a JSON-ifiable format.
 type OrderJSON struct {
 	ID        uint64        `json:"id"`

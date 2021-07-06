@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <style>
+            html, body {
+                font-size: 16px;
+                font-family: 'Times New Roman';
+                margin: 0;
+                width: 255px;
+                max-width: 255px;
+            }
+
+            .header {
+                text-align: center;
+                align-content: center;
+                margin-bottom: 10px;
+            }
+
+            .align-center {
+                text-align: center;
+            }
+
+            .header > .title {
+                font-weight: 900;
+            }
+
+            thead > tr {
+                border-bottom: 2px solid #222;
+            }
+
+            thead > tr,
+            tbody > tr,
+            thead th,
+            tbody td,
+            table {
+                border-top: 1px solid #222;
+                border-collapse: collapse;
+            }
+
+            tbody > tr:last-child {
+                border-top: 2px solid #222;
+            }
+
+            thead > tr > th:not(:first-child) {
+                text-align: left;
+            }
+
+            tbody > tr:last-child {
+                font-weight: 900;
+            }
+
+            td:first-child,
+            th:first-child {
+                width: 40px;
+                max-width: 40px;
+                text-align: center;
+            }
+
+            td:nth-child(2),
+            th:nth-child(2) {
+                width: 155px;
+                max-width: 155px;
+            }
+
+            td:last-child,
+            th:last-child {
+                width: 60px;
+                max-width: 60px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <div class="title">{{ .Name }}</div>
+            <div>{{ .Address1 }}</div>
+            <div>{{ .Address2 }}</div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .Products }}
+                <tr>
+                    <td>{{ .Quantity }}</td>
+                    <td>{{ .Name }}</td>
+                    <td>${{ printf "%.2f" .Price }}</td>
+                </tr>
+                {{ end }}
+                <tr>
+                    <td></td>
+                    <td>TOTAL</td>
+                    <td>${{ printf "%.2f" .Total }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="align-center">
+            <img src="data:image/png;base64, {{ .Qrcode }}">
+            <div>
+                Thank you!
+            </div>
+            <div>
+                Order {{ .Order.ID }}
+            </div>
+        </div>
+        <hr>
+    </body>
+</html>

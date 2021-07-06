@@ -10,3 +10,5 @@ node_modules/
 config.yaml
 *.xlsx
 .~lock.*
+receipts/*.pdf
+receipts/*.html

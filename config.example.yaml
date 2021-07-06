@@ -18,3 +18,15 @@ secret: "this is a test"
 # You can generate this with this command:
 # cat /dev/urandom | tr -dc '(\&\_a-zA-Z0-9\^\*\@' | fold -w ${1:-32} | head -n 1
 key: "Am0vtdUOTCpU43aS7_3v34*1xm(evGh_"
+
+name: "The name of your store"
+address1: "123 Something Blvd"
+address2: "Suite #12"
+
+# This works with a CUPS server.
+printer:
+    name: "Printer name"
+    server: "localhost"
+    port: 631
+    username: username
+    password: password

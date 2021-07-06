@@ -178,7 +178,7 @@ func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
 		return
 	}
 
-	encryptJSON := `{"order_id": ` + strconv.Itoa(orderId) + `}`
+	encryptJSON := `{"i": ` + strconv.Itoa(orderId) + `}`
 	encryptedId, _ := crypto.EncryptGCM([]byte(encryptJSON), []byte(oh.Config.Key))
 
 	response.Data = gin.H{
@@ -509,7 +509,7 @@ func (oh *OrderHandlers) PublicOrder(c *gin.Context) {
 	}
 
 	type OrderIdData struct {
-		OrderId int `json:"order_id"`
+		OrderId int `json:"i"`
 	}
 	orderIdJSONData := &OrderIdData{}
 
@@ -550,24 +550,17 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 		return
 	}
 
-	orderJSON, totalCost, err := oh.GetOrderByID(orderId)
+	_, _, err = oh.GetOrderByID(orderId) // orderJSON, totalCost
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	outboundIP := GetOutboundIP()
-	objJSON, _ := json.Marshal(gin.H{
-		"order_id":      orderJSON.ID,
-		"cancelled":     orderJSON.Cancelled,
-		"created_at":    orderJSON.CreatedAt,
-		"product_count": len(orderJSON.Products),
-		"link":          "http://" + outboundIP.String() + "/api/order/" + strconv.Itoa(orderId),
-		"total":         totalCost,
-	})
+	encryptJSON := `{"i": ` + strconv.Itoa(orderId) + `}`
+	encryptedId, _ := crypto.EncryptGCM([]byte(encryptJSON), []byte(oh.Config.Key))
 
-	png, err := qrcode.Encode(string(objJSON), qrcode.Medium, 256)
+	png, err := qrcode.Encode(string(encryptedId), qrcode.Medium, 256)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -580,4 +573,42 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 	if _, err := c.Writer.Write(png); err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
+}
+
+func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
+	response := &ApiResponse{}
+	orderId, err := oh.getOrderIDFromParams(c)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	orderJSON, totalCost, err := oh.GetOrderByID(orderId)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		return
+	}
+
+	// Create a new receipt.
+	receipt := &Receipt{
+		Order:  orderJSON,
+		Total:  totalCost,
+		Config: oh.Config,
+	}
+	receipt.ConnectToPrinter()
+	_, err = receipt.Print()
+
+	response.Success = true
+	response.Data = "OK"
+
+	if err != nil {
+		response.Error = err.Error()
+	}
+
+	c.JSON(http.StatusOK, response)
 }
