@@ -48,8 +48,8 @@ export const ProductList = (props: IProductListProps) => {
         <ProductCardList>
             {products.map((product, i) => {
                 return (
-                    <div onClick={() => onClick(product)} className={product.type}>
-                        <ProductCard key={i} product={product} />
+                    <div key={i} onClick={() => onClick(product)} className={product.type}>
+                        <ProductCard product={product} />
                     </div>
                 );
             })}

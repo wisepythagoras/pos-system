@@ -1,6 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Button, Typography, CircularProgress } from '@material-ui/core';
+import {
+    Button,
+    CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Typography,
+} from '@material-ui/core';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
@@ -77,6 +86,7 @@ export const Home = () => {
     const { loading, products } = useGetProducts();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
+    const [orderCreated, setOrderCreated] = useState<number>(0);
 
     useEffect(() => {
         lastSelectedProduct.current?.scrollIntoView();
@@ -183,7 +193,8 @@ export const Home = () => {
                             // Now print the order's receipt.
                             await fetch(`/api/order/${order.id}/receipt`);
 
-                            alert(`Order ${order.id} was created, extract the receipt`);
+                            // Open up the dialog.
+                            setOrderCreated(order.id);
 
                             // Since the order was created, empty 
                             setSelectedProducts([]);
@@ -201,6 +212,28 @@ export const Home = () => {
                         Cancel
                     </Button>
                 </div>
+
+                <Dialog open={!!orderCreated}>
+                    <DialogTitle>
+                        Order Created
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            <div>Order {orderCreated} was created.</div>
+                            <div>
+                                <b>Remember to extract the receipt.</b>
+                            </div>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button color="secondary" onClick={() => fetch(`/api/order/${orderCreated}/receipt`)}>
+                            Retry Receipt
+                        </Button>
+                        <Button color="primary" onClick={() => setOrderCreated(0)}>
+                            Ok
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </DisplayGrid>
     );

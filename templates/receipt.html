@@ -63,6 +63,9 @@
             th:nth-child(2) {
                 width: 155px;
                 max-width: 155px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
 
             td:last-child,
@@ -104,10 +107,10 @@
         <div class="align-center">
             <img src="data:image/png;base64, {{ .Qrcode }}">
             <div>
-                Thank you!
+                Thank you for your order!
             </div>
             <div>
-                Order {{ .Order.ID }}
+                #{{ .Order.ID }} - {{ .DateString }}
             </div>
         </div>
         <hr>

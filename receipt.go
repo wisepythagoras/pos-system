@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"strconv"
 	"text/template"
+	"time"
 
 	"github.com/phin1x/go-ipp"
 	"github.com/skip2/go-qrcode"
@@ -17,13 +18,14 @@ import (
 
 // ReceiptTmplData describes the template data for the receipt.
 type ReceiptTmplData struct {
-	Total    float64
-	Order    *OrderJSON
-	Products *[]AggregateProduct
-	Qrcode   string
-	Name     string
-	Address1 string
-	Address2 string
+	Total      float64
+	Order      *OrderJSON
+	Products   *[]AggregateProduct
+	Qrcode     string
+	Name       string
+	Address1   string
+	Address2   string
+	DateString string
 }
 
 // Receipt describes the receipt object. It should contain an order and the config.
@@ -113,13 +115,14 @@ func (r *Receipt) Print() (int, error) {
 	}
 
 	tmplData := ReceiptTmplData{
-		Total:    r.Total,
-		Order:    r.Order,
-		Qrcode:   base64.StdEncoding.EncodeToString(png),
-		Products: &aggregateProducts,
-		Name:     r.Config.Name,
-		Address1: r.Config.Address1,
-		Address2: r.Config.Address2,
+		Total:      r.Total,
+		Order:      r.Order,
+		Qrcode:     base64.StdEncoding.EncodeToString(png),
+		Products:   &aggregateProducts,
+		Name:       r.Config.Name,
+		Address1:   r.Config.Address1,
+		Address2:   r.Config.Address2,
+		DateString: r.Order.CreatedAt.Format(time.RFC822),
 	}
 
 	// Execute the receipt.
