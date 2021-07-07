@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import styled from 'styled-components';
 import {
     AppBar,
     Button,
@@ -9,87 +10,22 @@ import {
     Typography,
 } from '@material-ui/core';
 import { RichOrder } from '../RichOrder';
-import { RichOrderT } from '../../../app/types';
+import { EarningsCard } from '../EarningsCard';
+import {
+    useGetOrdersList,
+    useGetEarningsPerDay,
+    useGetTotalEarnings,
+} from '../../hooks';
 
-interface IGetOrdersListState {
-    loading: boolean;
-    error: string | null;
-    orders: RichOrderT[];
-    page: number;
-};
+const GridRowBox = styled.div`
+    display: grid;
+    grid-template-columns: 25% 25% 25% 25%;
+    margin-bottom: 15px;
 
-/**
- * Gets the list of orders.
- * @param page The page to get.
- * @returns The details.
- */
-const useGetOrdersList = (page: number) => {
-    const [state, setState] = useState<IGetOrdersListState>({
-        loading: false,
-        error: null,
-        orders: [],
-        page,
-    });
-
-    /**
-     * Fetches the list of orders.
-     */
-    const fetchOrders = async () => {
-        setState({
-            ...state,
-            loading: true,
-            orders: [],
-        });
-
-        const req = await fetch(`/api/orders?p=${page}`);
-        const resp = await req.json();
-
-        if (resp.success === true) {
-            setState({
-                ...state,
-                loading: false,
-                orders: resp.data,
-            });
-
-            return resp.data as RichOrderT[];
-        } else {
-            setState({
-                ...state,
-                loading: false,
-                error: resp.error || 'Unable to fetch orders',
-            });
-
-            return null;
-        }
-    };
-
-    useEffect(() => {
-        fetchOrders();
-    }, [page]);
-
-    return { ...state, fetchOrders };
-};
-
-/**
- * A hook that gets the total earnings year-to-date.
- * @returns The total earnings.
- */
-const useGetTotalEarnings = () => {
-    const [earnings, setEarnings] = useState(0);
-
-    useEffect(() => {
-        const getEarnings = async () => {
-            const req = await fetch('/api/orders/earnings');
-            const resp = await req.json();
-
-            setEarnings(resp.data);
-        };
-
-        getEarnings();
-    });
-
-    return earnings;
-}
+    & > div:not(:last-child) {
+        margin-right: 5px;
+    }
+`;
 
 export interface IMainProps {};
 
@@ -109,6 +45,7 @@ export const Main = (props: IMainProps) => {
         tab: 0,
     });
     const { loading, error, orders, fetchOrders } = useGetOrdersList(state.page);
+    const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
 
     const exportTotals = () => {
@@ -134,9 +71,15 @@ export const Main = (props: IMainProps) => {
                     <Typography variant="h3" component="h3" gutterBottom>
                         Total Earnings: ${earnings.toFixed(2)}
                     </Typography>
+                    <GridRowBox>
+                        <EarningsCard day={0} amount={earningsPerDay[0]} />
+                        <EarningsCard day={1} amount={earningsPerDay[1]} />
+                        <EarningsCard day={2} amount={earningsPerDay[2]} />
+                        <EarningsCard day={3} amount={earningsPerDay[3]} />
+                    </GridRowBox>
                     <div style={{ marginBottom: '15px' }}>
                         <Button onClick={exportTotals} variant="contained" color="primary">
-                            Export
+                            Export Sales YTD
                         </Button>
                     </div>
                     <div>

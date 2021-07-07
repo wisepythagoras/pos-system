@@ -478,7 +478,7 @@ func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
 	}
 
 	response.Success = true
-	response.Data = results
+	response.Data = results.Earnings
 
 	c.JSON(http.StatusOK, response)
 }
