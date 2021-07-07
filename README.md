@@ -33,6 +33,10 @@ If you wish to deploy the app, you can use a $35 [Raspberry Pi](https://www.rasp
 
 You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly to the router. After that, you'll have to drop this source directory somewhere (see the [Building] section) and create a `config.yaml` file following the example in `config.example.yaml`. Then direct your tablet(s) to `http://localhost:8088`. That's it!
 
+### Printing
+
+This app was built to use a CUPS server. You can connect your thermal printer to the Raspberry Pi you have this server running on, or to some other machine, and tell the POS app where to find it.
+
 ## What's missing
 
 1. [x] Receipt printer support.
