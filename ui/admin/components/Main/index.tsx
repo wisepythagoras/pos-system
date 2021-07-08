@@ -5,7 +5,14 @@ import {
     Button,
     CircularProgress,
     Container,
+    Paper,
     Tab,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
     Tabs,
     Typography,
 } from '@material-ui/core';
@@ -106,7 +113,22 @@ export const Main = (props: IMainProps) => {
                             </div>
                         ) : null}
 
-                        {orders.map((order, i) => <RichOrder key={i} order={order} />)}
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>#</TableCell>
+                                        <TableCell>Purchased Items</TableCell>
+                                        <TableCell></TableCell>
+                                        <TableCell>Total</TableCell>
+                                        <TableCell>Date Placed</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {orders.map((order, i) => <RichOrder key={i} order={order} />)}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
                     </div>
                     <br />
                 </Container>
