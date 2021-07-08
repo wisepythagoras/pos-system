@@ -111,24 +111,24 @@ export const Main = (props: IMainProps) => {
                                     thickness={4}
                                 />
                             </div>
-                        ) : null}
-
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>#</TableCell>
-                                        <TableCell>Purchased Items</TableCell>
-                                        <TableCell></TableCell>
-                                        <TableCell>Total</TableCell>
-                                        <TableCell>Date Placed</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {orders.map((order, i) => <RichOrder key={i} order={order} />)}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        ) : (
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>#</TableCell>
+                                            <TableCell>Purchased Items</TableCell>
+                                            <TableCell></TableCell>
+                                            <TableCell>Total</TableCell>
+                                            <TableCell>Date Placed</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {orders.map((order, i) => <RichOrder key={i} order={order} />)}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
                     </div>
                     <br />
                 </Container>
