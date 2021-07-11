@@ -34,20 +34,30 @@ const DisplayGrid = styled.div`
         overflow: none;
         grid-template-rows: calc(80vh - 50px) calc(20vh - 50px) 100px;
 
+        @media screen and (max-height: 768px) {
+            grid-template-rows: calc(80vh - 100px) 20vh 100px;
+        }
+
         & > div:first-child {
             padding: 10px;
             overflow: auto;
-            min-height: 500px;
             background-color: #222;
         }
 
         & > div:nth-child(2) {
-            padding: 20px;
-            padding-top: 2vh;
             text-align: center;
             border-top: 1px solid #111;
             background-color: #1a1a1a;
             color: #fff;
+            display: flex;
+            -moz-box-align: center;
+            align-items: center;
+            -moz-box-pack: center;
+            justify-content: center;
+
+            & > h2 {
+                margin-bottom: 0;
+            }
 
             @media screen and (max-width: 1024px) {
                 padding-top: 1vh;
