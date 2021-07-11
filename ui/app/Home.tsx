@@ -54,6 +54,7 @@ const DisplayGrid = styled.div`
             align-items: center;
             -moz-box-pack: center;
             justify-content: center;
+            user-select: none;
 
             & > h2 {
                 margin-bottom: 0;
