@@ -37,7 +37,7 @@ You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly t
 
 ### Printing
 
-This app was built to use a CUPS server. You can connect your thermal printer to the Raspberry Pi you have this server running on, or to some other machine, and tell the POS app where to find it.
+This app was built to use a CUPS server. You can connect your thermal printer to the Raspberry Pi you have this server running on, or to some other machine, and tell the POS app where to find it via the [config file](https://github.com/wisepythagoras/pos-system/blob/main/config.example.yaml#L27-L32).
 
 ### User Management
 
