@@ -5,20 +5,30 @@ import ClearIcon from '@material-ui/icons/Clear';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
 
-const ProductCardList = styled.div`
-    display: flex;
-    flex-flow: wrap;
+const SearchField = styled.div`
+    width: calc(100% - 10px);
+    margin: 0 5px 5px 5px;
+    position: sticky;
+    top: 0;
 
-    & > div:not(.search) {
-        width: 300px;
+    & > div {
+        width: 100%;
+    }
+`;
+
+const ProductCardList = styled.div`
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    display: grid;
+
+    @media screen and (max-width: 1024px) {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    & > div {
         height: 101px;
-        margin: 6px;
+        margin: 5px;
         cursor: pointer;
         user-select: none;
-
-        @media screen and (max-width: 1024px) {
-            width: 280px;
-        }
 
         &.food > div {
             background-color: #296a6c;
@@ -30,15 +40,6 @@ const ProductCardList = styled.div`
 
         &.pastry > div {
             background-color: #366a36;
-        }
-    }
-
-    & > .search {
-        width: 100%;
-        margin: 0 5px 5px 5px;
-
-        & > div {
-            width: 100%;
         }
     }
 `;
@@ -61,8 +62,8 @@ export const ProductList = (props: IProductListProps) => {
         products;
 
     return (
-        <ProductCardList>
-            <div className="search">
+        <div>
+            <SearchField>
                 <Paper style={{ display: 'flex' }}>
                     <InputBase
                         placeholder="Search"
@@ -71,7 +72,7 @@ export const ProductList = (props: IProductListProps) => {
                             flex: 1,
                         }}
                         inputRef={searchInputRef}
-                        value={search}
+                        value={search || ''}
                         onChange={(e) => {
                             setSearch(e.target.value);
                         }}
@@ -96,15 +97,16 @@ export const ProductList = (props: IProductListProps) => {
                         <ClearIcon />
                     </IconButton>
                 </Paper>
-            </div>
-
-            {filteredProducts.map((product, i) => {
-                return (
-                    <div key={i} onClick={() => onClick(product)} className={product.type}>
-                        <ProductCard product={product} />
-                    </div>
-                );
-            })}
-        </ProductCardList>
+            </SearchField>
+            <ProductCardList>
+                {filteredProducts.map((product, i) => {
+                    return (
+                        <div key={i} onClick={() => onClick(product)} className={product.type}>
+                            <ProductCard product={product} />
+                        </div>
+                    );
+                })}
+            </ProductCardList>
+        </div>
     );
 };

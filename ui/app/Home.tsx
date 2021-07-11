@@ -43,7 +43,7 @@ const DisplayGrid = styled.div`
 
         & > div:nth-child(2) {
             padding: 20px;
-            padding-top: 3vh;
+            padding-top: 2vh;
             text-align: center;
             border-top: 1px solid #111;
             background-color: #1a1a1a;
