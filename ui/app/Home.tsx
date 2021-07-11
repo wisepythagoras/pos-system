@@ -86,9 +86,15 @@ const DisplayGrid = styled.div`
 `;
 
 const TotalProductList = styled.div`
-    & > div {
+    & > div:not(.hint) {
         cursor: pointer;
         margin-bottom: 5px;
+        user-select: none;
+    }
+
+    & > .hint{
+        text-align: center;
+        padding-top: 10px;
         user-select: none;
     }
 `;
@@ -162,7 +168,7 @@ export const Home = () => {
                 <TotalProductList>
                     {/* Show this label only when no products are selected. */}
                     {aggregates.length === 0 ? (
-                        <div style={{ textAlign: 'center', paddingTop: '10px' }}>
+                        <div className="hint">
                             <Typography color="textSecondary" component="h3">
                                 To create a new order select products from the left.
                             </Typography>
