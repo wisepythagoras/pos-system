@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
+    createMuiTheme,
     Button,
     CircularProgress,
     Dialog,
@@ -8,6 +9,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    ThemeProvider,
     Typography,
 } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from './types';
@@ -19,10 +21,11 @@ const DisplayGrid = styled.div`
     display: grid;
     grid-template-columns: auto 400px;
     height: 100vh;
+    background: #222;
 
     & > .product-list {
         padding: 10px;
-        border-right: 1px solid #b3b3b3;
+        border-right: 1px solid #111;
         overflow: auto;
     }
 
@@ -35,18 +38,25 @@ const DisplayGrid = styled.div`
             padding: 10px;
             overflow: auto;
             min-height: 500px;
-            background-color: #f0f0f0;
+            background-color: #222;
         }
 
         & > div:nth-child(2) {
             padding: 20px;
             padding-top: 3vh;
             text-align: center;
-            border-top: 1px solid #b3b3b3;
-            background-color: #fff;
+            border-top: 1px solid #111;
+            background-color: #1a1a1a;
+            color: #fff;
 
             @media screen and (max-width: 1024px) {
                 padding-top: 1vh;
+            }
+
+            @media screen and (max-width: 1280px) {
+                & > h2 {
+                    font-size: 75px;
+                }
             }
         }
 
@@ -54,12 +64,17 @@ const DisplayGrid = styled.div`
             display: flex;
             width: 100%;
 
-            & > button.MuiButton-containedPrimary {
-                background-color: #31952e;
+            & > button.MuiButton-containedPrimary:not(:disabled)  {
+                background-color: #287425;
             }
 
             & > button.MuiButton-containedPrimary:disabled {
-                background-color: darkgray;
+                background-color: #6d6d6d;
+            }
+
+            & > button.MuiButton-containedSecondary:not(:disabled) {
+                color: #fff;
+                background-color: #821e1e;
             }
 
             & > button {
@@ -110,7 +125,14 @@ export const Home = () => {
         }
     }
 
+    const darkTheme = createMuiTheme({
+        palette: {
+            type: 'dark',
+        },
+    });
+
     return (
+        <ThemeProvider theme={darkTheme}>
         <DisplayGrid>
             <div className="product-list">
                 {loading ? (
@@ -200,7 +222,7 @@ export const Home = () => {
                             setSelectedProducts([]);
                         }}
                     >
-                        Place
+                        Checkout
                     </Button>
                     <Button
                         variant="contained"
@@ -209,7 +231,7 @@ export const Home = () => {
                         disabled={selectedProducts.length === 0 || loadingCreation}
                         onClick={() => setSelectedProducts([])}
                     >
-                        Cancel
+                        Clear
                     </Button>
                 </div>
 
@@ -236,5 +258,6 @@ export const Home = () => {
                 </Dialog>
             </div>
         </DisplayGrid>
+        </ThemeProvider>
     );
 };

@@ -19,15 +19,15 @@ const ProductCardList = styled.div`
         }
 
         &.food > div {
-            background-color: #65a6a8;
+            background-color: #296a6c;
         }
 
         &.drink > div {
-            background-color: #db896e;
+            background-color: #aa5438;
         }
 
         &.pastry > div {
-            background-color: #81b381;
+            background-color: #366a36;
         }
     }
 `;
