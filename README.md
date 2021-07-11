@@ -39,6 +39,32 @@ You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly t
 
 This app was built to use a CUPS server. You can connect your thermal printer to the Raspberry Pi you have this server running on, or to some other machine, and tell the POS app where to find it.
 
+### User Management
+
+There is no admin panel for managing users (creating and deleting them). You can do this manually, until the admin page for this is created. Simply open `pos.db` with [SQLite Database Browser](https://sqlitebrowser.org/), or any other app that can open sqlite databases, and then click on the "Execute SQL" tab.
+
+Then, open your terminal and generate the SHA3-512 of your desired password:
+
+``` sh
+echo -n 'test password' | openssl dgst -sha3-512
+```
+
+Finally, in the "Execute SQL" tab run a query that looks like this:
+
+``` sql
+insert into users (username, password, created_at) values ('testuser', '7103a07e72ee...e6794ecd0b704d0', date());
+```
+
+### Product Management
+
+Similar to the user situation, there is no admin for product management yet, but there is an API endpoint. So you can run a bash script that creates all of your products.
+
+``` sh
+curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
+```
+
+Currently, the app only supports the following product types: `food`, `drink`, `pastry`, but this is subject to change at any moment.
+
 ## What's missing
 
 1. [x] Receipt printer support.
