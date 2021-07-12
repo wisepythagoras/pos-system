@@ -64,7 +64,10 @@ export const ProductList = (props: IProductListProps) => {
     return (
         <div>
             <SearchField>
-                <Paper style={{ display: 'flex' }}>
+                <Paper style={{
+                    display: 'flex',
+                    height: '48px',
+                }}>
                     <InputBase
                         placeholder="Search"
                         style={{
@@ -77,25 +80,28 @@ export const ProductList = (props: IProductListProps) => {
                             setSearch(e.target.value);
                         }}
                     />
-                    <Divider
-                        orientation="vertical"
-                        style={{
-                            marginTop: '10px',
-                            height: '28px',
-                        }}
-                    />
-                    <IconButton
-                        disabled={!search || !search.length}
-                        onClick={() => {
-                            setSearch(null);
+                    {!!search && !!search.length ? (
+                        <>
+                            <Divider
+                                orientation="vertical"
+                                style={{
+                                    marginTop: '10px',
+                                    height: '28px',
+                                }}
+                            />
+                            <IconButton
+                                onClick={() => {
+                                    setSearch(null);
 
-                            if (!!searchInputRef && !!searchInputRef.current) {
-                                searchInputRef.current.value = '';
-                            }
-                        }} 
-                    >
-                        <ClearIcon />
-                    </IconButton>
+                                    if (!!searchInputRef && !!searchInputRef.current) {
+                                        searchInputRef.current.value = '';
+                                    }
+                                }} 
+                            >
+                                <ClearIcon />
+                            </IconButton>
+                        </>
+                    ) : null}
                 </Paper>
             </SearchField>
             <ProductCardList>
