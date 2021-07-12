@@ -19,6 +19,12 @@ If the build completes without any issues, you should have an executable file in
 ./bin/pos-system
 ```
 
+Then build the front end apps:
+
+``` sh
+yarn build && yarn build-admin
+```
+
 Now you can access the POS app via `http://localhost:8088`.
 
 ## Runtime Dependencies
