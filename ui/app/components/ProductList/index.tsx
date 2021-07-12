@@ -17,18 +17,36 @@ const SearchField = styled.div`
 `;
 
 const ProductCardList = styled.div`
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     display: grid;
 
     @media screen and (max-width: 1024px) {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
 
     & > div {
-        height: 101px;
+        height: 160px;
         margin: 5px;
         cursor: pointer;
         user-select: none;
+
+        @media screen and (max-width: 1024px) {
+            height: 120px;
+        }
+
+        // { food: '#325657', drink: '#753f2d', pastry: '#1d441d' }
+
+        & > div {
+            height: 100%;
+
+            & h2 {
+                word-break: break-word;
+
+                @media screen and (max-width: 1024px) {
+                    font-size: 1.3rem;
+                }
+            }
+        }
 
         &.food > div {
             background-color: #296a6c;
