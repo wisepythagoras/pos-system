@@ -75,7 +75,16 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	var productObjs []*Product
 	var products []interface{}
 
-	ph.DB.Order("type asc").Find(&productObjs)
+	// The GET param that tells us to get all products or not.
+	allProducts := c.Query("all") != ""
+
+	if allProducts == true {
+		ph.DB.Order("type asc").Find(&productObjs)
+	} else {
+		ph.DB.Where("discontinued = 0").
+			Order("type asc").
+			Find(&productObjs)
+	}
 
 	for _, product := range productObjs {
 		products = append(products, ProductFormatter(product))
