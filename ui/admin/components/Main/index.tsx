@@ -17,11 +17,13 @@ import {
     Typography,
 } from '@material-ui/core';
 import { RichOrder } from '../RichOrder';
+import { RichProduct } from '../RichProduct';
 import { EarningsCard } from '../EarningsCard';
 import {
     useGetOrdersList,
     useGetEarningsPerDay,
     useGetTotalEarnings,
+    useGetProductsList,
 } from '../../hooks';
 
 const GridRowBox = styled.div`
@@ -52,6 +54,12 @@ export const Main = (props: IMainProps) => {
         tab: 0,
     });
     const { loading, error, orders, fetchOrders } = useGetOrdersList(state.page);
+    const {
+        loading: loadingProducts,
+        error: loadingProductsError,
+        products,
+        fetchProducts,
+    } = useGetProductsList();
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
 
@@ -67,6 +75,7 @@ export const Main = (props: IMainProps) => {
             <AppBar>
                 <Tabs value={state.tab} onChange={(_, tab) => setState({ ...state, tab })}>
                     <Tab label="Orders" />
+                    <Tab label="Products" />
                     <Tab label="Users" />
                 </Tabs>
             </AppBar>
@@ -90,7 +99,7 @@ export const Main = (props: IMainProps) => {
                         </Button>
                     </div>
                     <div>
-                        {error ? (
+                        {!!error ? (
                             <Typography variant="h4" component="h4">
                                 {error}
                             </Typography>
@@ -135,6 +144,54 @@ export const Main = (props: IMainProps) => {
             ) : null}
 
             {state.tab === 1 ? (
+                <Container>
+                    <div>
+                        {!!loadingProductsError ? (
+                            <Typography variant="h4" component="h4">
+                                {loadingProductsError}
+                            </Typography>
+                        ) : null}
+
+                        {loadingProducts ? (
+                            <div style={{ textAlign: 'center' }}>
+                                <CircularProgress
+                                    variant="indeterminate"
+                                    disableShrink
+                                    style={{
+                                        strokeLinecap: 'round',
+                                        color: '#1a90ff',
+                                        animationDuration: '550ms',
+                                        marginTop: '20px',
+                                    }}
+                                    size={40}
+                                    thickness={4}
+                                />
+                            </div>
+                        ) : (
+                            <TableContainer component={Paper}>
+                                <Table>
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>#</TableCell>
+                                            <TableCell>Name</TableCell>
+                                            <TableCell>Type</TableCell>
+                                            <TableCell>Price</TableCell>
+                                            <TableCell>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {products.map((product, i) => {
+                                            return <RichProduct key={i} product={product} />;
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        )}
+                    </div>
+                </Container>
+            ) : null}
+
+            {state.tab === 2 ? (
                 <div>Hello</div>
             ) : null}
         </div>

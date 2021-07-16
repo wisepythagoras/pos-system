@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RichOrderT } from '../app/types';
+import { ProductT, RichOrderT } from '../app/types';
 
 interface IGetOrdersListState {
     loading: boolean;
@@ -115,4 +115,60 @@ export const useGetEarningsPerDay = () => {
     }, []);
 
     return earnings;
+};
+
+interface IGetProductListState {
+    loading: boolean;
+    error: string | null;
+    products: ProductT[];
+};
+
+/**
+ * Gets the list of all products.
+ * @returns The details.
+ */
+ export const useGetProductsList = () => {
+    const [state, setState] = useState<IGetProductListState>({
+        loading: false,
+        error: null,
+        products: [],
+    });
+
+    /**
+     * Fetches the list of products.
+     */
+    const fetchProducts = async () => {
+        setState({
+            ...state,
+            loading: true,
+            products: [],
+        });
+
+        const req = await fetch(`/api/products?all=1`);
+        const resp = await req.json();
+
+        if (resp.success === true) {
+            setState({
+                ...state,
+                loading: false,
+                products: resp.data,
+            });
+
+            return resp.data as ProductT[];
+        } else {
+            setState({
+                ...state,
+                loading: false,
+                error: resp.error || 'Unable to fetch products',
+            });
+
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    return { ...state, fetchProducts };
 };

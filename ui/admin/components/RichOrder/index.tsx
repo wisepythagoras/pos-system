@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { Chip, TableCell, TableRow } from '@material-ui/core';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import dayjs from 'dayjs';
 import { OrderProducts } from './OrderProducts';
 import { RichOrderT } from '../../../app/types';
-
 
 export interface IRichOrderProps {
     order: RichOrderT;

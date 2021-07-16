@@ -5,6 +5,8 @@ export type ProductT = {
     name: string;
     price: number;
     type: ProductTypeT;
+    discontinued: boolean;
+    sold_out: boolean;
 };
 
 export type ProductAggregateT = {

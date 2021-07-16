@@ -41,9 +41,12 @@ export const OrderProducts = (props: IOrderProductsProps) => {
         }
     }
 
-    aggregateProducts.forEach((pa) => {
+    aggregateProducts.forEach((pa, i) => {
         productPills.push(
-            <Chip label={<span>{pa.amount}&times;{pa.product.name}</span>} />
+            <Chip
+                key={i}
+                label={<span>{pa.amount}&times;{pa.product.name}</span>}
+            />
         );
     });
 

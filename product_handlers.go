@@ -15,11 +15,13 @@ func ProductFormatter(product *Product) interface{} {
 	}
 
 	return gin.H{
-		"id":         product.ID,
-		"name":       product.Name,
-		"price":      product.Price,
-		"type":       product.Type,
-		"created_at": product.CreatedAt,
+		"id":           product.ID,
+		"name":         product.Name,
+		"price":        product.Price,
+		"type":         product.Type,
+		"created_at":   product.CreatedAt,
+		"discontinued": product.Discontinued == 1,
+		"sold_out":     product.SoldOut == 1,
 	}
 }
 

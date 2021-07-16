@@ -149,5 +149,9 @@ func main() {
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)
 
+	// Placeholder endpoints that will be built later.
+	router.PUT("/api/product/:productId")    // Update all fields of a product.
+	router.DELETE("/api/product/:productId") // Discontinue, not an actual delete.
+
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }

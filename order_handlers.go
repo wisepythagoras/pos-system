@@ -70,10 +70,12 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 		totalCost += orderProduct.Product.Price
 
 		productJSON := ProductJSON{
-			ID:    orderProduct.Product.ID,
-			Name:  orderProduct.Product.Name,
-			Type:  orderProduct.Product.Type,
-			Price: orderProduct.Product.Price,
+			ID:           orderProduct.Product.ID,
+			Name:         orderProduct.Product.Name,
+			Type:         orderProduct.Product.Type,
+			Price:        orderProduct.Product.Price,
+			Discontinued: orderProduct.Product.Discontinued == 1,
+			SoldOut:      orderProduct.Product.SoldOut == 1,
 		}
 		orderJSON.Products = append(orderJSON.Products, productJSON)
 	}
@@ -113,7 +115,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	oh.DB.Create(newOrder).Commit()
 
 	result := oh.DB.
-		Where("id in (?)", productIds).
+		Where("id in (?) AND discontinued = 0 AND sold_out = 0", productIds).
 		Find(&dbProducts)
 
 	if result.RowsAffected == 0 {
@@ -232,10 +234,12 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 			totalCost += orderProduct.Product.Price
 
 			productJSON := ProductJSON{
-				ID:    orderProduct.Product.ID,
-				Name:  orderProduct.Product.Name,
-				Type:  orderProduct.Product.Type,
-				Price: orderProduct.Product.Price,
+				ID:           orderProduct.Product.ID,
+				Name:         orderProduct.Product.Name,
+				Type:         orderProduct.Product.Type,
+				Price:        orderProduct.Product.Price,
+				Discontinued: orderProduct.Product.Discontinued == 1,
+				SoldOut:      orderProduct.Product.SoldOut == 1,
 			}
 
 			orderJSON.Products = append(orderJSON.Products, productJSON)

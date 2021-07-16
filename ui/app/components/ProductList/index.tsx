@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Divider, IconButton, InputBase, Paper } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
+import SearchIcon from '@material-ui/icons/Search';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
 
@@ -86,6 +87,9 @@ export const ProductList = (props: IProductListProps) => {
                     display: 'flex',
                     height: '48px',
                 }}>
+                    <div style={{ padding: '12px', paddingRight: 0 }}>
+                        <SearchIcon />
+                    </div>
                     <InputBase
                         placeholder="Search"
                         style={{
