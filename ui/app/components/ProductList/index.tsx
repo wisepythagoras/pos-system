@@ -60,6 +60,18 @@ const ProductCardList = styled.div`
         &.pastry > div {
             background-color: #366a36;
         }
+
+        &.soldout {
+            cursor: auto;
+        }
+
+        &.soldout > div {
+            opacity: 0.8;
+
+            & > div > h2 {
+                text-decoration: line-through;
+            }
+        }
     }
 `;
 
@@ -128,8 +140,24 @@ export const ProductList = (props: IProductListProps) => {
             </SearchField>
             <ProductCardList>
                 {filteredProducts.map((product, i) => {
+                    const classNames: string[] = [product.type];
+
+                    if (product.sold_out) {
+                        classNames.push('soldout');
+                    }
+
                     return (
-                        <div key={i} onClick={() => onClick(product)} className={product.type}>
+                        <div
+                            key={i}
+                            onClick={() => {
+                                if (product.sold_out) {
+                                    return;
+                                }
+
+                                onClick(product);
+                            }}
+                            className={classNames.join(' ')}
+                        >
                             <ProductCard product={product} />
                         </div>
                     );

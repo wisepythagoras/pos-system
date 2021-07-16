@@ -133,6 +133,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	name := c.PostForm("name")
 	priceStr := c.PostForm("price")
 	productType := c.PostForm("type")
+	soldOutStr := c.PostForm("sold_out")
 
 	// Convert the price string to a float.
 	price, err := strconv.ParseFloat(priceStr, 64)
@@ -161,10 +162,17 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 		return
 	}
 
+	var soldOut uint8 = 0
+
+	if soldOutStr == "true" {
+		soldOut = 1
+	}
+
 	// Update our fields field.
 	product.Name = name
 	product.Price = price
 	product.Type = productType
+	product.SoldOut = soldOut
 
 	// Finally save.
 	ph.DB.Save(&product)

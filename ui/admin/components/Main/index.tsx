@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {
     AppBar,
     Button,
+    Card,
     CircularProgress,
     Container,
     Paper,
@@ -14,6 +15,7 @@ import {
     TableHead,
     TableRow,
     Tabs,
+    TextField,
     Typography,
 } from '@material-ui/core';
 import { RichOrder } from '../RichOrder';
@@ -151,6 +153,11 @@ export const Main = (props: IMainProps) => {
                                 {loadingProductsError}
                             </Typography>
                         ) : null}
+
+                        {/* This is where the create field will go. */}
+                        {/* <Card>
+                            <TextField label="Name" />
+                        </Card> */}
 
                         {loadingProducts && products.length === 0 ? (
                             <div style={{ textAlign: 'center' }}>
