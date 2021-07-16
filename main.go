@@ -150,8 +150,8 @@ func main() {
 	router.GET("/api/products", productHandlers.ListProducts)
 
 	// Placeholder endpoints that will be built later.
-	router.PUT("/api/product/:productId")    // Update all fields of a product.
-	router.DELETE("/api/product/:productId") // Discontinue, not an actual delete.
+	router.PUT("/api/product/:productId", productHandlers.UpdateProduct)
+	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }

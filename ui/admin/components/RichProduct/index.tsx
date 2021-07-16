@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import {
+    Chip,
     FormControl,
     Input,
     InputAdornment,
-    InputLabel,
     MenuItem,
     Select,
+    Switch,
     TableCell,
     TableRow,
 } from '@material-ui/core';
-import CancelIcon from '@material-ui/icons/Cancel';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import dayjs from 'dayjs';
+import SaveIcon from '@material-ui/icons/Save';
 import { ProductT, ProductTypeT } from '../../../app/types';
 
 export interface IRichProductProps {
     product: ProductT;
+    onSave: (newProduct: ProductT) => void;
 };
 
 /**
@@ -25,11 +25,19 @@ export interface IRichProductProps {
 export const RichProduct = (props: IRichProductProps) => {
     const [product, setProduct] = useState<ProductT>(props.product);
 
-    const onToggle = async () => {
-        // await fetch(`/api/order/${order.order_id}`, { method: 'DELETE' });
-        // const newOrder = { ...order };
-        // newOrder.order.cancelled = !newOrder.order.cancelled;
-        // setOrder(newOrder);
+    const onSave = async () => {
+        // This could probably be in the same endpoint, but meh.
+        if (product.discontinued !== props.product.discontinued) {
+            await fetch(`/api/product/${product.id}`, { method: 'DELETE' });
+        }
+
+        // Call the save endpoint.
+        await fetch(`/api/product/${product.id}`, {
+            method: 'PUT',
+            body: new URLSearchParams(product as unknown as Record<string, string>),
+        });
+
+        props.onSave(product);
     };
 
     return (
@@ -78,7 +86,40 @@ export const RichProduct = (props: IRichProductProps) => {
                 </FormControl>
             </TableCell>
             <TableCell>
-                test
+                <Switch
+                    checked={product.sold_out}
+                    onChange={() => {
+                        setProduct({
+                            ...product,
+                            sold_out: !product.sold_out,
+                        });
+                    }}
+                />
+            </TableCell>
+            <TableCell>
+                <Switch
+                    checked={product.discontinued}
+                    onChange={() => {
+                        setProduct({
+                            ...product,
+                            discontinued: !product.discontinued,
+                        });
+                    }}
+                />
+            </TableCell>
+            <TableCell>
+                <Chip
+                    icon={<SaveIcon />}
+                    label="Save"
+                    disabled={(() => {
+                        return (
+                            product.type === props.product.type &&
+                            product.sold_out === props.product.sold_out &&
+                            product.discontinued === props.product.discontinued
+                        )
+                    })()}
+                    onClick={onSave}
+                />
             </TableCell>
         </TableRow>
     );

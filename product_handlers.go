@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -28,6 +29,23 @@ func ProductFormatter(product *Product) interface{} {
 // ProductHandlers defines the handlers for all of the products.
 type ProductHandlers struct {
 	DB *gorm.DB
+}
+
+// getProductIDFromParams parses the product id from the param string.
+func (ph *ProductHandlers) getProductIDFromParams(c *gin.Context) (int, error) {
+	productIdStr := c.Param("productId")
+
+	if len(productIdStr) == 0 {
+		return 0, errors.New("Invalid or no product id")
+	}
+
+	productId, err := strconv.Atoi(productIdStr)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return productId, nil
 }
 
 // CreateProduct creates a product.
@@ -98,4 +116,91 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, apiResponse)
+}
+
+// UpdateProduct updates the fields of a product.
+func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
+	response := &ApiResponse{}
+	productId, err := ph.getProductIDFromParams(c)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	name := c.PostForm("name")
+	priceStr := c.PostForm("price")
+	productType := c.PostForm("type")
+
+	// Convert the price string to a float.
+	price, err := strconv.ParseFloat(priceStr, 64)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	if productType != "food" && productType != "drink" && productType != "pastry" {
+		response.Success = false
+		response.Error = "Invalid product type"
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	product := Product{ID: uint64(productId)}
+	ph.DB.First(&product)
+
+	if len(product.Name) == 0 {
+		response.Success = false
+		response.Error = "No such product"
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	// Update our fields field.
+	product.Name = name
+	product.Price = price
+	product.Type = productType
+
+	// Finally save.
+	ph.DB.Save(&product)
+
+	response.Success = true
+	c.JSON(http.StatusOK, response)
+}
+
+// ToggleDiscontinued turns the discontinued field of a product on and off.
+func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
+	response := &ApiResponse{}
+	productId, err := ph.getProductIDFromParams(c)
+
+	if err != nil {
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	product := Product{ID: uint64(productId)}
+	ph.DB.First(&product)
+
+	if len(product.Name) == 0 {
+		response.Success = false
+		response.Error = "No such product"
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	// Toggle this field.
+	product.Discontinued = (product.Discontinued + 1) % 2
+
+	// Finally save.
+	ph.DB.Save(&product)
+
+	response.Success = true
+	c.JSON(http.StatusOK, response)
 }

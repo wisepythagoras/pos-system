@@ -152,7 +152,7 @@ export const Main = (props: IMainProps) => {
                             </Typography>
                         ) : null}
 
-                        {loadingProducts ? (
+                        {loadingProducts && products.length === 0 ? (
                             <div style={{ textAlign: 'center' }}>
                                 <CircularProgress
                                     variant="indeterminate"
@@ -176,18 +176,27 @@ export const Main = (props: IMainProps) => {
                                             <TableCell>Name</TableCell>
                                             <TableCell>Type</TableCell>
                                             <TableCell>Price</TableCell>
-                                            <TableCell>Actions</TableCell>
+                                            <TableCell>Sold Out</TableCell>
+                                            <TableCell>Dicontinued</TableCell>
+                                            <TableCell></TableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
                                         {products.map((product, i) => {
-                                            return <RichProduct key={i} product={product} />;
+                                            return (
+                                                <RichProduct
+                                                    key={i}
+                                                    product={product}
+                                                    onSave={(_) => fetchProducts()}
+                                                />
+                                            );
                                         })}
                                     </TableBody>
                                 </Table>
                             </TableContainer>
                         )}
                     </div>
+                    <br />
                 </Container>
             ) : null}
 
