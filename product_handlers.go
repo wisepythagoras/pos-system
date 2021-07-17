@@ -1,13 +1,28 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"gorm.io/gorm"
 )
+
+type wsMessage struct {
+	ID          uint64
+	Product     ProductJSON
+	MessageDate time.Time
+}
+
+var wsUpgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 // ProductFormatter formats a product object.
 func ProductFormatter(product *Product) interface{} {
@@ -28,7 +43,8 @@ func ProductFormatter(product *Product) interface{} {
 
 // ProductHandlers defines the handlers for all of the products.
 type ProductHandlers struct {
-	DB *gorm.DB
+	DB        *gorm.DB
+	wsUpdates []wsMessage
 }
 
 // getProductIDFromParams parses the product id from the param string.
@@ -177,6 +193,16 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	// Finally save.
 	ph.DB.Save(&product)
 
+	// This is so that users get updates over the socket.
+	productJSON := ProductJSON{}
+	productJSON.SetFromProductModel(&product)
+
+	ph.wsUpdates = append(ph.wsUpdates, wsMessage{
+		ID:          product.ID,
+		Product:     productJSON,
+		MessageDate: time.Now(),
+	})
+
 	response.Success = true
 	c.JSON(http.StatusOK, response)
 }
@@ -209,6 +235,65 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	// Finally save.
 	ph.DB.Save(&product)
 
+	// This is so that users get updates over the socket.
+	productJSON := ProductJSON{}
+	productJSON.SetFromProductModel(&product)
+
+	ph.wsUpdates = append(ph.wsUpdates, wsMessage{
+		ID:          product.ID,
+		Product:     productJSON,
+		MessageDate: time.Now(),
+	})
+
 	response.Success = true
 	c.JSON(http.StatusOK, response)
+}
+
+// ProductUpdateStream handles web socket connections.
+func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
+	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+
+	if err != nil {
+		return
+	}
+
+	closed := false
+
+	go func() {
+		for {
+			if closed == true {
+				return
+			}
+
+			updates := ph.wsUpdates
+			ph.wsUpdates = make([]wsMessage, 0)
+
+			for _, v := range updates {
+				fmt.Println(time.Now().Unix() - v.MessageDate.Unix())
+				if time.Now().Unix()-v.MessageDate.Unix() > 2000 {
+					continue
+				}
+
+				bin, _ := json.Marshal(v.Product)
+				conn.WriteMessage(websocket.BinaryMessage, bin)
+			}
+
+			time.Sleep(time.Second)
+		}
+	}()
+
+	for {
+		t, _, _ := conn.ReadMessage()
+
+		if t == websocket.CloseMessage {
+			closed = true
+			break
+		}
+	}
+
+	conn.SetCloseHandler(func(code int, text string) error {
+		conn.WriteMessage(websocket.CloseMessage, []byte{})
+
+		return nil
+	})
 }

@@ -4,6 +4,7 @@ import { OrderT, ProductT } from './types';
 type GetProductsStateT = {
     products: ProductT[];
     loading: boolean;
+    canConnect: boolean;
 };
 
 /**
@@ -14,6 +15,7 @@ export const useGetProducts = () => {
     const [state, setState] = useState<GetProductsStateT>({
         products: [],
         loading: false,
+        canConnect: false,
     })
 
     useEffect(() => {
@@ -25,9 +27,10 @@ export const useGetProducts = () => {
                 setState({
                     products: resp.data,
                     loading: false,
+                    canConnect: true,
                 });
             }
-        }
+        };
 
         getProducts();
         setState({
@@ -35,6 +38,39 @@ export const useGetProducts = () => {
             loading: true,
         });
     }, []);
+
+    useEffect(() => {
+        if (!state.canConnect) {
+            return;
+        }
+
+        const host = window.location.host;
+        const socket = new WebSocket(`ws://${host}/api/products/ws`);
+        const onSocketMessage = async (event: MessageEvent<any>) => {
+            const data = JSON.parse(await event.data.text()) as ProductT;
+
+            if (state.products.length > 0) {
+                const products = [...state.products];
+                const index = products.findIndex((p) => p.id === data.id);
+
+                if (index < 0) {
+                    products.push(data);
+                } else {
+                    products[index] = data;
+                }
+
+                setState({
+                    ...state,
+                    products: products,
+                });
+            }
+        };
+
+        socket.onmessage = onSocketMessage;
+        socket.onopen = (e) => console.log('SOCKET_OPEN', e);
+        socket.onerror = (e) => console.log('SOCKET_ERROR', e);
+        socket.onclose = (e) => console.log('SOCKET_CLOSE', e);
+    }, [state.canConnect]);
 
     return state;
 };

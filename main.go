@@ -148,10 +148,11 @@ func main() {
 
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)
 	router.GET("/api/products", productHandlers.ListProducts)
-
-	// Placeholder endpoints that will be built later.
 	router.PUT("/api/product/:productId", productHandlers.UpdateProduct)
 	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
+
+	// The websocket endpoint for product updates.
+	router.GET("/api/products/ws", productHandlers.ProductUpdateStream)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }

@@ -10,6 +10,7 @@ require (
 	github.com/gin-contrib/sessions v0.0.3 // indirect
 	github.com/gin-contrib/static v0.0.1 // indirect
 	github.com/gin-gonic/gin v1.7.2 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.7 // indirect
 	github.com/phin1x/go-ipp v1.6.0 // indirect
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e // indirect
