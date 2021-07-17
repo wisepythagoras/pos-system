@@ -45,6 +45,7 @@ func ProductFormatter(product *Product) interface{} {
 type ProductHandlers struct {
 	DB        *gorm.DB
 	wsUpdates []wsMessage
+	wsClients map[string]*websocket.Conn
 }
 
 // getProductIDFromParams parses the product id from the param string.
@@ -249,50 +250,49 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// ProductUpdateStream handles web socket connections.
-func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
-	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
-
-	if err != nil {
-		return
-	}
-
-	closed := false
+// StartWSHandler starts the websocket client handler.
+func (ph *ProductHandlers) StartWSHandler() {
+	ph.wsClients = make(map[string]*websocket.Conn)
 
 	go func() {
 		for {
-			if closed == true {
-				return
-			}
-
 			updates := ph.wsUpdates
 			ph.wsUpdates = make([]wsMessage, 0)
 
 			for _, v := range updates {
-				fmt.Println(time.Now().Unix() - v.MessageDate.Unix())
 				if time.Now().Unix()-v.MessageDate.Unix() > 2000 {
 					continue
 				}
 
 				bin, _ := json.Marshal(v.Product)
-				conn.WriteMessage(websocket.BinaryMessage, bin)
+
+				for _, conn := range ph.wsClients {
+					err := conn.WriteMessage(websocket.BinaryMessage, bin)
+
+					if err != nil {
+						fmt.Println(err)
+					}
+				}
 			}
 
 			time.Sleep(time.Second)
 		}
 	}()
+}
 
-	for {
-		t, _, _ := conn.ReadMessage()
+// ProductUpdateStream handles web socket connections.
+func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
+	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+	ph.wsClients[conn.RemoteAddr().String()] = conn
 
-		if t == websocket.CloseMessage {
-			closed = true
-			break
-		}
+	if err != nil {
+		return
 	}
 
 	conn.SetCloseHandler(func(code int, text string) error {
 		conn.WriteMessage(websocket.CloseMessage, []byte{})
+
+		delete(ph.wsClients, conn.RemoteAddr().String())
 
 		return nil
 	})

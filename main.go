@@ -98,6 +98,9 @@ func main() {
 		Config: config,
 	}
 
+	// Start listeningfor messages and send them to the clients, if there are any.
+	productHandlers.StartWSHandler()
+
 	adminAuthToken := config.Admin.Token
 
 	router := gin.Default()
