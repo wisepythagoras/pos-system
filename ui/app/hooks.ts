@@ -5,6 +5,7 @@ type GetProductsStateT = {
     products: ProductT[];
     loading: boolean;
     canConnect: boolean;
+    disconnected: boolean;
 };
 
 /**
@@ -16,7 +17,44 @@ export const useGetProducts = () => {
         products: [],
         loading: false,
         canConnect: false,
-    })
+        disconnected: true,
+    });
+
+    const onSocketMessage = async (event: MessageEvent<any>) => {
+        const data = JSON.parse(await event.data.text()) as ProductT;
+
+        if (state.products.length > 0) {
+            const products = [...state.products];
+            const index = products.findIndex((p) => p.id === data.id);
+
+            if (index < 0) {
+                products.push(data);
+            } else {
+                products[index] = data;
+            }
+
+            setState({
+                ...state,
+                products: products,
+            });
+        }
+    };
+    const onSocketOpen = () => {
+        if (state.disconnected) {
+            setState({
+                ...state,
+                disconnected: false,
+            });
+        }
+    };
+    const onSocketClose = () => {
+        if (!state.disconnected) {
+            setState({
+                ...state,
+                disconnected: true,
+            });
+        }
+    };
 
     useEffect(() => {
         const getProducts = async () => {
@@ -25,6 +63,7 @@ export const useGetProducts = () => {
 
             if (resp.success) {
                 setState({
+                    ...state,
                     products: resp.data,
                     loading: false,
                     canConnect: true,
@@ -40,36 +79,17 @@ export const useGetProducts = () => {
     }, []);
 
     useEffect(() => {
-        if (!state.canConnect) {
+        if (!state.canConnect && state.disconnected) {
             return;
         }
 
         const host = window.location.host;
         const socket = new WebSocket(`ws://${host}/api/products/ws`);
-        const onSocketMessage = async (event: MessageEvent<any>) => {
-            const data = JSON.parse(await event.data.text()) as ProductT;
-
-            if (state.products.length > 0) {
-                const products = [...state.products];
-                const index = products.findIndex((p) => p.id === data.id);
-
-                if (index < 0) {
-                    products.push(data);
-                } else {
-                    products[index] = data;
-                }
-
-                setState({
-                    ...state,
-                    products: products,
-                });
-            }
-        };
 
         socket.onmessage = onSocketMessage;
-        socket.onopen = (e) => console.log('SOCKET_OPEN', e);
+        socket.onopen = onSocketOpen;
         socket.onerror = (e) => console.log('SOCKET_ERROR', e);
-        socket.onclose = (e) => console.log('SOCKET_CLOSE', e);
+        socket.onclose = onSocketClose;
     }, [state.canConnect]);
 
     return state;

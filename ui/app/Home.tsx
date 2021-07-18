@@ -110,26 +110,35 @@ const TotalProductList = styled.div`
     }
 `;
 
+export interface IHomeState {
+    selectedProducts: ProductT[];
+    orderCreated: number;
+    processing: boolean;
+};
+
 /**
  * Renders the home route. There should only be one route.
  */
 export const Home = () => {
-    const [selectedProducts, setSelectedProducts] = useState<ProductT[]>([]);
+    const [state, setState] = useState<IHomeState>({
+        selectedProducts: [],
+        orderCreated: 0,
+        processing: false,
+    });
     const { loading, products } = useGetProducts();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
-    const [orderCreated, setOrderCreated] = useState<number>(0);
 
     useEffect(() => {
         lastSelectedProduct.current?.scrollIntoView();
-    }, [selectedProducts]);
+    }, [state.selectedProducts]);
 
     // Compute the total price of all products that were selected.
-    const total = selectedProducts.map((p) => p.price).reduce((a, b) => a + b, 0);
+    const total = state.selectedProducts.map((p) => p.price).reduce((a, b) => a + b, 0);
     const aggregates: ProductAggregateT[] = [];
 
-    for (let i in selectedProducts) {
-        const product = selectedProducts[i];
+    for (let i in state.selectedProducts) {
+        const product = state.selectedProducts[i];
         const index = aggregates.findIndex((p) => p.product.id === product.id);
 
         if (index < 0) {
@@ -171,7 +180,10 @@ export const Home = () => {
                 <ProductList
                     products={products}
                     onClick={(product) => {
-                        setSelectedProducts([ ...selectedProducts, product ]);
+                        setState({
+                            ...state,
+                            selectedProducts: [ ...state.selectedProducts, product ],
+                        });
                     }}
                 />
             </div>
@@ -196,12 +208,15 @@ export const Home = () => {
                                 key={i}
                                 ref={isLast ? lastSelectedProduct : undefined}
                                 onClick={() => {
-                                    const selected = [...selectedProducts];
+                                    const selected = [...state.selectedProducts];
                                     const index = selected.findIndex((product) => {
                                         return aggregate.product.id == product.id;
                                     });
                                     selected.splice(index, 1);
-                                    setSelectedProducts(selected);
+                                    setState({
+                                        ...state,
+                                        selectedProducts: selected,
+                                    });
                                 }}
                             >
                                 <SmallProductCard product={product} amount={amount} />
@@ -219,10 +234,14 @@ export const Home = () => {
                         variant="contained"
                         color="primary"
                         size="large"
-                        disabled={selectedProducts.length === 0 || loadingCreation}
+                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
                         onClick={async () => {
-                            const productIds = selectedProducts.map((p) => p.id);
+                            const productIds = state.selectedProducts.map((p) => p.id);
                             const order = await createOrder(productIds);
+                            setState({
+                                ...state,
+                                processing: true,
+                            });
 
                             if (!order) {
                                 alert('Unable to create order');
@@ -232,43 +251,63 @@ export const Home = () => {
                             // Now print the order's receipt.
                             await fetch(`/api/order/${order.id}/receipt`);
 
-                            // Open up the dialog.
-                            setOrderCreated(order.id);
-
-                            // Since the order was created, empty 
-                            setSelectedProducts([]);
+                            // Since the order was created, empty the list of selected products, open up the
+                            // receipt dialog, and set processing to false.
+                            setState({
+                                ...state,
+                                processing: false,
+                                orderCreated: order.id,
+                                selectedProducts: [],
+                            });
                         }}
                     >
-                        Checkout
+                        {state.processing ? (
+                            <CircularProgress
+                                variant="indeterminate"
+                                disableShrink
+                                style={{
+                                    strokeLinecap: 'round',
+                                    color: '#fff',
+                                    animationDuration: '550ms',
+                                }}
+                                size={35}
+                                thickness={4}
+                            />
+                        ) : 'Checkout'}
                     </Button>
                     <Button
                         variant="contained"
                         color="secondary"
                         size="large"
-                        disabled={selectedProducts.length === 0 || loadingCreation}
-                        onClick={() => setSelectedProducts([])}
+                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                        onClick={() => {
+                            setState({
+                                ...state,
+                                selectedProducts: [],
+                            });
+                        }}
                     >
                         Clear
                     </Button>
                 </div>
 
-                <Dialog open={!!orderCreated}>
+                <Dialog open={!!state.orderCreated}>
                     <DialogTitle>
                         Order Created
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            <div>Order {orderCreated} was created.</div>
+                            <div>Order {state.orderCreated} was created.</div>
                             <div>
                                 <b>Remember to extract the receipt.</b>
                             </div>
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button color="secondary" onClick={() => fetch(`/api/order/${orderCreated}/receipt`)}>
+                        <Button color="secondary" onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}>
                             Retry Receipt
                         </Button>
-                        <Button color="primary" onClick={() => setOrderCreated(0)}>
+                        <Button color="primary" onClick={() => setState({ ...state, orderCreated: 0 })}>
                             Ok
                         </Button>
                     </DialogActions>
