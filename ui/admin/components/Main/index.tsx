@@ -15,7 +15,6 @@ import {
     TableHead,
     TableRow,
     Tabs,
-    TextField,
     Typography,
 } from '@material-ui/core';
 import { RichOrder } from '../RichOrder';

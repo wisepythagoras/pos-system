@@ -38,7 +38,7 @@ export const useGetOrdersList = (page: number) => {
             setState({
                 ...state,
                 loading: false,
-                orders: resp.data,
+                orders: resp.data || [],
             });
 
             return resp.data as RichOrderT[];
