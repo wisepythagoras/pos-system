@@ -63,7 +63,7 @@ insert into users (username, password, created_at) values ('testuser', '7103a07e
 
 ### Product Management
 
-Similar to the user situation, there is no admin for product management yet, but there is an API endpoint. So you can run a bash script that creates all of your products.
+Although there is an admin to manage existing products, there is no way to create them from the admin page. To get around this issue, you can call an existing API endpoint that allows you to create a new product, until the admin control is done. You can call this API endpoint the following way:
 
 ``` sh
 curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
