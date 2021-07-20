@@ -45,6 +45,10 @@ You can create a dedicated Wi-Fi network and connect the Raspberry Pi directly t
 
 This app was built to use a CUPS server. You can connect your thermal printer to the Raspberry Pi you have this server running on, or to some other machine, and tell the POS app where to find it via the [config file](https://github.com/wisepythagoras/pos-system/blob/main/config.example.yaml#L27-L32).
 
+Make sure that your printer settings are valid. You can check the settings by navifating to to http://your-server-ip:631 and under the "Printers" tab select your printer. From there, click on the second dropdown menu and click on "Set Default Options", as shown in the screenshot below.
+
+<img src="docs/cups-1.png" alt="CUPS screenshot" height="320"/>
+
 ### User Management
 
 There is no admin panel for managing users (creating and deleting them). You can do this manually, until the admin page for this is created. Simply open `pos.db` with [SQLite Database Browser](https://sqlitebrowser.org/), or any other app that can open sqlite databases, and then click on the "Execute SQL" tab.
