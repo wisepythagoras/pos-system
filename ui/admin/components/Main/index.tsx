@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import { RichOrder } from '../RichOrder';
 import { RichProduct } from '../RichProduct';
+import { CreateRichProduct } from '../RichProduct/Create';
 import { EarningsCard } from '../EarningsCard';
 import {
     useGetOrdersList,
@@ -188,6 +189,7 @@ export const Main = (props: IMainProps) => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
+                                        <CreateRichProduct onSave={(_) => fetchProducts()} />
                                         {products.map((product, i) => {
                                             return (
                                                 <RichProduct
