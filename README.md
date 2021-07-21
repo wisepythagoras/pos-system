@@ -47,7 +47,9 @@ This app was built to use a CUPS server. You can connect your thermal printer to
 
 Make sure that your printer settings are valid. You can check the settings by navifating to to http://your-server-ip:631 and under the "Printers" tab select your printer. From there, click on the second dropdown menu and click on "Set Default Options", as shown in the screenshot below.
 
-<img src="docs/cups-1.png" alt="CUPS screenshot" height="320"/>
+<p align="center">
+    <img src="docs/cups-1.png" alt="CUPS screenshot" height="320"/>
+</p>
 
 ### User Management
 
