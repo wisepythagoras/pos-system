@@ -18,11 +18,15 @@ const SearchField = styled.div`
 `;
 
 const ProductCardList = styled.div`
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     display: grid;
 
-    @media screen and (max-width: 1024px) {
+    @media screen and (max-width: 1200px) and (min-width: 1025px) {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    @media screen and (max-width: 1024px) {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
 
     & > div {
