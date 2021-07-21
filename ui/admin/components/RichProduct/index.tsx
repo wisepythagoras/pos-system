@@ -43,7 +43,19 @@ export const RichProduct = (props: IRichProductProps) => {
     return (
         <TableRow>
             <TableCell>{product.id}</TableCell>
-            <TableCell>{product.name}</TableCell>
+            <TableCell>
+                <FormControl variant="outlined">
+                    <Input
+                        value={product.name}
+                        onChange={(e) => {
+                            setProduct({
+                                ...product,
+                                name: e.target.value,
+                            });
+                        }}
+                    />
+                </FormControl>
+            </TableCell>
             <TableCell>
                 <FormControl variant="outlined">
                     <Select
@@ -113,9 +125,11 @@ export const RichProduct = (props: IRichProductProps) => {
                     label="Save"
                     disabled={(() => {
                         return (
-                            product.type === props.product.type &&
+                            (product.type === props.product.type &&
                             product.sold_out === props.product.sold_out &&
-                            product.discontinued === props.product.discontinued
+                            product.discontinued === props.product.discontinued &&
+                            product.name === props.product.name) ||
+                            !product.name || !product.price || product.price < 0
                         )
                     })()}
                     onClick={onSave}
