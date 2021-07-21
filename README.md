@@ -67,7 +67,7 @@ insert into users (username, password, created_at) values ('testuser', '7103a07e
 
 ### Product Management
 
-Although there is an admin to manage existing products, there is no way to create them from the admin page. To get around this issue, you can call an existing API endpoint that allows you to create a new product, until the admin control is done. You can call this API endpoint the following way:
+You can fully manage your products from the "Products" tab in the admin page, as well as create new ones. However, you also have the flexibility of doing this through the API. The following curl is an example of how to create a new product.
 
 ``` sh
 curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
@@ -78,5 +78,5 @@ Currently, the app only supports the following product types: `food`, `drink`, `
 ## What's missing
 
 1. [x] Receipt printer support.
-2. [ ] Manage products from the admin panel.
+2. [x] Manage products from the admin panel.
 3. [ ] Manage users through the admin panel.
