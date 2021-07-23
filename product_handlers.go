@@ -116,10 +116,13 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	allProducts := c.Query("all") != ""
 
 	if allProducts == true {
-		ph.DB.Order("type asc").Find(&productObjs)
+		ph.DB.Order("type asc").
+			Order("name asc").
+			Find(&productObjs)
 	} else {
 		ph.DB.Where("discontinued = 0").
 			Order("type asc").
+			Order("name asc").
 			Find(&productObjs)
 	}
 
