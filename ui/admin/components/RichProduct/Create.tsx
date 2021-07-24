@@ -36,8 +36,6 @@ export const CreateRichProduct = (props: ICreateRichProductProps) => {
             return;
         }
 
-        console.log(data);
-        
         const body = new FormData();
 
         for (let field in data) {
@@ -52,15 +50,6 @@ export const CreateRichProduct = (props: ICreateRichProductProps) => {
 
         props.onSave(resp);
 
-        console.log(resp);
-
-        // reset({
-        //     deepNest: {
-        //         name: "",
-        //         price: 0,
-        //         type: "food",
-        //     },
-        // });
         reset();
     };
 

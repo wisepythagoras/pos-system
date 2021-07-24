@@ -9,9 +9,12 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    InputBase,
+    Paper,
     ThemeProvider,
     Typography,
 } from '@material-ui/core';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
@@ -32,7 +35,7 @@ const DisplayGrid = styled.div`
     & > .total-column {
         display: grid;
         overflow: none;
-        grid-template-rows: calc(80vh - 50px) calc(20vh - 50px) 100px;
+        grid-template-rows: calc(80vh - 100px) 50px calc(20vh - 50px) 100px;
 
         @media screen and (max-height: 768px) {
             grid-template-rows: calc(80vh - 100px) 20vh 100px;
@@ -44,7 +47,7 @@ const DisplayGrid = styled.div`
             background-color: #222;
         }
 
-        & > div:nth-child(2) {
+        & > div:nth-child(3) {
             text-align: center;
             border-top: 1px solid #111;
             background-color: #1a1a1a;
@@ -114,6 +117,8 @@ export interface IHomeState {
     selectedProducts: ProductT[];
     orderCreated: number;
     processing: boolean;
+    cashPayment: string;
+    cashPaymentError: string | null;
 };
 
 /**
@@ -124,6 +129,8 @@ export const Home = () => {
         selectedProducts: [],
         orderCreated: 0,
         processing: false,
+        cashPayment: '',
+        cashPaymentError: null,
     });
     const { loading, products } = useGetProducts();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
@@ -225,6 +232,38 @@ export const Home = () => {
                     })}
                 </TotalProductList>
                 <div>
+                    <Paper style={{
+                        display: 'flex',
+                        height: '50px',
+                    }}>
+                        <div style={{ padding: '12px', paddingRight: 0 }}>
+                            <AttachMoneyIcon />
+                        </div>
+                        <InputBase
+                            error={!!state.cashPaymentError}
+                            value={state.cashPayment}
+                            placeholder="0.00"
+                            style={{
+                                paddingLeft: '15px',
+                                flex: 1,
+                            }}
+                            onChange={(e) => {
+                                let cashPaymentError = null;
+
+                                if (isNaN(parseFloat(e.target.value))) {
+                                    cashPaymentError = 'Invalid cash amount';
+                                }
+
+                                setState({
+                                    ...state,
+                                    cashPayment: e.target.value,
+                                    cashPaymentError,
+                                });
+                            }}
+                        />
+                    </Paper>
+                </div>
+                <div>
                     <Typography variant="h1" component="h2" gutterBottom>
                         ${total.toFixed(2)}
                     </Typography>
@@ -258,6 +297,7 @@ export const Home = () => {
                                 processing: false,
                                 orderCreated: order.id,
                                 selectedProducts: [],
+                                cashPayment: '',
                             });
                         }}
                     >
