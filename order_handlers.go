@@ -468,7 +468,7 @@ func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
 			left join products p on p.id = op.product_id
 			left join orders o on o.id = op.order_id
 			where
-				op.created_at >= date('now', '-1 day', 'start of day') and
+				op.created_at >= date('now', 'start of day') and
 				o.cancelled = 0
 			order by op.id desc;
 		`).Scan(&results)
@@ -479,8 +479,8 @@ func (oh *OrderHandlers) EarningsPerDay(c *gin.Context) {
 			left join orders o on o.id = op.order_id
 			where
 				op.created_at >=
-					date('now', '-` + strconv.Itoa(day+1) + ` day', 'start of day') and
-				op.created_at <= date('now', '-` + dayParam + ` day', 'start of day') and
+					date('now', 'start of day', '-` + dayParam + ` day') and
+				op.created_at <= date('now', 'start of day', '-` + strconv.Itoa(day-1) + ` day') and
 				o.cancelled = 0
 			order by op.id desc;
 		`).Scan(&results)

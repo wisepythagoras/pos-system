@@ -242,7 +242,7 @@ export const Home = () => {
                         <InputBase
                             error={!!state.cashPaymentError}
                             value={state.cashPayment}
-                            placeholder="0.00"
+                            placeholder="Enter Cash In Amount"
                             style={{
                                 paddingLeft: '15px',
                                 flex: 1,
