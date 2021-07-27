@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {
     AppBar,
     Button,
-    Card,
+    ButtonGroup,
     CircularProgress,
     Container,
     Paper,
@@ -138,6 +138,32 @@ export const Main = (props: IMainProps) => {
                                         {orders.map((order, i) => <RichOrder key={i} order={order} />)}
                                     </TableBody>
                                 </Table>
+                                <div style={{ textAlign: 'center', padding: '10px' }}>
+                                    <ButtonGroup>
+                                        <Button
+                                            disabled={state.page == 1}
+                                            onClick={() => {
+                                                setState({
+                                                    ...state,
+                                                    page: state.page - 1,
+                                                });
+                                            }}
+                                        >
+                                            Prev
+                                        </Button>
+                                        <Button
+                                            disabled={orders.length < 30}
+                                            onClick={() => {
+                                                setState({
+                                                    ...state,
+                                                    page: state.page + 1,
+                                                });
+                                            }}
+                                        >
+                                            Next
+                                        </Button>
+                                    </ButtonGroup>
+                                </div>
                             </TableContainer>
                         )}
                     </div>
