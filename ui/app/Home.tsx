@@ -35,7 +35,8 @@ const DisplayGrid = styled.div`
     & > .total-column {
         display: grid;
         overflow: none;
-        grid-template-rows: calc(80vh - 100px) 50px calc(20vh - 50px) 100px;
+        /* grid-template-rows: calc(80vh - 100px) 50px calc(20vh - 50px) 100px; */
+        grid-template-rows: calc(80vh - 50px) calc(20vh - 50px) 100px;
 
         @media screen and (max-height: 768px) {
             grid-template-rows: calc(80vh - 100px) 20vh 100px;
@@ -47,7 +48,7 @@ const DisplayGrid = styled.div`
             background-color: #222;
         }
 
-        & > div:nth-child(3) {
+        & > div:nth-child(2) {
             text-align: center;
             border-top: 1px solid #111;
             background-color: #1a1a1a;
@@ -231,7 +232,7 @@ export const Home = () => {
                         );
                     })}
                 </TotalProductList>
-                <div>
+                {/* <div>
                     <Paper style={{
                         display: 'flex',
                         height: '50px',
@@ -242,7 +243,7 @@ export const Home = () => {
                         <InputBase
                             error={!!state.cashPaymentError}
                             value={state.cashPayment}
-                            placeholder="0.00"
+                            placeholder="Enter Cash In Amount"
                             style={{
                                 paddingLeft: '15px',
                                 flex: 1,
@@ -262,7 +263,7 @@ export const Home = () => {
                             }}
                         />
                     </Paper>
-                </div>
+                </div> */}
                 <div>
                     <Typography variant="h1" component="h2" gutterBottom>
                         ${total.toFixed(2)}
