@@ -15,8 +15,10 @@ import {
     TableHead,
     TableRow,
     Tabs,
+    TextField,
     Typography,
 } from '@material-ui/core';
+import debounce from 'lodash/debounce';
 import { RichOrder } from '../RichOrder';
 import { RichProduct } from '../RichProduct';
 import { CreateRichProduct } from '../RichProduct/Create';
@@ -72,6 +74,23 @@ export const Main = (props: IMainProps) => {
         link.click();
     };
 
+    const onSearchChange = debounce((e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        const idStr = e.target.value || '0';
+        const id = parseInt(idStr);
+        console.log(idStr);
+        
+        if (isNaN(id)) {
+            return;
+        }
+
+        if (id <= 0) {
+            fetchOrders();
+            return;
+        }
+
+        fetchOrders(id);
+    }, 500);
+
     return (
         <div>
             <AppBar>
@@ -95,7 +114,7 @@ export const Main = (props: IMainProps) => {
                         <EarningsCard day={2} amount={earningsPerDay[2]} />
                         <EarningsCard day={3} amount={earningsPerDay[3]} />
                     </GridRowBox>
-                    <div style={{ marginBottom: '15px' }}>
+                    <div style={{ marginBottom: '15px', display: 'flex' }}>
                         <Button onClick={exportTotals} variant="contained" color="primary">
                             Export Sales YTD
                         </Button>
@@ -106,6 +125,18 @@ export const Main = (props: IMainProps) => {
                                 {error}
                             </Typography>
                         ) : null}
+
+                        <div style={{ marginBottom: '5px' }}>
+                            <TextField
+                                label="Search order id"
+                                onChange={onSearchChange}
+                                style={{
+                                    width: '300px',
+                                    backgroundColor: '#fff',
+                                }}
+                                variant="outlined"
+                            />
+                        </div>
 
                         {loading ? (
                             <div style={{ textAlign: 'center' }}>

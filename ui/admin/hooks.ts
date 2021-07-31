@@ -23,33 +23,58 @@ export const useGetOrdersList = (page: number) => {
 
     /**
      * Fetches the list of orders.
+     * @param orderId Optional parameter when searching for a specific order.
+     * @returns The order(s) found.
      */
-    const fetchOrders = async () => {
+    const fetchOrders = async (orderId?: number) => {
         setState({
             ...state,
             loading: true,
             orders: [],
         });
 
-        const req = await fetch(`/api/orders?p=${page}`);
-        const resp = await req.json();
+        if (!orderId) {
+            const req = await fetch(`/api/orders?p=${page}`);
+            const resp = await req.json();
 
-        if (resp.success === true) {
-            setState({
-                ...state,
-                loading: false,
-                orders: resp.data || [],
-            });
+            if (resp.success === true) {
+                setState({
+                    ...state,
+                    loading: false,
+                    orders: resp.data || [],
+                });
 
-            return resp.data as RichOrderT[];
+                return resp.data as RichOrderT[];
+            } else {
+                setState({
+                    ...state,
+                    loading: false,
+                    error: resp.error || 'Unable to fetch orders',
+                });
+
+                return null;
+            }
         } else {
-            setState({
-                ...state,
-                loading: false,
-                error: resp.error || 'Unable to fetch orders',
-            });
+            const req = await fetch(`/api/order/${orderId}`);
+            const resp = await req.json();
 
-            return null;
+            if (resp.success === true) {
+                setState({
+                    ...state,
+                    loading: false,
+                    orders: [resp.data] || [],
+                });
+
+                return [resp.data] as RichOrderT[];
+            } else {
+                setState({
+                    ...state,
+                    loading: false,
+                    error: resp.error,
+                });
+
+                return null;
+            }
         }
     };
 
