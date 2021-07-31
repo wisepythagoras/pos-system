@@ -58,7 +58,7 @@ export const useGetOrdersList = (page: number) => {
             const req = await fetch(`/api/order/${orderId}`);
             const resp = await req.json();
 
-            if (resp.success === true) {
+            if (resp.success === true && !!resp.data.order.id) {
                 setState({
                     ...state,
                     loading: false,
@@ -71,6 +71,7 @@ export const useGetOrdersList = (page: number) => {
                     ...state,
                     loading: false,
                     error: resp.error,
+                    orders: [],
                 });
 
                 return null;
