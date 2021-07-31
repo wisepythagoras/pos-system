@@ -77,6 +77,10 @@ curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99
 
 Currently, the app only supports the following product types: `food`, `drink`, `pastry`, but this is subject to change at any moment.
 
+### Startup Service
+
+Read [this](/startup/README.md) guide.
+
 ## What's missing
 
 1. [x] Receipt printer support.

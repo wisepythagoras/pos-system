@@ -1,0 +1,11 @@
+[Unit]
+Description=Starts the POS server code.
+After=multi-user.target
+
+[Service]
+User=pi
+Type=idle
+ExecStart=/home/pi/start-pos.sh
+
+[Install]
+WantedBy=multi-user.target
