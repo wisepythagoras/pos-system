@@ -57,7 +57,7 @@ export const RichProduct = (props: IRichProductProps) => {
                 </FormControl>
             </TableCell>
             <TableCell>
-                <FormControl variant="outlined">
+                <FormControl variant="outlined" size="small">
                     <Select
                         value={product.type}
                         onChange={(e) => {

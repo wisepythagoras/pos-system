@@ -65,7 +65,7 @@ export const CreateRichProduct = (props: ICreateRichProductProps) => {
                 </FormControl>
             </TableCell>
             <TableCell>
-                <FormControl variant="outlined">
+                <FormControl variant="outlined" size="small">
                     <Select
                         {...register('type', { required: true })}
                         defaultValue="food"
