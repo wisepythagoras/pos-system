@@ -40,6 +40,15 @@ const GridRowBox = styled.div`
     }
 `;
 
+const ControlContainer = styled.div`
+    margin-bottom: 15px;
+    flex: 1;
+
+    & > * {
+        margin-right: 5px;
+    }
+`;
+
 export interface IMainProps {};
 
 interface IMainState {
@@ -67,10 +76,10 @@ export const Main = (props: IMainProps) => {
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
 
-    const exportTotals = () => {
+    const exportTotals = (pastDay = false) => {
         const link = document.createElement('a');
         link.download = '';
-        link.href = '/api/orders/totals/export';
+        link.href = `/api/orders/totals/export${pastDay ? '?day=1' : ''}`;
         link.click();
     };
 
@@ -114,29 +123,30 @@ export const Main = (props: IMainProps) => {
                         <EarningsCard day={2} amount={earningsPerDay[2]} />
                         <EarningsCard day={3} amount={earningsPerDay[3]} />
                     </GridRowBox>
-                    <div style={{ marginBottom: '15px', display: 'flex' }}>
-                        <Button onClick={exportTotals} variant="contained" color="primary">
+                    <ControlContainer>
+                        <TextField
+                            label="Search order id"
+                            onChange={onSearchChange}
+                            size="small"
+                            style={{
+                                width: '300px',
+                                backgroundColor: '#fff',
+                            }}
+                            variant="outlined"
+                        />
+                        <Button onClick={() => exportTotals()} variant="contained" color="primary">
                             Export Sales YTD
                         </Button>
-                    </div>
+                        <Button onClick={() => exportTotals(true)} variant="contained" color="primary">
+                            Export Sales Past Day
+                        </Button>
+                    </ControlContainer>
                     <div>
                         {!!error ? (
                             <Typography variant="h4" component="h4">
                                 {error}
                             </Typography>
                         ) : null}
-
-                        <div style={{ marginBottom: '5px' }}>
-                            <TextField
-                                label="Search order id"
-                                onChange={onSearchChange}
-                                style={{
-                                    width: '300px',
-                                    backgroundColor: '#fff',
-                                }}
-                                variant="outlined"
-                            />
-                        </div>
 
                         {loading ? (
                             <div style={{ textAlign: 'center' }}>

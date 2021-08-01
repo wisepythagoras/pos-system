@@ -293,12 +293,19 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 	var products []Product
 	var productCols map[string]string = make(map[string]string)
 
+	pastDay := c.Request.URL.Query().Get("day")
+	exportClause := "created_at > DATE('now', 'start of year')"
+
+	if pastDay == "1" || pastDay == "true" {
+		exportClause = "created_at > DATE('now', 'start of day')"
+	}
+
 	// Get the list of products.
 	oh.DB.Find(&products)
 
 	// Get the list of orders.
 	oh.DB.
-		Where("created_at > DATE('now', 'start of year')").
+		Where(exportClause).
 		Where("cancelled = 0").
 		Preload("OrderProducts.Product").
 		Find(&orders)
