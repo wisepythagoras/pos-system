@@ -167,194 +167,194 @@ export const Home = () => {
 
     return (
         <ThemeProvider theme={darkTheme}>
-        <DisplayGrid>
-            <div className="product-list">
-                {loading ? (
-                    <div style={{ textAlign: 'center' }}>
-                        <CircularProgress
-                            variant="indeterminate"
-                            disableShrink
-                            style={{
-                                strokeLinecap: 'round',
-                                color: '#1a90ff',
-                                animationDuration: '550ms',
-                                marginTop: '20px',
-                            }}
-                            size={40}
-                            thickness={4}
-                        />
-                    </div>
-                ) : null}
-                <ProductList
-                    products={products}
-                    onClick={(product) => {
-                        setState({
-                            ...state,
-                            selectedProducts: [ ...state.selectedProducts, product ],
-                        });
-                    }}
-                />
-            </div>
-            <div className="total-column">
-                <TotalProductList>
-                    {/* Show this label only when no products are selected. */}
-                    {aggregates.length === 0 ? (
-                        <div className="hint">
-                            <Typography color="textSecondary" component="h3">
-                                To create a new order select products from the left.
-                            </Typography>
-                        </div>
-                    ) : null}
-
-                    {/* Show the list of selected products. */}
-                    {aggregates.map((aggregate, i) => {
-                        const isLast = aggregates.length - 1 == i;
-                        const { amount, product } = aggregate;
-
-                        return (
-                            <div
-                                key={i}
-                                ref={isLast ? lastSelectedProduct : undefined}
-                                onClick={() => {
-                                    const selected = [...state.selectedProducts];
-                                    const index = selected.findIndex((product) => {
-                                        return aggregate.product.id == product.id;
-                                    });
-                                    selected.splice(index, 1);
-                                    setState({
-                                        ...state,
-                                        selectedProducts: selected,
-                                    });
-                                }}
-                            >
-                                <SmallProductCard product={product} amount={amount} />
-                            </div>
-                        );
-                    })}
-                </TotalProductList>
-                {/* <div>
-                    <Paper style={{
-                        display: 'flex',
-                        height: '50px',
-                    }}>
-                        <div style={{ padding: '12px', paddingRight: 0 }}>
-                            <AttachMoneyIcon />
-                        </div>
-                        <InputBase
-                            error={!!state.cashPaymentError}
-                            value={state.cashPayment}
-                            placeholder="Enter Cash In Amount"
-                            style={{
-                                paddingLeft: '15px',
-                                flex: 1,
-                            }}
-                            onChange={(e) => {
-                                let cashPaymentError = null;
-
-                                if (isNaN(parseFloat(e.target.value))) {
-                                    cashPaymentError = 'Invalid cash amount';
-                                }
-
-                                setState({
-                                    ...state,
-                                    cashPayment: e.target.value,
-                                    cashPaymentError,
-                                });
-                            }}
-                        />
-                    </Paper>
-                </div> */}
-                <div>
-                    <Typography variant="h1" component="h2" gutterBottom>
-                        ${total.toFixed(2)}
-                    </Typography>
-                </div>
-                <div>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
-                        onClick={async () => {
-                            const productIds = state.selectedProducts.map((p) => p.id);
-                            const order = await createOrder(productIds);
-                            setState({
-                                ...state,
-                                processing: true,
-                            });
-
-                            if (!order) {
-                                alert('Unable to create order');
-                                return;
-                            }
-
-                            // Now print the order's receipt.
-                            await fetch(`/api/order/${order.id}/receipt`);
-
-                            // Since the order was created, empty the list of selected products, open up the
-                            // receipt dialog, and set processing to false.
-                            setState({
-                                ...state,
-                                processing: false,
-                                orderCreated: order.id,
-                                selectedProducts: [],
-                                cashPayment: '',
-                            });
-                        }}
-                    >
-                        {state.processing ? (
+            <DisplayGrid>
+                <div className="product-list">
+                    {loading ? (
+                        <div style={{ textAlign: 'center' }}>
                             <CircularProgress
                                 variant="indeterminate"
                                 disableShrink
                                 style={{
                                     strokeLinecap: 'round',
-                                    color: '#fff',
+                                    color: '#1a90ff',
                                     animationDuration: '550ms',
+                                    marginTop: '20px',
                                 }}
-                                size={35}
+                                size={40}
                                 thickness={4}
                             />
-                        ) : 'Checkout'}
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        size="large"
-                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
-                        onClick={() => {
+                        </div>
+                    ) : null}
+                    <ProductList
+                        products={products}
+                        onClick={(product) => {
                             setState({
                                 ...state,
-                                selectedProducts: [],
+                                selectedProducts: [ ...state.selectedProducts, product ],
                             });
                         }}
-                    >
-                        Clear
-                    </Button>
+                    />
                 </div>
-
-                <Dialog open={!!state.orderCreated}>
-                    <DialogTitle>
-                        Order Created
-                    </DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            <div>Order {state.orderCreated} was created.</div>
-                            <div>
-                                <b>Remember to extract the receipt.</b>
+                <div className="total-column">
+                    <TotalProductList>
+                        {/* Show this label only when no products are selected. */}
+                        {aggregates.length === 0 ? (
+                            <div className="hint">
+                                <Typography color="textSecondary" component="h3">
+                                    To create a new order select products from the left.
+                                </Typography>
                             </div>
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button color="secondary" onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}>
-                            Retry Receipt
+                        ) : null}
+
+                        {/* Show the list of selected products. */}
+                        {aggregates.map((aggregate, i) => {
+                            const isLast = aggregates.length - 1 == i;
+                            const { amount, product } = aggregate;
+
+                            return (
+                                <div
+                                    key={i}
+                                    ref={isLast ? lastSelectedProduct : undefined}
+                                    onClick={() => {
+                                        const selected = [...state.selectedProducts];
+                                        const index = selected.findIndex((product) => {
+                                            return aggregate.product.id == product.id;
+                                        });
+                                        selected.splice(index, 1);
+                                        setState({
+                                            ...state,
+                                            selectedProducts: selected,
+                                        });
+                                    }}
+                                >
+                                    <SmallProductCard product={product} amount={amount} />
+                                </div>
+                            );
+                        })}
+                    </TotalProductList>
+                    {/* <div>
+                        <Paper style={{
+                            display: 'flex',
+                            height: '50px',
+                        }}>
+                            <div style={{ padding: '12px', paddingRight: 0 }}>
+                                <AttachMoneyIcon />
+                            </div>
+                            <InputBase
+                                error={!!state.cashPaymentError}
+                                value={state.cashPayment}
+                                placeholder="Enter Cash In Amount"
+                                style={{
+                                    paddingLeft: '15px',
+                                    flex: 1,
+                                }}
+                                onChange={(e) => {
+                                    let cashPaymentError = null;
+
+                                    if (isNaN(parseFloat(e.target.value))) {
+                                        cashPaymentError = 'Invalid cash amount';
+                                    }
+
+                                    setState({
+                                        ...state,
+                                        cashPayment: e.target.value,
+                                        cashPaymentError,
+                                    });
+                                }}
+                            />
+                        </Paper>
+                    </div> */}
+                    <div>
+                        <Typography variant="h1" component="h2" gutterBottom>
+                            ${total.toFixed(2)}
+                        </Typography>
+                    </div>
+                    <div>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                            onClick={async () => {
+                                const productIds = state.selectedProducts.map((p) => p.id);
+                                const order = await createOrder(productIds);
+                                setState({
+                                    ...state,
+                                    processing: true,
+                                });
+
+                                if (!order) {
+                                    alert('Unable to create order');
+                                    return;
+                                }
+
+                                // Now print the order's receipt.
+                                await fetch(`/api/order/${order.id}/receipt`);
+
+                                // Since the order was created, empty the list of selected products, open up the
+                                // receipt dialog, and set processing to false.
+                                setState({
+                                    ...state,
+                                    processing: false,
+                                    orderCreated: order.id,
+                                    selectedProducts: [],
+                                    cashPayment: '',
+                                });
+                            }}
+                        >
+                            {state.processing ? (
+                                <CircularProgress
+                                    variant="indeterminate"
+                                    disableShrink
+                                    style={{
+                                        strokeLinecap: 'round',
+                                        color: '#fff',
+                                        animationDuration: '550ms',
+                                    }}
+                                    size={35}
+                                    thickness={4}
+                                />
+                            ) : 'Checkout'}
                         </Button>
-                        <Button color="primary" onClick={() => setState({ ...state, orderCreated: 0 })}>
-                            Ok
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            size="large"
+                            disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                            onClick={() => {
+                                setState({
+                                    ...state,
+                                    selectedProducts: [],
+                                });
+                            }}
+                        >
+                            Clear
                         </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-        </DisplayGrid>
+                    </div>
+
+                    <Dialog open={!!state.orderCreated}>
+                        <DialogTitle>
+                            Order Created
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                <div>Order {state.orderCreated} was created.</div>
+                                <div>
+                                    <b>Remember to extract the receipt.</b>
+                                </div>
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button color="secondary" onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}>
+                                Retry Receipt
+                            </Button>
+                            <Button color="primary" onClick={() => setState({ ...state, orderCreated: 0 })}>
+                                Ok
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </div>
+            </DisplayGrid>
         </ThemeProvider>
     );
 };

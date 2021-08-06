@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { Divider, IconButton, InputBase, Paper } from '@material-ui/core';
+import { IconButton, InputBase, Paper } from '@material-ui/core';
 import ClearIcon from '@material-ui/icons/Clear';
 import SearchIcon from '@material-ui/icons/Search';
 import { ProductT } from '../../types';
@@ -119,26 +119,17 @@ export const ProductList = (props: IProductListProps) => {
                         }}
                     />
                     {!!search && !!search.length ? (
-                        <>
-                            <Divider
-                                orientation="vertical"
-                                style={{
-                                    marginTop: '10px',
-                                    height: '28px',
-                                }}
-                            />
-                            <IconButton
-                                onClick={() => {
-                                    setSearch(null);
+                        <IconButton
+                            onClick={() => {
+                                setSearch(null);
 
-                                    if (!!searchInputRef && !!searchInputRef.current) {
-                                        searchInputRef.current.value = '';
-                                    }
-                                }} 
-                            >
-                                <ClearIcon />
-                            </IconButton>
-                        </>
+                                if (!!searchInputRef && !!searchInputRef.current) {
+                                    searchInputRef.current.value = '';
+                                }
+                            }} 
+                        >
+                            <ClearIcon />
+                        </IconButton>
                     ) : null}
                 </Paper>
             </SearchField>
