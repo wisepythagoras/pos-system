@@ -214,7 +214,7 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 		Preload("OrderProducts.Product").
 		Order("id desc").
 		Limit(50).
-		Offset((page - 1) * 30).
+		Offset((page - 1) * 50).
 		Find(&orders)
 
 	// Convert all orders to the JSON format.

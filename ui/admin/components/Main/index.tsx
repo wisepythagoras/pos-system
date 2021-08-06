@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import {
     AppBar,
     Button,
-    ButtonGroup,
     CircularProgress,
     Container,
     Paper,
@@ -18,6 +17,7 @@ import {
     TextField,
     Typography,
 } from '@material-ui/core';
+import Pagination from '@material-ui/lab/Pagination';
 import debounce from 'lodash/debounce';
 import { RichOrder } from '../RichOrder';
 import { RichProduct } from '../RichProduct';
@@ -38,6 +38,12 @@ const GridRowBox = styled.div`
     & > div:not(:last-child) {
         margin-right: 5px;
     }
+`;
+
+const PaginationContainer = styled.div`
+    padding: 10px;
+    display: flex;
+    justify-content: center;
 `;
 
 const ControlContainer = styled.div`
@@ -75,6 +81,11 @@ export const Main = (props: IMainProps) => {
     } = useGetProductsList();
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
+    const lastOrderRef = useRef(0);
+
+    if (state.page === 1 && !loading && orders.length > 0) {
+        lastOrderRef.current = orders[0].order_id;
+    }
 
     const exportTotals = (pastDay = false) => {
         const link = document.createElement('a');
@@ -179,32 +190,23 @@ export const Main = (props: IMainProps) => {
                                         {orders.map((order, i) => <RichOrder key={i} order={order} />)}
                                     </TableBody>
                                 </Table>
-                                <div style={{ textAlign: 'center', padding: '10px' }}>
-                                    <ButtonGroup>
-                                        <Button
-                                            disabled={state.page == 1}
-                                            onClick={() => {
-                                                setState({
-                                                    ...state,
-                                                    page: state.page - 1,
-                                                });
-                                            }}
-                                        >
-                                            Prev
-                                        </Button>
-                                        <Button
-                                            disabled={orders.length < 30}
-                                            onClick={() => {
-                                                setState({
-                                                    ...state,
-                                                    page: state.page + 1,
-                                                });
-                                            }}
-                                        >
-                                            Next
-                                        </Button>
-                                    </ButtonGroup>
-                                </div>
+                                <PaginationContainer>
+                                    <Pagination
+                                        defaultPage={1}
+                                        count={Math.round(lastOrderRef.current / 50)}
+                                        page={state.page}
+                                        onChange={(_, page) => {
+                                            setState({
+                                                ...state,
+                                                page,
+                                            });
+                                        }}
+                                        hideNextButton={orders.length < 50}
+                                        size="large"
+                                        showFirstButton
+                                        showLastButton
+                                    />
+                                </PaginationContainer>
                             </TableContainer>
                         )}
                     </div>
