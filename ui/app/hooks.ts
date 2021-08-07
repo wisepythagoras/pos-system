@@ -73,6 +73,7 @@ export const useGetProducts = () => {
                 return;
             }
 
+            // Remove the waitingToReconnect flag so that the client can reconnect.
             if (stateRef.current.waitingToReconnect) {
                 setState({
                     ...stateRef.current,
@@ -83,6 +84,7 @@ export const useGetProducts = () => {
     };
 
     useEffect(() => {
+        // This is what submits the actual request to get the list of products.
         const getProducts = async () => {
             const req = await fetch('/api/products');
             const resp = await req.json();
