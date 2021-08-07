@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { OrderT, ProductT } from './types';
 
 type GetProductsStateT = {
     products: ProductT[];
     loading: boolean;
-    canConnect: boolean;
-    disconnected: boolean;
+    socketIsOpen: boolean;
+    waitingToReconnect: boolean;
 };
 
 /**
@@ -16,15 +16,18 @@ export const useGetProducts = () => {
     const [state, setState] = useState<GetProductsStateT>({
         products: [],
         loading: false,
-        canConnect: false,
-        disconnected: true,
+        socketIsOpen: false,
+        waitingToReconnect: false,
     });
+    const stateRef = useRef(state);
+    const wsRef = useRef<WebSocket | null>(null);
+    const waitRef = useRef<NodeJS.Timer | null>(null);
 
     const onSocketMessage = async (event: MessageEvent<any>) => {
         const data = JSON.parse(await event.data.text()) as ProductT;
 
-        if (state.products.length > 0) {
-            const products = [...state.products];
+        if (stateRef.current.products.length > 0) {
+            const products = [...stateRef.current.products];
             const index = products.findIndex((p) => p.id === data.id);
 
             if (index < 0) {
@@ -34,26 +37,49 @@ export const useGetProducts = () => {
             }
 
             setState({
-                ...state,
+                ...stateRef.current,
                 products: products,
             });
         }
     };
     const onSocketOpen = () => {
-        if (state.disconnected) {
-            setState({
-                ...state,
-                disconnected: false,
-            });
-        }
+        setState({
+            ...stateRef.current,
+            socketIsOpen: true,
+        });
+        console.log('SOCKET_CONNECTED', new Date());
     };
     const onSocketClose = () => {
-        if (!state.disconnected) {
-            setState({
-                ...state,
-                disconnected: true,
-            });
+        if (stateRef.current.waitingToReconnect || !wsRef.current) {
+            return;
         }
+
+        wsRef.current = null;
+        setState({
+            ...stateRef.current,
+            socketIsOpen: false,
+            waitingToReconnect: true,
+        });
+
+        if (!!waitRef.current) {
+            return;
+        }
+
+        // Try to reconnect every second.
+        waitRef.current = setInterval(() => {
+            if (stateRef.current.socketIsOpen) {
+                // @ts-ignore
+                clearInterval(waitRef.current);
+                return;
+            }
+
+            if (stateRef.current.waitingToReconnect) {
+                setState({
+                    ...stateRef.current,
+                    waitingToReconnect: false,
+                });
+            }
+        }, 1000);
     };
 
     useEffect(() => {
@@ -63,34 +89,43 @@ export const useGetProducts = () => {
 
             if (resp.success) {
                 setState({
-                    ...state,
+                    ...stateRef.current,
                     products: resp.data,
                     loading: false,
-                    canConnect: true,
                 });
             }
         };
 
         getProducts();
         setState({
-            ...state,
+            ...stateRef.current,
             loading: true,
         });
     }, []);
 
     useEffect(() => {
-        if (!state.canConnect && state.disconnected) {
+        if (state.waitingToReconnect || !!wsRef.current) {
             return;
         }
 
         const host = window.location.host;
         const socket = new WebSocket(`ws://${host}/api/products/ws`);
+        wsRef.current = socket;
 
         socket.onmessage = onSocketMessage;
         socket.onopen = onSocketOpen;
         socket.onerror = (e) => console.log('SOCKET_ERROR', e);
         socket.onclose = onSocketClose;
-    }, [state.canConnect]);
+
+        return () => {
+            wsRef.current?.close();
+            wsRef.current = null;
+        };
+    }, [state.waitingToReconnect]);
+
+    useEffect(() => {
+        stateRef.current = state;
+    }, [state]);
 
     return state;
 };
