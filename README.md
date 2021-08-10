@@ -86,3 +86,4 @@ Read [this](/startup/README.md) guide.
 1. [x] Receipt printer support.
 2. [x] Manage products from the admin panel.
 3. [ ] Manage users through the admin panel.
+4. [ ] Allow cashiers to select between multiple printers.
