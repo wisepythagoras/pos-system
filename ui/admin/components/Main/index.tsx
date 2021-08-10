@@ -5,6 +5,7 @@ import {
     Button,
     CircularProgress,
     Container,
+    Divider,
     Paper,
     Tab,
     Table,
@@ -49,9 +50,15 @@ const PaginationContainer = styled.div`
 const ControlContainer = styled.div`
     margin-bottom: 15px;
     flex: 1;
+    display: flex;
 
     & > * {
         margin-right: 5px;
+    }
+
+    & > .divider {
+        width: 1px;
+        margin: 0 10px 0 6px;
     }
 `;
 
@@ -145,6 +152,7 @@ export const Main = (props: IMainProps) => {
                             }}
                             variant="outlined"
                         />
+                        <Divider className="divider" orientation="vertical" flexItem />
                         <Button onClick={() => exportTotals()} variant="contained" color="primary">
                             Export Sales YTD
                         </Button>
