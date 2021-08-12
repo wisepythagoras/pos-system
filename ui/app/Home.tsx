@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import {
-    createMuiTheme,
     Button,
     CircularProgress,
     Dialog,
@@ -14,6 +13,7 @@ import {
     ThemeProvider,
     Typography,
 } from '@material-ui/core';
+import { createTheme } from '@material-ui/core/styles';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
@@ -159,7 +159,7 @@ export const Home = () => {
         }
     }
 
-    const darkTheme = createMuiTheme({
+    const darkTheme = createTheme({
         palette: {
             type: 'dark',
         },

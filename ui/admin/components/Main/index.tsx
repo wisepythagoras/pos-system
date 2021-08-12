@@ -1,24 +1,24 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import {
-    AppBar,
     Button,
     CircularProgress,
     Container,
     Divider,
     Paper,
-    Tab,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Tabs,
     TextField,
     Typography,
 } from '@material-ui/core';
 import Pagination from '@material-ui/lab/Pagination';
+import ReceiptIcon from '@material-ui/icons/Receipt';
+import StorageIcon from '@material-ui/icons/Storage';
+import PeopleIcon from '@material-ui/icons/People';
 import debounce from 'lodash/debounce';
 import { RichOrder } from '../RichOrder';
 import { RichProduct } from '../RichProduct';
@@ -52,13 +52,33 @@ const ControlContainer = styled.div`
     flex: 1;
     display: flex;
 
-    & > * {
+    & > button {
         margin-right: 5px;
     }
 
     & > .divider {
         width: 1px;
-        margin: 0 10px 0 6px;
+        margin: 0 10px;
+    }
+`;
+
+const CustomAppBar = styled.div`
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    & > .app-bar-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        & > button {
+            flex: 1;
+            flex-grow: 1;
+
+            &:not(:last-child) {
+                margin-right: 5px;
+            }
+        }
     }
 `;
 
@@ -118,18 +138,40 @@ export const Main = (props: IMainProps) => {
         fetchOrders(id);
     }, 500);
 
+    const setTab = (tab: number) => {
+        setState({ ...state, tab });
+    };
+
     return (
         <div>
-            <AppBar>
-                <Tabs value={state.tab} onChange={(_, tab) => setState({ ...state, tab })}>
-                    <Tab label="Orders" />
-                    <Tab label="Products" />
-                    <Tab label="Users" />
-                </Tabs>
-            </AppBar>
-            <br />
-            <br />
-            <br />
+            <CustomAppBar>
+                <Container className="app-bar-container">
+                    <Button
+                        variant="contained"
+                        color={state.tab === 0 ? 'primary' : 'default'}
+                        onClick={() => setTab(0)}
+                        startIcon={<ReceiptIcon />}
+                    >
+                        Orders
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color={state.tab === 1 ? 'primary' : 'default'}
+                        onClick={() => setTab(1)}
+                        startIcon={<StorageIcon />}
+                    >
+                        Products
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color={state.tab === 2 ? 'primary' : 'default'}
+                        onClick={() => setTab(2)}
+                        startIcon={<PeopleIcon />}
+                    >
+                        Users
+                    </Button>
+                </Container>
+            </CustomAppBar>
             {state.tab === 0 ? (
                 <Container>
                     <Typography variant="h3" component="h3" gutterBottom>
