@@ -8,13 +8,10 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    InputBase,
-    Paper,
     ThemeProvider,
     Typography,
 } from '@material-ui/core';
 import { createTheme } from '@material-ui/core/styles';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
@@ -337,11 +334,11 @@ export const Home = () => {
                             Order Created
                         </DialogTitle>
                         <DialogContent>
+                            <DialogContentText style={{ marginBottom: 0 }}>
+                                Order {state.orderCreated} was created.
+                            </DialogContentText>
                             <DialogContentText>
-                                <div>Order {state.orderCreated} was created.</div>
-                                <div>
-                                    <b>Remember to extract the receipt.</b>
-                                </div>
+                                <b>Remember to extract the receipt.</b>
                             </DialogContentText>
                         </DialogContent>
                         <DialogActions>
