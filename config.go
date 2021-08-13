@@ -11,6 +11,7 @@ type AdminUser struct {
 }
 
 type Printer struct {
+	ID       int
 	Name     string
 	Server   string
 	Port     int
@@ -21,7 +22,7 @@ type Printer struct {
 type Config struct {
 	Server   ServerConfig
 	Admin    AdminUser
-	Printer  Printer
+	Printers []Printer
 	Secret   string
 	Key      string
 	Name     string

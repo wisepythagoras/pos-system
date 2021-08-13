@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/hex"
+	"errors"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -38,10 +39,15 @@ type Receipt struct {
 
 // ConnectToPrinter connects to the printer server.
 func (r *Receipt) ConnectToPrinter() {
-	server := r.Config.Printer.Server
-	port := r.Config.Printer.Port
-	username := r.Config.Printer.Username
-	password := r.Config.Printer.Password
+	if len(r.Config.Printers) == 0 {
+		return
+	}
+
+	// TODO: In order to support multiple printers, this should take a specific index.
+	server := r.Config.Printers[0].Server
+	port := r.Config.Printers[0].Port
+	username := r.Config.Printers[0].Username
+	password := r.Config.Printers[0].Password
 
 	// Connect to the printer server.
 	r.Client = ipp.NewIPPClient(server, port, username, password, true)
@@ -149,6 +155,12 @@ func (r *Receipt) Print() (int, error) {
 		return 99, err
 	}
 
+	if len(r.Config.Printers) == 0 {
+		return -1, errors.New("No printers are set up")
+	}
+
+	printer := r.Config.Printers[0].Name
+
 	// Finally, call the printer to print the receipt.
-	return r.Client.PrintFile(output, r.Config.Printer.Name, map[string]interface{}{})
+	return r.Client.PrintFile(output, printer, map[string]interface{}{})
 }
