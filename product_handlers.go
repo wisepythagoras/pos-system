@@ -343,6 +343,4 @@ func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 			return false
 		}
 	})
-
-	fmt.Println("here 1")
 }
