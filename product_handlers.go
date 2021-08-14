@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/asaskevich/EventBus"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"gorm.io/gorm"
@@ -47,6 +48,7 @@ type ProductHandlers struct {
 	DB        *gorm.DB
 	wsUpdates []wsMessage
 	wsClients map[string]*websocket.Conn
+	bus       EventBus.Bus
 }
 
 // getProductIDFromParams parses the product id from the param string.
@@ -202,11 +204,14 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	productJSON := ProductJSON{}
 	productJSON.SetFromProductModel(&product)
 
-	ph.wsUpdates = append(ph.wsUpdates, wsMessage{
+	update := wsMessage{
 		ID:          product.ID,
 		Product:     productJSON,
 		MessageDate: time.Now(),
-	})
+	}
+
+	ph.wsUpdates = append(ph.wsUpdates, update)
+	ph.bus.Publish("product_updates", update)
 
 	response.Success = true
 	c.JSON(http.StatusOK, response)
@@ -244,11 +249,14 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	productJSON := ProductJSON{}
 	productJSON.SetFromProductModel(&product)
 
-	ph.wsUpdates = append(ph.wsUpdates, wsMessage{
+	update := wsMessage{
 		ID:          product.ID,
 		Product:     productJSON,
 		MessageDate: time.Now(),
-	})
+	}
+
+	ph.wsUpdates = append(ph.wsUpdates, update)
+	ph.bus.Publish("product_updates", update)
 
 	response.Success = true
 	c.JSON(http.StatusOK, response)
@@ -257,6 +265,10 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 // StartWSHandler starts the websocket client handler.
 func (ph *ProductHandlers) StartWSHandler() {
 	ph.wsClients = make(map[string]*websocket.Conn)
+	ph.bus = EventBus.New()
+
+	// TODO: Maybe all this should be deleted and the app should rely on the event bus, instead
+	// of this code that I put together (which is probably error-prone).
 
 	go func() {
 		for {
@@ -309,26 +321,28 @@ func (ph *ProductHandlers) ProductUpdateWS(c *gin.Context) {
 // });
 func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 	streamUpdates := make(chan wsMessage)
+	// defer close(streamUpdates)
 
-	// TODO: This is an experimental streaming API endpoint. This will result in double messages
-	// being sent. Figure this out.
 	go func() {
-		for {
-			updates := ph.wsUpdates
-
-			for _, v := range updates {
-				streamUpdates <- v
+		ph.bus.Subscribe("product_updates", func(u wsMessage) {
+			select {
+			case streamUpdates <- u:
+				return
+			default:
+				streamUpdates = make(chan wsMessage)
 			}
-
-			time.Sleep(time.Millisecond * 250)
-		}
+		})
 	}()
 
 	c.Stream(func(w io.Writer) bool {
 		if msg, ok := <-streamUpdates; ok {
-			c.SSEvent("message", msg)
+			c.SSEvent("message", msg.Product)
+			return true
+		} else {
+			fmt.Println("Something happened here")
+			return false
 		}
-
-		return true
 	})
+
+	fmt.Println("here 1")
 }

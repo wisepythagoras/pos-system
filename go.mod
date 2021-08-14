@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1 // indirect
 	github.com/armon/consul-api v0.0.0-20180202201655-eb2c6b5be1b6 // indirect
+	github.com/asaskevich/EventBus v0.0.0-20200907212545-49d423059eef // indirect
 	github.com/coreos/etcd v3.3.10+incompatible // indirect
 	github.com/coreos/go-etcd v2.0.0+incompatible // indirect
 	github.com/gin-contrib/sessions v0.0.3 // indirect
