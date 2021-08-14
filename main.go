@@ -155,7 +155,8 @@ func main() {
 	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
 
 	// The websocket endpoint for product updates.
-	router.GET("/api/products/ws", productHandlers.ProductUpdateStream)
+	router.GET("/api/products/ws", productHandlers.ProductUpdateWS)
+	router.GET("/api/products/stream", productHandlers.ProductUpdateStream)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -283,8 +284,8 @@ func (ph *ProductHandlers) StartWSHandler() {
 	}()
 }
 
-// ProductUpdateStream handles web socket connections.
-func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
+// ProductUpdateWS handles web socket connections.
+func (ph *ProductHandlers) ProductUpdateWS(c *gin.Context) {
 	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
 	ph.wsClients[conn.RemoteAddr().String()] = conn
 
@@ -298,5 +299,36 @@ func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 		delete(ph.wsClients, conn.RemoteAddr().String())
 
 		return nil
+	})
+}
+
+// ProductUpdateStream handles the streaming endpoint connections.
+// const stream = new EventSource("/api/products/stream");
+// stream.addEventListener("message", (e) => {
+//     console.log(e.data);
+// });
+func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
+	streamUpdates := make(chan wsMessage)
+
+	// TODO: This is an experimental streaming API endpoint. This will result in double messages
+	// being sent. Figure this out.
+	go func() {
+		for {
+			updates := ph.wsUpdates
+
+			for _, v := range updates {
+				streamUpdates <- v
+			}
+
+			time.Sleep(time.Millisecond * 250)
+		}
+	}()
+
+	c.Stream(func(w io.Writer) bool {
+		if msg, ok := <-streamUpdates; ok {
+			c.SSEvent("message", msg)
+		}
+
+		return true
 	})
 }
