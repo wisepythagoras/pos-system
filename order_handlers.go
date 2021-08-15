@@ -591,6 +591,7 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 	}
 }
 
+// PrintReceipt handles requests for printing a receipt for a specific order.
 func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 	response := &ApiResponse{}
 	orderId, err := oh.getOrderIDFromParams(c)
