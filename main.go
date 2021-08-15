@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/asaskevich/EventBus"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
@@ -87,10 +88,16 @@ func main() {
 		return
 	}
 
+	bus := EventBus.New()
+
 	// Instanciate all of the route handlers here.
-	productHandlers := &ProductHandlers{DB: db}
+	productHandlers := &ProductHandlers{
+		DB:  db,
+		Bus: bus,
+	}
 	orderHandlers := &OrderHandlers{
 		DB:     db,
+		Bus:    bus,
 		Config: config,
 	}
 	userHandlers := &UserHandlers{
@@ -142,6 +149,7 @@ func main() {
 	router.GET("/api/orders/earnings/:day", authHandler(true, adminAuthToken), orderHandlers.EarningsPerDay)
 	router.GET("/api/orders/totals/export", authHandler(true, adminAuthToken), orderHandlers.ExportTotalEarnings)
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
+	router.GET("/api/orders/stream", authHandler(true, adminAuthToken), orderHandlers.OrderStream)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.PrintOrder)
 	router.GET("/api/order/:orderId/receipt", authHandler(false, adminAuthToken), orderHandlers.PrintReceipt)

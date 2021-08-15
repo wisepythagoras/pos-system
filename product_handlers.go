@@ -48,7 +48,7 @@ type ProductHandlers struct {
 	DB        *gorm.DB
 	wsUpdates []wsMessage
 	wsClients map[string]*websocket.Conn
-	bus       EventBus.Bus
+	Bus       EventBus.Bus
 }
 
 // getProductIDFromParams parses the product id from the param string.
@@ -211,7 +211,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	}
 
 	ph.wsUpdates = append(ph.wsUpdates, update)
-	ph.bus.Publish("product_updates", update)
+	ph.Bus.Publish("product_updates", update)
 
 	response.Success = true
 	c.JSON(http.StatusOK, response)
@@ -256,7 +256,7 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	}
 
 	ph.wsUpdates = append(ph.wsUpdates, update)
-	ph.bus.Publish("product_updates", update)
+	ph.Bus.Publish("product_updates", update)
 
 	response.Success = true
 	c.JSON(http.StatusOK, response)
@@ -265,7 +265,6 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 // StartWSHandler starts the websocket client handler.
 func (ph *ProductHandlers) StartWSHandler() {
 	ph.wsClients = make(map[string]*websocket.Conn)
-	ph.bus = EventBus.New()
 
 	// TODO: Maybe all this should be deleted and the app should rely on the event bus, instead
 	// of this code that I put together (which is probably error-prone).
@@ -324,7 +323,7 @@ func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 	// defer close(streamUpdates)
 
 	go func() {
-		ph.bus.Subscribe("product_updates", func(u wsMessage) {
+		ph.Bus.Subscribe("product_updates", func(u wsMessage) {
 			select {
 			case streamUpdates <- u:
 				return

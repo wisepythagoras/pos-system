@@ -4,12 +4,15 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"path/filepath"
 	"strconv"
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize"
+	"github.com/asaskevich/EventBus"
 	"github.com/gin-gonic/gin"
 	"github.com/skip2/go-qrcode"
 	"github.com/wisepythagoras/pos-system/crypto"
@@ -19,6 +22,7 @@ import (
 type OrderHandlers struct {
 	DB     *gorm.DB
 	Config *Config
+	Bus    EventBus.Bus
 }
 
 // getOrderIDFromParams parses the order id from the param string.
@@ -156,6 +160,8 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 
 	response.Success = true
 	response.Data = orderJSON
+
+	oh.Bus.Publish("order_updates", orderJSON)
 
 	c.JSON(http.StatusOK, response)
 }
@@ -628,4 +634,34 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// OrderStream handles the streaming endpoint connections.
+// const stream = new EventSource("/api/orders/stream");
+// stream.addEventListener("message", (e) => {
+//     console.log(e.data);
+// });
+func (oh *OrderHandlers) OrderStream(c *gin.Context) {
+	streamUpdates := make(chan *OrderJSON)
+
+	go func() {
+		oh.Bus.Subscribe("order_updates", func(u *OrderJSON) {
+			select {
+			case streamUpdates <- u:
+				return
+			default:
+				streamUpdates = make(chan *OrderJSON)
+			}
+		})
+	}()
+
+	c.Stream(func(w io.Writer) bool {
+		if msg, ok := <-streamUpdates; ok {
+			c.SSEvent("message", msg)
+			return true
+		} else {
+			fmt.Println("Something happened here")
+			return false
+		}
+	})
 }
