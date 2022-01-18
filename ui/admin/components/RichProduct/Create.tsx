@@ -93,6 +93,7 @@ export const CreateRichProduct = (props: ICreateRichProductProps) => {
                 <Chip
                     icon={<AddIcon />}
                     label="Create"
+                    // @ts-ignore
                     onClick={handleSubmit(onSubmit)}
                 />
             </TableCell>

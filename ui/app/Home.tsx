@@ -11,7 +11,8 @@ import {
     ThemeProvider,
     Typography,
 } from '@material-ui/core';
-import { createTheme } from '@material-ui/core/styles';
+// import { createTheme } from '@material-ui/core/styles';
+import { createTheme, ThemeOptions } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
@@ -119,6 +120,18 @@ export interface IHomeState {
     cashPaymentError: string | null;
 };
 
+export const themeOptions: ThemeOptions = {
+    palette: {
+        type: 'dark',
+        primary: {
+            main: '#383c6b',
+        },
+        secondary: {
+            main: '#f50057',
+        },
+    },
+};
+
 /**
  * Renders the home route. There should only be one route.
  */
@@ -156,11 +169,7 @@ export const Home = () => {
         }
     }
 
-    const darkTheme = createTheme({
-        palette: {
-            type: 'dark',
-        },
-    });
+    const darkTheme = createTheme(themeOptions);
 
     return (
         <ThemeProvider theme={darkTheme}>
