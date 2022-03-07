@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/wisepythagoras/pos-system#readme",
   "dependencies": {
+    "@chakra-ui/react": "^1.8.6",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@material-ui/core": "^4.12.3",
@@ -32,6 +33,7 @@
     "@types/react-dom": "^17.0.11",
     "@types/styled-components": "^5.1.20",
     "dayjs": "^1.10.7",
+    "framer-motion": "^6.2.8",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

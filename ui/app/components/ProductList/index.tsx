@@ -72,7 +72,7 @@ const ProductCardList = styled.div`
         &.soldout > div {
             opacity: 0.8;
 
-            & > div > h2 {
+            & > h3 {
                 text-decoration: line-through;
             }
         }
@@ -153,7 +153,7 @@ export const ProductList = (props: IProductListProps) => {
                             }}
                             className={classNames.join(' ')}
                         >
-                            <ProductCard product={product} />
+                            <ProductCard product={product} type={product.type} />
                         </div>
                     );
                 })}
