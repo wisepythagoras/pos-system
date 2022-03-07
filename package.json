@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/wisepythagoras/pos-system#readme",
   "dependencies": {
+    "@chakra-ui/icons": "^1.1.7",
     "@chakra-ui/react": "^1.8.6",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",

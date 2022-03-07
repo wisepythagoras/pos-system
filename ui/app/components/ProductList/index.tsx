@@ -1,8 +1,14 @@
 import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
-import { IconButton, InputBase, Paper } from '@material-ui/core';
-import ClearIcon from '@material-ui/icons/Clear';
-import SearchIcon from '@material-ui/icons/Search';
+import {
+    Box,
+    CloseButton,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+} from '@chakra-ui/react';
+import { Search2Icon } from '@chakra-ui/icons';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
 
@@ -99,39 +105,39 @@ export const ProductList = (props: IProductListProps) => {
     return (
         <div>
             <SearchField>
-                <Paper style={{
-                    display: 'flex',
-                    height: '48px',
-                }}>
-                    <div style={{ padding: '12px', paddingRight: 0 }}>
-                        <SearchIcon />
-                    </div>
-                    <InputBase
-                        placeholder="Search"
-                        style={{
-                            paddingLeft: '15px',
-                            flex: 1,
-                        }}
-                        inputRef={searchInputRef}
-                        value={search || ''}
-                        onChange={(e) => {
-                            setSearch(e.target.value);
-                        }}
-                    />
-                    {!!search && !!search.length ? (
-                        <IconButton
-                            onClick={() => {
-                                setSearch(null);
+                <Box>
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            children={<Search2Icon color="gray.300" />}
+                        />
+                        <Input
+                            placeholder="Search"
+                            // @ts-ignore
+                            ref={searchInputRef}
+                            value={search || ''}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                            }}
+                            bg="gray.800"
+                        />
+                        {!!search && !!search.length ? (
+                            <InputRightElement
+                                children={(
+                                    <CloseButton
+                                        onClick={() => {
+                                            setSearch(null);
 
-                                if (!!searchInputRef && !!searchInputRef.current) {
-                                    searchInputRef.current.value = '';
-                                }
-                            }} 
-                        >
-                            <ClearIcon />
-                        </IconButton>
-                    ) : null}
-                </Paper>
+                                            if (!!searchInputRef && !!searchInputRef.current) {
+                                                searchInputRef.current.value = '';
+                                            }
+                                        }} 
+                                    />
+                                )}
+                            />
+                        ) : null}
+                    </InputGroup>
+                </Box>
             </SearchField>
             <ProductCardList>
                 {filteredProducts.map((product, i) => {

@@ -12,7 +12,7 @@ import {
     Typography,
     // Deprecated. Don't use.
 } from '@material-ui/core';
-import { ChakraProvider } from '@chakra-ui/react';
+import { extendTheme, ChakraProvider } from '@chakra-ui/react';
 import { createTheme, ThemeOptions } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
@@ -171,9 +171,15 @@ export const Home = () => {
     }
 
     const darkTheme = createTheme(themeOptions);
+    const customTheme = extendTheme({
+        config: {
+            initialColorMode: 'dark',
+            useSystemColorMode: false,
+        },
+    });
 
     return (
-        <ChakraProvider>
+        <ChakraProvider theme={customTheme}>
         <ThemeProvider theme={darkTheme}>
             <DisplayGrid>
                 <div className="product-list">
