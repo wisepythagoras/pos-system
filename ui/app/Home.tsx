@@ -1,19 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import {
+import { 
+    extendTheme,
     Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    ThemeProvider,
-    Typography,
-    // Deprecated. Don't use.
-} from '@material-ui/core';
-import { extendTheme, ChakraProvider } from '@chakra-ui/react';
-import { createTheme, ThemeOptions } from '@material-ui/core';
+    Center,
+    ChakraProvider,
+    Heading,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalCloseButton,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Spinner,
+} from '@chakra-ui/react';
 import { ProductT, ProductAggregateT } from './types';
 import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
@@ -121,18 +122,6 @@ export interface IHomeState {
     cashPaymentError: string | null;
 };
 
-export const themeOptions: ThemeOptions = {
-    palette: {
-        type: 'dark',
-        primary: {
-            main: '#4a96f7',
-        },
-        secondary: {
-            main: '#f50057',
-        },
-    },
-};
-
 /**
  * Renders the home route. There should only be one route.
  */
@@ -170,7 +159,6 @@ export const Home = () => {
         }
     }
 
-    const darkTheme = createTheme(themeOptions);
     const customTheme = extendTheme({
         config: {
             initialColorMode: 'dark',
@@ -180,24 +168,12 @@ export const Home = () => {
 
     return (
         <ChakraProvider theme={customTheme}>
-        <ThemeProvider theme={darkTheme}>
             <DisplayGrid>
                 <div className="product-list">
                     {loading ? (
-                        <div style={{ textAlign: 'center' }}>
-                            <CircularProgress
-                                variant="indeterminate"
-                                disableShrink
-                                style={{
-                                    strokeLinecap: 'round',
-                                    color: '#1a90ff',
-                                    animationDuration: '550ms',
-                                    marginTop: '20px',
-                                }}
-                                size={40}
-                                thickness={4}
-                            />
-                        </div>
+                        <Center height="100vh">
+                            <Spinner size="xl" color='white' />
+                        </Center>
                     ) : null}
                     <ProductList
                         products={products}
@@ -214,9 +190,9 @@ export const Home = () => {
                         {/* Show this label only when no products are selected. */}
                         {aggregates.length === 0 ? (
                             <div className="hint">
-                                <Typography color="textSecondary" component="h3">
+                                <Heading size="md" as="h3">
                                     To create a new order select products from the left.
-                                </Typography>
+                                </Heading>
                             </div>
                         ) : null}
 
@@ -246,49 +222,18 @@ export const Home = () => {
                             );
                         })}
                     </TotalProductList>
-                    {/* <div>
-                        <Paper style={{
-                            display: 'flex',
-                            height: '50px',
-                        }}>
-                            <div style={{ padding: '12px', paddingRight: 0 }}>
-                                <AttachMoneyIcon />
-                            </div>
-                            <InputBase
-                                error={!!state.cashPaymentError}
-                                value={state.cashPayment}
-                                placeholder="Enter Cash In Amount"
-                                style={{
-                                    paddingLeft: '15px',
-                                    flex: 1,
-                                }}
-                                onChange={(e) => {
-                                    let cashPaymentError = null;
-
-                                    if (isNaN(parseFloat(e.target.value))) {
-                                        cashPaymentError = 'Invalid cash amount';
-                                    }
-
-                                    setState({
-                                        ...state,
-                                        cashPayment: e.target.value,
-                                        cashPaymentError,
-                                    });
-                                }}
-                            />
-                        </Paper>
-                    </div> */}
                     <div>
-                        <Typography variant="h1" component="h2" gutterBottom>
+                        <Heading as="h2" size="2xl" marginBottom={10}>
                             ${total.toFixed(2)}
-                        </Typography>
+                        </Heading>
                     </div>
                     <div>
                         <Button
-                            variant="contained"
-                            color="primary"
+                            variant="solid"
+                            backgroundColor="#246a24"
+                            color="#fafafa"
                             size="large"
-                            disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                            isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
                             onClick={async () => {
                                 const productIds = state.selectedProducts.map((p) => p.id);
                                 const order = await createOrder(productIds);
@@ -315,26 +260,17 @@ export const Home = () => {
                                     cashPayment: '',
                                 });
                             }}
+                            isLoading={state.processing}
+                            spinner={<Spinner size="lg" color='white' />}
                         >
-                            {state.processing ? (
-                                <CircularProgress
-                                    variant="indeterminate"
-                                    disableShrink
-                                    style={{
-                                        strokeLinecap: 'round',
-                                        color: '#fff',
-                                        animationDuration: '550ms',
-                                    }}
-                                    size={35}
-                                    thickness={4}
-                                />
-                            ) : 'Checkout'}
+                            Checkout
                         </Button>
                         <Button
-                            variant="contained"
-                            color="secondary"
+                            variant="solid"
+                            backgroundColor="#771919"
+                            color="#fafafa"
                             size="large"
-                            disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                            isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
                             onClick={() => {
                                 setState({
                                     ...state,
@@ -346,30 +282,45 @@ export const Home = () => {
                         </Button>
                     </div>
 
-                    <Dialog open={!!state.orderCreated}>
-                        <DialogTitle>
-                            Order Created
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText style={{ marginBottom: 0 }}>
-                                Order {state.orderCreated} was created.
-                            </DialogContentText>
-                            <DialogContentText>
-                                <b>Remember to extract the receipt.</b>
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button color="secondary" onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}>
-                                Retry Receipt
-                            </Button>
-                            <Button color="primary" onClick={() => setState({ ...state, orderCreated: 0 })}>
-                                Ok
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
+
+                    <Modal
+                        isOpen={!!state.orderCreated}
+                        onClose={() => setState({ ...state, orderCreated: 0 })}
+                        isCentered
+                    >
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>
+                                Order Created
+                            </ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <div>
+                                    Order {state.orderCreated} was created.
+                                </div>
+                                <div>
+                                    <b>Remember to extract the receipt.</b>
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
+                                    colorScheme="ghost"
+                                    onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}
+                                >
+                                    Retry Receipt
+                                </Button>
+                                <Button
+                                    colorScheme="blue"
+                                    mr={3}
+                                    onClick={() => setState({ ...state, orderCreated: 0 })}
+                                >
+                                    Ok
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
                 </div>
             </DisplayGrid>
-        </ThemeProvider>
         </ChakraProvider>
     );
 };
