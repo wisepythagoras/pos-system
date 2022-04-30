@@ -225,11 +225,19 @@ export const ProductList = (props: IProductListProps) => {
                         <Box>
                             {printers.map((p, i) => {
                                 return (
-                                    <List spacing={3} verticalAlign="middle" key={`printer-${i}`}>
-                                        <ListItem onClick={() => setSelectedPrinter(p)}>
+                                    <List spacing={3} key={`printer-${i}`}>
+                                        <ListItem
+                                            onClick={() => setSelectedPrinter(p)}
+                                            cursor="pointer"
+                                            padding="5px"
+                                            borderRadius="5px"
+                                            _hover={{
+                                                background: 'rgba(255, 255, 255, 0.1)',
+                                            }}
+                                        >
                                             {p.id === selectedPrinter?.id ?
-                                                <ListIcon as={CheckCircleIcon} color="green.500" /> :
-                                                <ListIcon as={MinusIcon} color="gray.500" />
+                                                <ListIcon as={CheckCircleIcon} color="green.500" verticalAlign="middle" /> :
+                                                <ListIcon as={MinusIcon} color="gray.500" verticalAlign="middle" />
                                             }
                                             {p.name}
                                         </ListItem>
