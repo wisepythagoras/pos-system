@@ -31,26 +31,43 @@ type ReceiptTmplData struct {
 
 // Receipt describes the receipt object. It should contain an order and the config.
 type Receipt struct {
-	Order  *OrderJSON
-	Total  float64
-	Config *Config
-	Client *ipp.IPPClient
+	Order     *OrderJSON
+	Total     float64
+	Config    *Config
+	Client    *ipp.IPPClient
+	printerId int
 }
 
 // ConnectToPrinter connects to the printer server.
-func (r *Receipt) ConnectToPrinter() {
+func (r *Receipt) ConnectToPrinter() error {
 	if len(r.Config.Printers) == 0 {
-		return
+		return errors.New("No printers were specified in the config")
+	}
+
+	printerId := r.printerId
+	printerIdx := 0
+
+	if printerId <= 0 {
+		printerId = 1
+	}
+
+	for i, p := range r.Config.Printers {
+		if p.ID == printerId {
+			printerIdx = i
+			break
+		}
 	}
 
 	// TODO: In order to support multiple printers, this should take a specific index.
-	server := r.Config.Printers[0].Server
-	port := r.Config.Printers[0].Port
-	username := r.Config.Printers[0].Username
-	password := r.Config.Printers[0].Password
+	server := r.Config.Printers[printerIdx].Server
+	port := r.Config.Printers[printerIdx].Port
+	username := r.Config.Printers[printerIdx].Username
+	password := r.Config.Printers[printerIdx].Password
 
 	// Connect to the printer server.
 	r.Client = ipp.NewIPPClient(server, port, username, password, true)
+
+	return nil
 }
 
 // Print prints the receipt.

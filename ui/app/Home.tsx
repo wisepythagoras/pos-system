@@ -16,9 +16,10 @@ import {
     Spinner,
 } from '@chakra-ui/react';
 import { ProductT, ProductAggregateT } from './types';
-import { useGetProducts, useCreateOrder } from './hooks';
+import { useGetProducts, useCreateOrder, PrinterT } from './hooks';
 import { ProductList } from './components/ProductList';
 import { SmallProductCard } from './components/SmallProductCard';
+import { useLocalStorage } from 'react-use';
 
 const DisplayGrid = styled.div`
     display: grid;
@@ -136,6 +137,8 @@ export const Home = () => {
     const { loading, products } = useGetProducts();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
+    const [selectedPrinter] = useLocalStorage<PrinterT>('printer');
+    const printerId = selectedPrinter ? selectedPrinter.id : 1;
 
     useEffect(() => {
         lastSelectedProduct.current?.scrollIntoView();
@@ -248,7 +251,7 @@ export const Home = () => {
                                 }
 
                                 // Now print the order's receipt.
-                                await fetch(`/api/order/${order.id}/receipt`);
+                                await fetch(`/api/order/${order.id}/receipt/${printerId}`);
 
                                 // Since the order was created, empty the list of selected products, open up the
                                 // receipt dialog, and set processing to false.
@@ -304,7 +307,7 @@ export const Home = () => {
                             <ModalFooter>
                                 <Button
                                     colorScheme="ghost"
-                                    onClick={() => fetch(`/api/order/${state.orderCreated}/receipt`)}
+                                    onClick={() => fetch(`/api/order/${state.orderCreated}/receipt/${printerId}`)}
                                 >
                                     Retry Receipt
                                 </Button>

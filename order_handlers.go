@@ -25,12 +25,12 @@ type OrderHandlers struct {
 	Bus    EventBus.Bus
 }
 
-// getOrderIDFromParams parses the order id from the param string.
-func (oh *OrderHandlers) getOrderIDFromParams(c *gin.Context) (int, error) {
-	orderIdStr := c.Param("orderId")
+// getIDFromParams parses the order id from the param string.
+func (oh *OrderHandlers) getIDFromParams(name string, c *gin.Context) (int, error) {
+	orderIdStr := c.Param(name)
 
 	if len(orderIdStr) == 0 {
-		return 0, errors.New("Invalid or no order id")
+		return 0, errors.New("Invalid numeric id")
 	}
 
 	orderId, err := strconv.Atoi(orderIdStr)
@@ -166,10 +166,10 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// PrintOrder is supposed to return the order and also print the receipt for it.
-func (oh *OrderHandlers) PrintOrder(c *gin.Context) {
+// FetchOrder is supposed to fetch and return the order with the giver id.
+func (oh *OrderHandlers) FetchOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getOrderIDFromParams(c)
+	orderId, err := oh.getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -409,7 +409,7 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 // ToggleOrder toggles the cancelled field of an order.
 func (oh *OrderHandlers) ToggleOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getOrderIDFromParams(c)
+	orderId, err := oh.getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -565,7 +565,7 @@ func (oh *OrderHandlers) PublicOrder(c *gin.Context) {
 
 // OrderQRCode returns the QR code for a specific order.
 func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
-	orderId, err := oh.getOrderIDFromParams(c)
+	orderId, err := oh.getIDFromParams("orderId", c)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -600,13 +600,19 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 // PrintReceipt handles requests for printing a receipt for a specific order.
 func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getOrderIDFromParams(c)
+	orderId, err := oh.getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
 		response.Error = err.Error()
 		c.JSON(http.StatusOK, response)
 		return
+	}
+
+	printerId, err := oh.getIDFromParams("printerId", c)
+
+	if err != nil {
+		printerId = 1
 	}
 
 	orderJSON, totalCost, err := oh.GetOrderByID(orderId)
@@ -619,9 +625,10 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 
 	// Create a new receipt.
 	receipt := &Receipt{
-		Order:  orderJSON,
-		Total:  totalCost,
-		Config: oh.Config,
+		Order:     orderJSON,
+		Total:     totalCost,
+		Config:    oh.Config,
+		printerId: printerId,
 	}
 	receipt.ConnectToPrinter()
 	_, err = receipt.Print()
