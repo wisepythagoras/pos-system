@@ -223,9 +223,9 @@ export const ProductList = (props: IProductListProps) => {
                     <ModalCloseButton />
                     <ModalBody>
                         <Box>
-                            {printers.map((p) => {
+                            {printers.map((p, i) => {
                                 return (
-                                    <List spacing={3} verticalAlign="middle">
+                                    <List spacing={3} verticalAlign="middle" key={`printer-${i}`}>
                                         <ListItem onClick={() => setSelectedPrinter(p)}>
                                             {p.id === selectedPrinter?.id ?
                                                 <ListIcon as={CheckCircleIcon} color="green.500" /> :
