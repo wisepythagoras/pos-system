@@ -163,7 +163,10 @@ func main() {
 	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
 
 	router.GET("/api/printers", func(c *gin.Context) {
-		c.JSON(http.StatusOK, config.Printers)
+		c.JSON(http.StatusOK, &ApiResponse{
+			Data:    config.Printers,
+			Success: true,
+		})
 	})
 
 	// The websocket endpoint for product updates.

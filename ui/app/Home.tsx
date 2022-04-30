@@ -50,8 +50,8 @@ const DisplayGrid = styled.div`
 
         & > div:nth-child(2) {
             text-align: center;
-            border-top: 1px solid #111;
-            background-color: #1a1a1a;
+            border-top: 1px solid #11111160;
+            background-color: #1a1a1a60;
             color: #fff;
             display: flex;
             -moz-box-align: center;
@@ -281,7 +281,6 @@ export const Home = () => {
                             Clear
                         </Button>
                     </div>
-
 
                     <Modal
                         isOpen={!!state.orderCreated}

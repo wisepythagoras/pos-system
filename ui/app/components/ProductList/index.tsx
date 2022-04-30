@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import {
     Box,
@@ -8,10 +8,23 @@ import {
     InputGroup,
     InputLeftElement,
     InputRightElement,
+    Modal,
+    ModalBody,
+    ModalContent,
+    ModalCloseButton,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure,
+    List,
+    ListItem,
+    ListIcon,
 } from '@chakra-ui/react';
-import { Search2Icon, SettingsIcon } from '@chakra-ui/icons';
+import { CheckCircleIcon, MinusIcon, Search2Icon, SettingsIcon } from '@chakra-ui/icons';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
+import { useLocalStorage, useLockBodyScroll } from 'react-use';
+import { PrinterT, useGetPrinters } from '../../hooks';
 
 const SearchField = styled.div`
     width: calc(100% - 10px);
@@ -102,12 +115,36 @@ export interface IProductListProps {
  * @param props The props.
  */
 export const ProductList = (props: IProductListProps) => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { printers, getPrinters } = useGetPrinters();
+    const [
+        selectedPrinter,
+        setSelectedPrinter,
+        removeSelectedPrinter,
+    ] = useLocalStorage<PrinterT>('printer');
     const [search, setSearch] = useState<string | null>(null);
     const searchInputRef = useRef<HTMLInputElement>();
     const { products, onClick } = props;
     const filteredProducts = !!search && search.length > 0 ?
         products.filter((p) => p.name.toLowerCase().indexOf(search.toLowerCase()) >= 0) :
         products;
+    const productListRef = useRef<HTMLDivElement | null>(null);
+    const selectedPrinterRef = useRef<PrinterT>();
+
+    // Don't scroll the background if the modal is open.
+    useLockBodyScroll(isOpen, productListRef);
+
+    useEffect(() => {
+        selectedPrinterRef.current = selectedPrinter;
+    }, [selectedPrinter]);
+
+    const onPrinterModalClose = () => {
+        if (selectedPrinter?.id !== selectedPrinterRef.current?.id) {
+            setSelectedPrinter(selectedPrinterRef.current);
+        }
+
+        onClose();
+    };
 
     return (
         <div>
@@ -144,14 +181,14 @@ export const ProductList = (props: IProductListProps) => {
                                         }} 
                                     />
                                 ) : null}
-                                <Button size="sm" leftIcon={<SettingsIcon />}>
-                                    Printer
+                                <Button size="sm" leftIcon={<SettingsIcon />} onClick={onOpen}>
+                                    Printer (<b>{!selectedPrinter ? '-' : selectedPrinter.id}</b>)
                                 </Button>
                             </InputRightElement>
                     </InputGroup>
                 </Box>
             </SearchField>
-            <ProductCardList>
+            <ProductCardList ref={productListRef}>
                 {filteredProducts.map((product, i) => {
                     const classNames: string[] = [product.type];
 
@@ -176,6 +213,41 @@ export const ProductList = (props: IProductListProps) => {
                     );
                 })}
             </ProductCardList>
+
+            <Modal isOpen={isOpen} onClose={onPrinterModalClose} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>
+                        Select a printer
+                    </ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <Box>
+                            {printers.map((p) => {
+                                return (
+                                    <List spacing={3} verticalAlign="middle">
+                                        <ListItem onClick={() => setSelectedPrinter(p)}>
+                                            {p.id === selectedPrinter?.id ?
+                                                <ListIcon as={CheckCircleIcon} color="green.500" /> :
+                                                <ListIcon as={MinusIcon} color="gray.500" />
+                                            }
+                                            {p.name}
+                                        </ListItem>
+                                    </List>
+                                );
+                            })}
+                        </Box>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="ghost" onClick={onPrinterModalClose}>
+                            Cancel
+                        </Button>
+                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                            Ok
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </div>
     );
 };
