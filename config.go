@@ -11,12 +11,12 @@ type AdminUser struct {
 }
 
 type Printer struct {
-	ID       int
-	Name     string
-	Server   string
-	Port     int
-	Username string
-	Password string
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Server   string `json:"-"`
+	Port     int    `json:"-"`
+	Username string `json:"-"`
+	Password string `json:"-"`
 }
 
 type Config struct {

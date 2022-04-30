@@ -24,7 +24,7 @@ const DisplayGrid = styled.div`
     display: grid;
     grid-template-columns: auto 400px;
     height: 100vh;
-    background: #222;
+    background: var(--chakra-colors-gray-800);
 
     & > .product-list {
         padding: 10px;
@@ -45,7 +45,7 @@ const DisplayGrid = styled.div`
         & > div:first-child {
             padding: 10px;
             overflow: auto;
-            background-color: #222;
+            background-color: var(--chakra-colors-gray-800);
         }
 
         & > div:nth-child(2) {
@@ -190,7 +190,7 @@ export const Home = () => {
                         {/* Show this label only when no products are selected. */}
                         {aggregates.length === 0 ? (
                             <div className="hint">
-                                <Heading size="md" as="h3">
+                                <Heading size="md" as="h3" color="gray.700">
                                     To create a new order select products from the left.
                                 </Heading>
                             </div>

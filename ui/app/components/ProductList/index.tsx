@@ -2,13 +2,14 @@ import React, { useState, useRef } from 'react';
 import styled from 'styled-components';
 import {
     Box,
+    Button,
     CloseButton,
     Input,
     InputGroup,
     InputLeftElement,
     InputRightElement,
 } from '@chakra-ui/react';
-import { Search2Icon } from '@chakra-ui/icons';
+import { Search2Icon, SettingsIcon } from '@chakra-ui/icons';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
 
@@ -20,6 +21,12 @@ const SearchField = styled.div`
 
     & > div {
         width: 100%;
+
+        & .input-buttons {
+            & > button:not(:last-child) {
+                margin-right: 4px;
+            }
+        }
     }
 `;
 
@@ -119,11 +126,14 @@ export const ProductList = (props: IProductListProps) => {
                             onChange={(e) => {
                                 setSearch(e.target.value);
                             }}
-                            bg="gray.800"
+                            bg="gray.700"
                         />
-                        {!!search && !!search.length ? (
                             <InputRightElement
-                                children={(
+                                width="auto"
+                                className="input-buttons"
+                                marginRight="4px"
+                            >
+                                {!!search && !!search.length ? (
                                     <CloseButton
                                         onClick={() => {
                                             setSearch(null);
@@ -133,9 +143,11 @@ export const ProductList = (props: IProductListProps) => {
                                             }
                                         }} 
                                     />
-                                )}
-                            />
-                        ) : null}
+                                ) : null}
+                                <Button size="sm" leftIcon={<SettingsIcon />}>
+                                    Printer
+                                </Button>
+                            </InputRightElement>
                     </InputGroup>
                 </Box>
             </SearchField>

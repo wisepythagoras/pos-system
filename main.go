@@ -162,6 +162,10 @@ func main() {
 	router.PUT("/api/product/:productId", productHandlers.UpdateProduct)
 	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
 
+	router.GET("/api/printers", func(c *gin.Context) {
+		c.JSON(http.StatusOK, config.Printers)
+	})
+
 	// The websocket endpoint for product updates.
 	router.GET("/api/products/ws", productHandlers.ProductUpdateWS)
 	router.GET("/api/products/stream", productHandlers.ProductUpdateStream)
