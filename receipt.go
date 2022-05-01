@@ -167,7 +167,7 @@ func (r *Receipt) Print() (int, error) {
 	output := cwd + "/receipts/" + fileName + ".pdf"
 
 	// Now we want to convert the receipt to a PDF so that the printer can render it.
-	cmd := exec.Command("wkhtmltopdf", "--page-width", "60", "--page-height", "200", input, output)
+	cmd := exec.Command("wkhtmltopdf", "--page-width", "80", "--page-height", "200", input, output)
 	err = cmd.Start()
 
 	if err != nil {

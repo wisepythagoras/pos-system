@@ -4,13 +4,16 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
         <style>
             html, body {
-                font-size: 16px;
-                font-family: 'Times New Roman';
+                font-size: 20px;
+                font-family: 'Roboto', sans-serif;
                 margin: 0;
-                width: 255px;
-                max-width: 255px;
+                width: 300px;
+                max-width: 300px;
             }
 
             .header {
@@ -27,51 +30,50 @@
                 font-weight: 900;
             }
 
-            thead > tr {
-                border-bottom: 2px solid #222;
+            .product-list {
+                width: 100%;
             }
 
-            thead > tr,
-            tbody > tr,
-            thead th,
-            tbody td,
-            table {
-                border-top: 1px solid #222;
-                border-collapse: collapse;
+            .product-list > div {
+                width: 100%;
+                display: flex;
+                flex-direction: row;
             }
 
-            tbody > tr:last-child {
-                border-top: 2px solid #222;
-            }
-
-            thead > tr > th:not(:first-child) {
-                text-align: left;
-            }
-
-            tbody > tr:last-child {
-                font-weight: 900;
-            }
-
-            td:first-child,
-            th:first-child {
+            .product-list > div > div:first-child {
                 width: 40px;
-                max-width: 40px;
                 text-align: center;
             }
 
-            td:nth-child(2),
-            th:nth-child(2) {
-                width: 155px;
-                max-width: 155px;
+            .product-list > div {
+                padding: 5px 0;
+                border-bottom: 2px solid #000;
+            }
+
+            .product-list > div > div:nth-child(2) {
+                width: 185px;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
             }
 
-            td:last-child,
-            th:last-child {
+            .product-list > div > div:first-child {
                 width: 60px;
-                max-width: 60px;
+            }
+
+            .product-list > div:not(:first-child) > div:last-child {
+                text-align: right;
+            }
+
+            .product-list > div:last-child {
+                border-top: 3px solid #000;
+                font-weight: 700;
+            }
+
+            .product-list > div:first-child {
+                border-top: 2px solid #000;
+                border-bottom: 4px solid #000;
+                font-weight: 700;
             }
         </style>
     </head>
@@ -81,36 +83,32 @@
             <div>{{ .Address1 }}</div>
             <div>{{ .Address2 }}</div>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Product</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range .Products }}
-                <tr>
-                    <td>{{ .Quantity }}</td>
-                    <td>{{ .Name }}</td>
-                    <td>${{ printf "%.2f" .Price }}</td>
-                </tr>
-                {{ end }}
-                <tr>
-                    <td></td>
-                    <td>TOTAL</td>
-                    <td>${{ printf "%.2f" .Total }}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="product-list">
+            <div>
+                <div>#</div>
+                <div>Product</div>
+                <div>Price</div>
+            </div>
+            {{ range .Products }}
+            <div>
+                <div>{{ .Quantity }}</div>
+                <div>{{ .Name }}</div>
+                <div>${{ printf "%.2f" .Price }}</div>
+            </div>
+            {{ end }}
+            <div>
+                <div></div>
+                <div>TOTAL</div>
+                <div>${{ printf "%.2f" .Total }}</div>
+            </div>
+        </div>
         <div class="align-center">
             <img src="data:image/png;base64, {{ .Qrcode }}">
             <div>
                 Thank you for your order!
             </div>
             <div>
-                #{{ .Order.ID }} - {{ .DateString }}
+                <b>#{{ .Order.ID }}</b> - {{ .DateString }}
             </div>
         </div>
         <hr>
