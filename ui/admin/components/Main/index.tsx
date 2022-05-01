@@ -15,10 +15,14 @@ import {
     TextField,
     Typography,
 } from '@material-ui/core';
+import {
+    Tab,
+    TabList,
+    Tabs,
+    TabPanel,
+    TabPanels,
+} from '@chakra-ui/react';
 import Pagination from '@material-ui/lab/Pagination';
-import ReceiptIcon from '@material-ui/icons/Receipt';
-import StorageIcon from '@material-ui/icons/Storage';
-import PeopleIcon from '@material-ui/icons/People';
 import debounce from 'lodash/debounce';
 import { RichOrder } from '../RichOrder';
 import { RichProduct } from '../RichProduct';
@@ -142,194 +146,179 @@ export const Main = (props: IMainProps) => {
         setState({ ...state, tab });
     };
 
+    const ordersTab = (
+        <Container>
+            <Typography variant="h3" component="h3" gutterBottom>
+                Total Earnings: ${earnings.toFixed(2)}
+            </Typography>
+            <GridRowBox>
+                <EarningsCard day={0} amount={earningsPerDay[0]} />
+                <EarningsCard day={1} amount={earningsPerDay[1]} />
+                <EarningsCard day={2} amount={earningsPerDay[2]} />
+                <EarningsCard day={3} amount={earningsPerDay[3]} />
+            </GridRowBox>
+            <ControlContainer>
+                <TextField
+                    label="Search order id"
+                    onChange={onSearchChange}
+                    size="small"
+                    style={{
+                        width: '300px',
+                        backgroundColor: '#fff',
+                    }}
+                    variant="outlined"
+                />
+                <Divider className="divider" orientation="vertical" flexItem />
+                <Button onClick={() => exportTotals()} variant="contained" color="primary">
+                    Export Sales YTD
+                </Button>
+                <Button onClick={() => exportTotals(true)} variant="contained" color="primary">
+                    Export Sales Past Day
+                </Button>
+            </ControlContainer>
+            <div>
+                {!!error ? (
+                    <Typography variant="h4" component="h4">
+                        {error}
+                    </Typography>
+                ) : null}
+
+                {loading ? (
+                    <div style={{ textAlign: 'center' }}>
+                        <CircularProgress
+                            variant="indeterminate"
+                            disableShrink
+                            style={{
+                                strokeLinecap: 'round',
+                                color: '#1a90ff',
+                                animationDuration: '550ms',
+                                marginTop: '20px',
+                            }}
+                            size={40}
+                            thickness={4}
+                        />
+                    </div>
+                ) : (
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>Purchased Items</TableCell>
+                                    <TableCell></TableCell>
+                                    <TableCell>Total</TableCell>
+                                    <TableCell>Date Placed</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {orders.map((order, i) => <RichOrder key={i} order={order} />)}
+                            </TableBody>
+                        </Table>
+                        <PaginationContainer>
+                            <Pagination
+                                defaultPage={1}
+                                count={Math.round(lastOrderRef.current / 50)}
+                                page={state.page}
+                                onChange={(_, page) => {
+                                    setState({
+                                        ...state,
+                                        page,
+                                    });
+                                }}
+                                hideNextButton={orders.length < 50}
+                                size="large"
+                                showFirstButton
+                                showLastButton
+                            />
+                        </PaginationContainer>
+                    </TableContainer>
+                )}
+            </div>
+            <br />
+        </Container>
+    );
+
+    const productsTab = (
+        <Container>
+            <div>
+                {!!loadingProductsError ? (
+                    <Typography variant="h4" component="h4">
+                        {loadingProductsError}
+                    </Typography>
+                ) : null}
+
+                {/* This is where the create field will go. */}
+                {/* <Card>
+                    <TextField label="Name" />
+                </Card> */}
+
+                {loadingProducts && products.length === 0 ? (
+                    <div style={{ textAlign: 'center' }}>
+                        <CircularProgress
+                            variant="indeterminate"
+                            disableShrink
+                            style={{
+                                strokeLinecap: 'round',
+                                color: '#1a90ff',
+                                animationDuration: '550ms',
+                                marginTop: '20px',
+                            }}
+                            size={40}
+                            thickness={4}
+                        />
+                    </div>
+                ) : (
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>#</TableCell>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Type</TableCell>
+                                    <TableCell>Price</TableCell>
+                                    <TableCell>Sold Out</TableCell>
+                                    <TableCell>Dicontinued</TableCell>
+                                    <TableCell></TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <CreateRichProduct onSave={(_) => fetchProducts()} />
+                                {products.map((product, i) => {
+                                    return (
+                                        <RichProduct
+                                            key={i}
+                                            product={product}
+                                            onSave={(_) => fetchProducts()}
+                                        />
+                                    );
+                                })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                )}
+            </div>
+            <br />
+        </Container>
+    );
+
+    const usersTab = (
+        <div>Hello</div>
+    );
+
     return (
         <div>
-            <CustomAppBar>
-                <Container className="app-bar-container">
-                    <Button
-                        variant="contained"
-                        color={state.tab === 0 ? 'primary' : 'default'}
-                        onClick={() => setTab(0)}
-                        startIcon={<ReceiptIcon />}
-                    >
-                        Orders
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color={state.tab === 1 ? 'primary' : 'default'}
-                        onClick={() => setTab(1)}
-                        startIcon={<StorageIcon />}
-                    >
-                        Products
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color={state.tab === 2 ? 'primary' : 'default'}
-                        onClick={() => setTab(2)}
-                        startIcon={<PeopleIcon />}
-                    >
-                        Users
-                    </Button>
-                </Container>
-            </CustomAppBar>
-            {state.tab === 0 ? (
-                <Container>
-                    <Typography variant="h3" component="h3" gutterBottom>
-                        Total Earnings: ${earnings.toFixed(2)}
-                    </Typography>
-                    <GridRowBox>
-                        <EarningsCard day={0} amount={earningsPerDay[0]} />
-                        <EarningsCard day={1} amount={earningsPerDay[1]} />
-                        <EarningsCard day={2} amount={earningsPerDay[2]} />
-                        <EarningsCard day={3} amount={earningsPerDay[3]} />
-                    </GridRowBox>
-                    <ControlContainer>
-                        <TextField
-                            label="Search order id"
-                            onChange={onSearchChange}
-                            size="small"
-                            style={{
-                                width: '300px',
-                                backgroundColor: '#fff',
-                            }}
-                            variant="outlined"
-                        />
-                        <Divider className="divider" orientation="vertical" flexItem />
-                        <Button onClick={() => exportTotals()} variant="contained" color="primary">
-                            Export Sales YTD
-                        </Button>
-                        <Button onClick={() => exportTotals(true)} variant="contained" color="primary">
-                            Export Sales Past Day
-                        </Button>
-                    </ControlContainer>
-                    <div>
-                        {!!error ? (
-                            <Typography variant="h4" component="h4">
-                                {error}
-                            </Typography>
-                        ) : null}
-
-                        {loading ? (
-                            <div style={{ textAlign: 'center' }}>
-                                <CircularProgress
-                                    variant="indeterminate"
-                                    disableShrink
-                                    style={{
-                                        strokeLinecap: 'round',
-                                        color: '#1a90ff',
-                                        animationDuration: '550ms',
-                                        marginTop: '20px',
-                                    }}
-                                    size={40}
-                                    thickness={4}
-                                />
-                            </div>
-                        ) : (
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>#</TableCell>
-                                            <TableCell>Purchased Items</TableCell>
-                                            <TableCell></TableCell>
-                                            <TableCell>Total</TableCell>
-                                            <TableCell>Date Placed</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {orders.map((order, i) => <RichOrder key={i} order={order} />)}
-                                    </TableBody>
-                                </Table>
-                                <PaginationContainer>
-                                    <Pagination
-                                        defaultPage={1}
-                                        count={Math.round(lastOrderRef.current / 50)}
-                                        page={state.page}
-                                        onChange={(_, page) => {
-                                            setState({
-                                                ...state,
-                                                page,
-                                            });
-                                        }}
-                                        hideNextButton={orders.length < 50}
-                                        size="large"
-                                        showFirstButton
-                                        showLastButton
-                                    />
-                                </PaginationContainer>
-                            </TableContainer>
-                        )}
-                    </div>
-                    <br />
-                </Container>
-            ) : null}
-
-            {state.tab === 1 ? (
-                <Container>
-                    <div>
-                        {!!loadingProductsError ? (
-                            <Typography variant="h4" component="h4">
-                                {loadingProductsError}
-                            </Typography>
-                        ) : null}
-
-                        {/* This is where the create field will go. */}
-                        {/* <Card>
-                            <TextField label="Name" />
-                        </Card> */}
-
-                        {loadingProducts && products.length === 0 ? (
-                            <div style={{ textAlign: 'center' }}>
-                                <CircularProgress
-                                    variant="indeterminate"
-                                    disableShrink
-                                    style={{
-                                        strokeLinecap: 'round',
-                                        color: '#1a90ff',
-                                        animationDuration: '550ms',
-                                        marginTop: '20px',
-                                    }}
-                                    size={40}
-                                    thickness={4}
-                                />
-                            </div>
-                        ) : (
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>#</TableCell>
-                                            <TableCell>Name</TableCell>
-                                            <TableCell>Type</TableCell>
-                                            <TableCell>Price</TableCell>
-                                            <TableCell>Sold Out</TableCell>
-                                            <TableCell>Dicontinued</TableCell>
-                                            <TableCell></TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        <CreateRichProduct onSave={(_) => fetchProducts()} />
-                                        {products.map((product, i) => {
-                                            return (
-                                                <RichProduct
-                                                    key={i}
-                                                    product={product}
-                                                    onSave={(_) => fetchProducts()}
-                                                />
-                                            );
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        )}
-                    </div>
-                    <br />
-                </Container>
-            ) : null}
-
-            {state.tab === 2 ? (
-                <div>Hello</div>
-            ) : null}
+            <Tabs variant="enclosed-colored" isFitted>
+                <TabList mb="1em">
+                    <Tab>Orders</Tab>
+                    <Tab>Products</Tab>
+                    <Tab>Users</Tab>
+                </TabList>
+                <TabPanels>
+                    <TabPanel>{ordersTab}</TabPanel>
+                    <TabPanel>{productsTab}</TabPanel>
+                    <TabPanel>{usersTab}</TabPanel>
+                </TabPanels>
+            </Tabs>
         </div>
     );
 };
