@@ -108,6 +108,7 @@ const ProductCardList = styled.div`
 export interface IProductListProps {
     products: ProductT[];
     onClick: (product: ProductT) => void;
+    onPrinterChange?: (p: PrinterT | undefined) => void;
 };
 
 /**
@@ -250,7 +251,10 @@ export const ProductList = (props: IProductListProps) => {
                         <Button colorScheme="ghost" onClick={onPrinterModalClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="blue" mr={3} onClick={onClose}>
+                        <Button colorScheme="blue" mr={3} onClick={() => {
+                            props.onPrinterChange?.(selectedPrinter);
+                            onClose();
+                        }}>
                             Ok
                         </Button>
                     </ModalFooter>

@@ -38,18 +38,15 @@ type Receipt struct {
 	printerId int
 }
 
-// ConnectToPrinter connects to the printer server.
-func (r *Receipt) ConnectToPrinter() error {
-	if len(r.Config.Printers) == 0 {
-		return errors.New("No printers were specified in the config")
-	}
-
+// GetPrinter returns the index of the selected printer in the configuration array.
+func (r *Receipt) GetPrinter() int {
 	printerId := r.printerId
-	printerIdx := 0
 
 	if printerId <= 0 {
 		printerId = 1
 	}
+
+	printerIdx := 0
 
 	for i, p := range r.Config.Printers {
 		if p.ID == printerId {
@@ -57,6 +54,17 @@ func (r *Receipt) ConnectToPrinter() error {
 			break
 		}
 	}
+
+	return printerIdx
+}
+
+// ConnectToPrinter connects to the printer server.
+func (r *Receipt) ConnectToPrinter() error {
+	if len(r.Config.Printers) == 0 {
+		return errors.New("No printers were specified in the config")
+	}
+
+	printerIdx := r.GetPrinter()
 
 	// TODO: In order to support multiple printers, this should take a specific index.
 	server := r.Config.Printers[printerIdx].Server
@@ -176,7 +184,8 @@ func (r *Receipt) Print() (int, error) {
 		return -1, errors.New("No printers are set up")
 	}
 
-	printer := r.Config.Printers[0].Name
+	printerIdx := r.GetPrinter()
+	printer := r.Config.Printers[printerIdx].Name
 
 	// Finally, call the printer to print the receipt.
 	return r.Client.PrintFile(output, printer, map[string]interface{}{})

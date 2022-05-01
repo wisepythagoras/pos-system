@@ -137,8 +137,9 @@ export const Home = () => {
     const { loading, products } = useGetProducts();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
-    const [selectedPrinter] = useLocalStorage<PrinterT>('printer');
-    const printerId = selectedPrinter ? selectedPrinter.id : 1;
+    const [printer] = useLocalStorage<PrinterT>('printer');
+    const printerRef = useRef<PrinterT | undefined>(printer);
+    const printerId = printerRef.current ? printerRef.current.id : 1;
 
     useEffect(() => {
         lastSelectedProduct.current?.scrollIntoView();
@@ -185,6 +186,9 @@ export const Home = () => {
                                 ...state,
                                 selectedProducts: [ ...state.selectedProducts, product ],
                             });
+                        }}
+                        onPrinterChange={(p: PrinterT | undefined) => {
+                            printerRef.current = p;
                         }}
                     />
                 </div>

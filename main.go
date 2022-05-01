@@ -151,7 +151,7 @@ func main() {
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
 	router.GET("/api/orders/stream", authHandler(true, adminAuthToken), orderHandlers.OrderStream)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
-	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.FetchOrder) // TODO: Fix this as well.
+	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.FetchOrder)
 	router.GET("/api/order/:orderId/receipt/:printerId", authHandler(false, adminAuthToken), orderHandlers.PrintReceipt)
 	router.GET("/api/order/:orderId/pub", orderHandlers.PublicOrder)
 	router.GET("/api/order/:orderId/qrcode", authHandler(false, adminAuthToken), orderHandlers.OrderQRCode)
