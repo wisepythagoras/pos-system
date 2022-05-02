@@ -126,9 +126,9 @@ export const ProductList = (props: IProductListProps) => {
     const [search, setSearch] = useState<string | null>(null);
     const searchInputRef = useRef<HTMLInputElement>();
     const { products, onClick } = props;
-    const filteredProducts = !!search && search.length > 0 ?
+    const filteredProducts = (!!search && search.length > 0 ?
         products.filter((p) => p.name.toLowerCase().indexOf(search.toLowerCase()) >= 0) :
-        products;
+        products) || [];
     const productListRef = useRef<HTMLDivElement | null>(null);
     const selectedPrinterRef = useRef<PrinterT>();
 
