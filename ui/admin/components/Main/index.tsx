@@ -25,8 +25,6 @@ import {
 import Pagination from '@material-ui/lab/Pagination';
 import debounce from 'lodash/debounce';
 import { RichOrder } from '../RichOrder';
-import { RichProduct } from '../RichProduct';
-import { CreateRichProduct } from '../RichProduct/Create';
 import { EarningsCard } from '../EarningsCard';
 import {
     useGetOrdersList,
@@ -34,6 +32,7 @@ import {
     useGetTotalEarnings,
     useGetProductsList,
 } from '../../hooks';
+import { ProductsTab } from '../ProductsTab';
 
 const GridRowBox = styled.div`
     display: grid;
@@ -63,26 +62,6 @@ const ControlContainer = styled.div`
     & > .divider {
         width: 1px;
         margin: 0 10px;
-    }
-`;
-
-const CustomAppBar = styled.div`
-    padding-top: 10px;
-    padding-bottom: 10px;
-
-    & > .app-bar-container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-
-        & > button {
-            flex: 1;
-            flex-grow: 1;
-
-            &:not(:last-child) {
-                margin-right: 5px;
-            }
-        }
     }
 `;
 
@@ -238,69 +217,6 @@ export const Main = (props: IMainProps) => {
         </Container>
     );
 
-    const productsTab = (
-        <Container>
-            <div>
-                {!!loadingProductsError ? (
-                    <Typography variant="h4" component="h4">
-                        {loadingProductsError}
-                    </Typography>
-                ) : null}
-
-                {/* This is where the create field will go. */}
-                {/* <Card>
-                    <TextField label="Name" />
-                </Card> */}
-
-                {loadingProducts && products.length === 0 ? (
-                    <div style={{ textAlign: 'center' }}>
-                        <CircularProgress
-                            variant="indeterminate"
-                            disableShrink
-                            style={{
-                                strokeLinecap: 'round',
-                                color: '#1a90ff',
-                                animationDuration: '550ms',
-                                marginTop: '20px',
-                            }}
-                            size={40}
-                            thickness={4}
-                        />
-                    </div>
-                ) : (
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>#</TableCell>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Type</TableCell>
-                                    <TableCell>Price</TableCell>
-                                    <TableCell>Sold Out</TableCell>
-                                    <TableCell>Dicontinued</TableCell>
-                                    <TableCell></TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <CreateRichProduct onSave={(_) => fetchProducts()} />
-                                {products.map((product, i) => {
-                                    return (
-                                        <RichProduct
-                                            key={i}
-                                            product={product}
-                                            onSave={(_) => fetchProducts()}
-                                        />
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                )}
-            </div>
-            <br />
-        </Container>
-    );
-
     const usersTab = (
         <div>Hello</div>
     );
@@ -315,7 +231,14 @@ export const Main = (props: IMainProps) => {
                 </TabList>
                 <TabPanels>
                     <TabPanel>{ordersTab}</TabPanel>
-                    <TabPanel>{productsTab}</TabPanel>
+                    <TabPanel>
+                        <ProductsTab
+                            loadingProducts={loadingProducts}
+                            loadingProductsError={loadingProductsError}
+                            products={products}
+                            fetchProducts={fetchProducts}
+                        />
+                    </TabPanel>
                     <TabPanel>{usersTab}</TabPanel>
                 </TabPanels>
             </Tabs>
