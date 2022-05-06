@@ -34,9 +34,6 @@ func (uh *UserHandlers) LoginPage(c *gin.Context) {
 // Login will check the password and username against the DB and
 // create a session for valid users.
 func (uh *UserHandlers) Login(c *gin.Context) {
-	// Extend this to auth users from the DB (pos users) and break
-	// into its own handler.
-
 	session := sessions.Default(c)
 
 	username := c.PostForm("username")
@@ -103,4 +100,18 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusMovedPermanently, "/?e=Invalid username or password")
+}
+
+// Logout removes a user's session.
+func (uh *UserHandlers) Logout(c *gin.Context) {
+	session := sessions.Default(c)
+
+	currentUser := session.Get("user")
+
+	if currentUser != nil {
+		session.Delete("user")
+		session.Save()
+	}
+
+	c.Redirect(http.StatusMovedPermanently, "/?m=Logged out!")
 }

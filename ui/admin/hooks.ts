@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useMedia } from "react-use";
 import { ProductT, RichOrderT } from '../app/types';
 
 interface IGetOrdersListState {
@@ -197,4 +198,11 @@ interface IGetProductListState {
     }, []);
 
     return { ...state, fetchProducts };
+};
+
+/**
+ * Returns whether we're in a compact (mobile) view.
+ */
+export const useIsCompactView = (): boolean => {
+    return useMedia('(max-width: 500px)');
 };

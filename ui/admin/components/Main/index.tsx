@@ -1,5 +1,4 @@
 import React, { useState, useRef } from 'react';
-import styled from 'styled-components';
 import {
     Tab,
     TabList,
@@ -13,9 +12,11 @@ import {
     useGetEarningsPerDay,
     useGetTotalEarnings,
     useGetProductsList,
+    useIsCompactView,
 } from '../../hooks';
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
+import { AdminWrapper } from './styled';
 
 export interface IMainProps {};
 
@@ -35,6 +36,7 @@ export const Main = (props: IMainProps) => {
     } = useGetProductsList();
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
+    const isCompactView = useIsCompactView();
     const lastOrderRef = useRef(0);
 
     if (page === 1 && !loading && orders.length > 0) {
@@ -70,14 +72,31 @@ export const Main = (props: IMainProps) => {
     );
 
     return (
-        <div>
-            <Tabs variant="enclosed-colored" isFitted>
-                <TabList mb="1em">
-                    <Tab>Orders</Tab>
+        <AdminWrapper>
+            <Tabs
+                variant="enclosed-colored"
+                display="flex"
+                flexDirection={isCompactView ? 'column' : 'row'}
+                orientation={isCompactView ? 'horizontal' : 'vertical'}
+            >
+                <TabList
+                    mb="1em"
+                    height={isCompactView ? 'auto' : '100vh'}
+                    marginBottom={isCompactView ? 'initial' : '0'}
+                    backgroundColor="gray.100"
+                    border={isCompactView ? 'none' : '1px solid rgb(226, 232, 240)'}
+                    width={isCompactView ? 'auto' : '160px'}
+                >
+                    <Tab marginTop={isCompactView ? undefined : '-2px'}>Orders</Tab>
                     <Tab>Products</Tab>
-                    <Tab>Users</Tab>
+                    <Tab marginRight={isCompactView ? undefined : '-1px'}>
+                        Users
+                    </Tab>
                 </TabList>
-                <TabPanels>
+                <TabPanels
+                    height={isCompactView ? 'auto' : '100vh'}
+                    overflowY="auto"
+                >
                     <TabPanel>
                         <OrdersTab
                             earnings={earnings}
@@ -103,6 +122,6 @@ export const Main = (props: IMainProps) => {
                     <TabPanel>{usersTab}</TabPanel>
                 </TabPanels>
             </Tabs>
-        </div>
+        </AdminWrapper>
     );
 };
