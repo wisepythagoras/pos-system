@@ -153,7 +153,7 @@ func (r *Receipt) Print() (int, error) {
 		Name:       r.Config.Name,
 		Address1:   r.Config.Address1,
 		Address2:   r.Config.Address2,
-		DateString: r.Order.CreatedAt.Format(time.RFC822),
+		DateString: r.Order.CreatedAt.Format(time.RFC1123),
 	}
 
 	// Execute the receipt.
