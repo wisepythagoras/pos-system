@@ -1,10 +1,13 @@
 import React, { useState, useRef } from 'react';
 import {
+    Box,
+    Button,
     Tab,
     TabList,
     Tabs,
     TabPanel,
     TabPanels,
+    Center,
 } from '@chakra-ui/react';
 import debounce from 'lodash/debounce';
 import {
@@ -17,6 +20,7 @@ import {
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
 import { AdminWrapper } from './styled';
+import { LockIcon } from '@chakra-ui/icons';
 
 export interface IMainProps {};
 
@@ -79,22 +83,44 @@ export const Main = (props: IMainProps) => {
                 flexDirection={isCompactView ? 'column' : 'row'}
                 orientation={isCompactView ? 'horizontal' : 'vertical'}
             >
-                <TabList
-                    mb="1em"
+                <Box
                     height={isCompactView ? 'auto' : '100vh'}
                     marginBottom={isCompactView ? 'initial' : '0'}
                     backgroundColor="gray.100"
                     border={isCompactView ? 'none' : '1px solid rgb(226, 232, 240)'}
                     width={isCompactView ? 'auto' : '160px'}
+                    display="flex"
+                    flexDirection={isCompactView ? 'row' : 'column'}
+                    justifyContent="space-between"
                 >
-                    <Tab marginTop={isCompactView ? undefined : '-2px'}>Orders</Tab>
-                    <Tab>Products</Tab>
-                    <Tab marginRight={isCompactView ? undefined : '-1px'}>
-                        Users
-                    </Tab>
-                </TabList>
+                    <TabList mb="1em">
+                        <Tab marginTop={isCompactView ? undefined : '-2px'}>Orders</Tab>
+                        <Tab>Products</Tab>
+                        <Tab marginRight={isCompactView ? undefined : '-1px'}>
+                            Users
+                        </Tab>
+                    </TabList>
+                    {!isCompactView ? (
+                        <Box padding="10px">
+                            <Center>
+                                <Button
+                                    leftIcon={<LockIcon />}
+                                    colorScheme="pink"
+                                    variant="solid"
+                                    width="100%"
+                                    onClick={() => window.location.href = '/logout'}
+                                >
+                                    <Box paddingTop="4px">
+                                        Logout
+                                    </Box>
+                                </Button>
+                            </Center>
+                        </Box>
+                    ) : undefined}
+                </Box>
                 <TabPanels
                     height={isCompactView ? 'auto' : '100vh'}
+                    paddingTop={isCompactView ? 'initial' : '40px'}
                     overflowY="auto"
                 >
                     <TabPanel>
