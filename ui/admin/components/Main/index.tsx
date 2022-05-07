@@ -8,7 +8,18 @@ import {
     TabPanel,
     TabPanels,
     Center,
+    Drawer,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerCloseButton,
+    DrawerHeader,
+    DrawerBody,
+    DrawerFooter,
+    useDisclosure,
+    HStack,
+    Heading,
 } from '@chakra-ui/react';
+import { HamburgerIcon, LockIcon } from '@chakra-ui/icons';
 import debounce from 'lodash/debounce';
 import {
     useGetOrdersList,
@@ -20,7 +31,6 @@ import {
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
 import { AdminWrapper } from './styled';
-import { LockIcon } from '@chakra-ui/icons';
 
 export interface IMainProps {};
 
@@ -32,6 +42,7 @@ export interface IMainProps {};
 export const Main = (props: IMainProps) => {
     const [page, setPage] = useState(1);
     const { loading, error, orders, fetchOrders } = useGetOrdersList(page);
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const {
         loading: loadingProducts,
         error: loadingProductsError,
@@ -75,49 +86,114 @@ export const Main = (props: IMainProps) => {
         <div>Hello</div>
     );
 
+    const TabWrapper = isCompactView ? Button : Box;
+
+    const tabList = (
+        <TabList
+            mb="1em"
+            style={isCompactView ? {
+                display: 'flex',
+                flexDirection: 'column',
+            } : undefined}
+        >
+            <Tab
+                marginTop={isCompactView ? undefined : '-2px'}
+                onClick={onClose}
+            >
+                <TabWrapper colorScheme="teal" variant="ghost" width="100%">
+                    Orders
+                </TabWrapper>
+            </Tab>
+            <Tab onClick={onClose}>
+                <TabWrapper colorScheme="teal" variant="ghost" width="100%">
+                    Products
+                </TabWrapper>
+            </Tab>
+            <Tab
+                marginRight={isCompactView ? undefined : '-1px'}
+                onClick={onClose}
+            >
+                <TabWrapper colorScheme="teal" variant="ghost" width="100%">
+                    Users
+                </TabWrapper>
+            </Tab>
+        </TabList>
+    );
+
+    const logoutButton = (
+        <Button
+            leftIcon={<LockIcon />}
+            colorScheme="pink"
+            variant="solid"
+            width="100%"
+            onClick={() => window.location.href = '/logout'}
+        >
+            <Box paddingTop="4px">
+                Logout
+            </Box>
+        </Button>
+    );
+
     return (
         <AdminWrapper>
+            {isCompactView ? (
+                <HStack spacing="5px">
+                    <Button
+                        colorScheme="gray"
+                        variant="ghost"
+                        onClick={onOpen}
+                        className="hamburger-menu-btn"
+                    >
+                        <HamburgerIcon />
+                    </Button>
+                    <Heading as="h1" size="md" paddingTop="5px">
+                        POS Admin
+                    </Heading>
+                </HStack>
+            ) : undefined}
             <Tabs
                 variant="enclosed-colored"
                 display="flex"
                 flexDirection={isCompactView ? 'column' : 'row'}
-                orientation={isCompactView ? 'horizontal' : 'vertical'}
+                orientation="vertical"
             >
-                <Box
-                    height={isCompactView ? 'auto' : '100vh'}
-                    marginBottom={isCompactView ? 'initial' : '0'}
-                    backgroundColor="gray.100"
-                    border={isCompactView ? 'none' : '1px solid rgb(226, 232, 240)'}
-                    width={isCompactView ? 'auto' : '160px'}
-                    display="flex"
-                    flexDirection={isCompactView ? 'row' : 'column'}
-                    justifyContent="space-between"
-                >
-                    <TabList mb="1em">
-                        <Tab marginTop={isCompactView ? undefined : '-2px'}>Orders</Tab>
-                        <Tab>Products</Tab>
-                        <Tab marginRight={isCompactView ? undefined : '-1px'}>
-                            Users
-                        </Tab>
-                    </TabList>
-                    {!isCompactView ? (
+                {!isCompactView ? (
+                    <Box
+                        height="100vh"
+                        marginBottom={0}
+                        backgroundColor="gray.100"
+                        border="1px solid rgb(226, 232, 240)"
+                        width="160px"
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="space-between"
+                    >
+                        {tabList}
                         <Box padding="10px">
                             <Center>
-                                <Button
-                                    leftIcon={<LockIcon />}
-                                    colorScheme="pink"
-                                    variant="solid"
-                                    width="100%"
-                                    onClick={() => window.location.href = '/logout'}
-                                >
-                                    <Box paddingTop="4px">
-                                        Logout
-                                    </Box>
-                                </Button>
+                                {logoutButton}
                             </Center>
                         </Box>
-                    ) : undefined}
-                </Box>
+                    </Box>
+                ) : (
+                    <Drawer
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        placement="left"
+                    >
+                        <DrawerOverlay />
+                        <DrawerContent>
+                            <DrawerCloseButton />
+                            <DrawerHeader>POS Admin</DrawerHeader>
+                            <DrawerBody>
+                                {tabList}
+                            </DrawerBody>
+                            <DrawerFooter>
+                                {logoutButton}
+                            </DrawerFooter>
+                        </DrawerContent>
+                    </Drawer>
+                )}
                 <TabPanels
                     height={isCompactView ? 'auto' : '100vh'}
                     paddingTop={isCompactView ? 'initial' : '40px'}
