@@ -15,6 +15,7 @@ import {
 import { RichProduct } from '../RichProduct';
 import { CreateRichProduct } from '../RichProduct/Create';
 import { ProductT } from '../../../app/types';
+import { useIsCompactView } from '../../hooks';
 
 type PropsT = {
     fetchProducts: () => Promise<ProductT[] | null>;
@@ -49,9 +50,15 @@ export const ProductsTab = (props: PropsT) => {
         products,
         fetchProducts,
     } = props;
+    const isCompactView = useIsCompactView();
 
     return (
-        <Container maxWidth="170ch" overflowX="auto">
+        <Container
+            maxWidth="170ch"
+            overflowX="auto"
+            paddingInlineStart={isCompactView ? 0 : undefined}
+            paddingInlineEnd={isCompactView ? 0 : undefined}
+        >
             <div>
                 {!!loadingProductsError ? (
                     <Heading variant="h4" as="h4">

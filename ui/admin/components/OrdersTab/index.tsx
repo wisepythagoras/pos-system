@@ -32,6 +32,7 @@ import { RichOrder } from '../RichOrder';
 import { EarningsCard } from '../EarningsCard';
 import { ControlContainer } from './styled';
 import { RichOrderT } from '../../../app/types';
+import { useIsCompactView } from '../../hooks';
 
 type PropsT = {
     earnings: number;
@@ -64,9 +65,15 @@ export const OrdersTab = (props: PropsT) => {
         orders,
         page,
     } = props;
+    const isCompactView = useIsCompactView();
 
     return (
-        <Container maxWidth="170ch" overflowX="auto">
+        <Container
+            maxWidth="170ch"
+            overflowX="auto"
+            paddingInlineStart={isCompactView ? 0 : undefined}
+            paddingInlineEnd={isCompactView ? 0 : undefined}
+        >
             <Heading variant="h3" as="h3" marginBottom="10px">
                 Total Earnings: ${earnings.toFixed(2)}
             </Heading>
