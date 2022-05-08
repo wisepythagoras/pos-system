@@ -1,17 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Chip } from '@material-ui/core';
 import { ProductT, ProductAggregateT } from '../../../app/types';
-
-const PillContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-
-    & > * {
-        margin-right: 3px;
-        margin-bottom: 3px;
-    }
-`;
+import { HStack, Tag } from '@chakra-ui/react';
 
 export interface IOrderProductsProps {
     products: ProductT[];
@@ -42,17 +31,35 @@ export const OrderProducts = (props: IOrderProductsProps) => {
     }
 
     aggregateProducts.forEach((pa, i) => {
+        let colorSheme;
+
+        switch (pa.product.type) {
+            case 'drink':
+                colorSheme = 'orange';
+                break;
+            case 'food':
+                colorSheme = 'teal';
+                break;
+            case 'drink':
+            default:
+                colorSheme = 'green';
+        }
+
         productPills.push(
-            <Chip
+            <Tag
                 key={i}
-                label={<span>{pa.amount}&times;{pa.product.name}</span>}
-            />
+                size="md"
+                variant="solid"
+                colorScheme={colorSheme}
+            >
+                <b>{pa.amount}</b>&nbsp;{pa.product.name}
+            </Tag>
         );
     });
 
     return (
-        <PillContainer>
+        <HStack wrap="wrap">
             {productPills}
-        </PillContainer>
+        </HStack>
     );
 };
