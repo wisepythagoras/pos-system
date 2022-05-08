@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Chip, TableCell, TableRow } from '@material-ui/core';
-import CancelIcon from '@material-ui/icons/Cancel';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import { Box, Button, Center, Td, Tr } from '@chakra-ui/react';
+import { CheckCircleIcon, DeleteIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 import { OrderProducts } from './OrderProducts';
 import { RichOrderT } from '../../../app/types';
@@ -25,33 +24,42 @@ export const RichOrder = (props: IRichOrderProps) => {
     };
 
     return (
-        <TableRow>
-            <TableCell>{order.order_id}</TableCell>
-            <TableCell>
+        <Tr>
+            <Td>{order.order_id}</Td>
+            <Td>
                 <OrderProducts products={order.order.products} />
-            </TableCell>
-            <TableCell>
-                {order.order.cancelled ? (
-                    <Chip
-                        icon={<CheckCircleIcon />}
-                        label="Reactivate"
-                        onClick={onToggle}
-                    />
-                ) : (
-                    <Chip
-                        icon={<CancelIcon />}
-                        label="Cancel"
-                        color="secondary"
-                        onClick={onToggle}
-                    />
-                )}
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
+                <Center>
+                    {order.order.cancelled ? (
+                        <Button
+                            colorScheme="gray"
+                            onClick={onToggle}
+                            variant="solid"
+                            leftIcon={<CheckCircleIcon />}
+                            size="sm"
+                        >
+                            <Box paddingTop="4px">Reactivate</Box>
+                        </Button>
+                    ) : (
+                        <Button
+                            colorScheme="red"
+                            onClick={onToggle}
+                            variant="solid"
+                            leftIcon={<DeleteIcon />}
+                            size="sm"
+                        >
+                            <Box paddingTop="4px">Cancel</Box>
+                        </Button>
+                    )}
+                </Center>
+            </Td>
+            <Td>
                 ${order.total.toFixed(2)}
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
                 {dayjs(order.order.created_at).format('HH:mm MM-DD-YYYY')}
-            </TableCell>
-        </TableRow>
+            </Td>
+        </Tr>
     );
 };

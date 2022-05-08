@@ -1,6 +1,6 @@
 import React from 'react';
-import { ProductT, ProductAggregateT } from '../../../app/types';
 import { HStack, Tag } from '@chakra-ui/react';
+import { ProductT, ProductAggregateT } from '../../../app/types';
 
 export interface IOrderProductsProps {
     products: ProductT[];
