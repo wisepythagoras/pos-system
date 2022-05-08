@@ -8,6 +8,8 @@ import {
     Grid,
     GridItem,
     Heading,
+    HStack,
+    IconButton,
     Input,
     InputGroup,
     InputLeftElement,
@@ -158,20 +160,31 @@ export const OrdersTab = (props: PropsT) => {
                                     {orders.map((order, i) => <RichOrder key={i} order={order} />)}
                                 </Tbody>
                             </Table>
-                            {/* <PaginationContainer>
-                                <Pagination
-                                    defaultPage={1}
-                                    count={Math.round(lastOrder / 50)}
-                                    page={page}
-                                    onChange={(_, page) => {
-                                        onPageChange(page);
-                                    }}
-                                    hideNextButton={orders.length < 50}
-                                    size="large"
-                                    showFirstButton
-                                    showLastButton
-                                />
-                            </PaginationContainer> */}
+                            <HStack marginTop="15px">
+                                <Box w="40px">
+                                    <IconButton
+                                        variant="ghost"
+                                        icon={<ChevronLeftIcon />}
+                                        aria-label="Previous page"
+                                        disabled={page === 1}
+                                        onClick={() => onPageChange(page - 1)}
+                                    />
+                                </Box>
+                                <Box width="100%">
+                                    <Center>
+                                        Page {page}
+                                    </Center>
+                                </Box>
+                                <Box w="40px">
+                                    <IconButton
+                                        variant="ghost"
+                                        icon={<ChevronRightIcon />}
+                                        aria-label="Next page"
+                                        disabled={orders.length < 50}
+                                        onClick={() => onPageChange(page + 1)}
+                                    />
+                                </Box>
+                            </HStack>
                         </TableContainer>
                     </Box>
                 )}
