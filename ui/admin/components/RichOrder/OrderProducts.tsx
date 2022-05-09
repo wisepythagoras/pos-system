@@ -1,4 +1,6 @@
 import React from 'react';
+import { Interpolation } from '@emotion/react';
+import { css } from 'styled-components';
 import { HStack, Tag } from '@chakra-ui/react';
 import { ProductT, ProductAggregateT } from '../../../app/types';
 
@@ -14,6 +16,16 @@ export const OrderProducts = (props: IOrderProductsProps) => {
     const { products } = props;
     const aggregateProducts = new Map<number, ProductAggregateT>();
     const productPills: JSX.Element[] = [];
+    const specialStyles = css`
+        & > span {
+            margin-inline-start: 0 !important;
+            margin-inline-end: 0.5rem !important;
+
+            @media screen and (max-width: 768px) {
+                margin-bottom: 5px !important;
+            }
+        }
+    ` as Interpolation<{}>;
 
     for (let i in products) {
         const product = products[i];
@@ -58,7 +70,7 @@ export const OrderProducts = (props: IOrderProductsProps) => {
     });
 
     return (
-        <HStack wrap="wrap">
+        <HStack wrap="wrap" css={specialStyles}>
             {productPills}
         </HStack>
     );
