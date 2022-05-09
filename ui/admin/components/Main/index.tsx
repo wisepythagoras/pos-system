@@ -168,7 +168,14 @@ export const Main = (props: IMainProps) => {
                         flexDirection="column"
                         justifyContent="space-between"
                     >
-                        {tabList}
+                        <Box>
+                            <Box padding="10px">
+                                <Heading size="md" as="h1" userSelect="none">
+                                    POS Admin
+                                </Heading>
+                            </Box>
+                            {tabList}
+                        </Box>
                         <Box padding="10px">
                             <Center>
                                 {logoutButton}
