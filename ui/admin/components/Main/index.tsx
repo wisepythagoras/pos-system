@@ -123,7 +123,7 @@ export const Main = (props: IMainProps) => {
     const logoutButton = (
         <Button
             leftIcon={<LockIcon />}
-            colorScheme="pink"
+            colorScheme="red"
             variant="solid"
             width="100%"
             onClick={() => window.location.href = '/logout'}

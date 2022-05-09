@@ -11,8 +11,26 @@ export const ControlContainer = styled.div`
     }
 
     & > .divider {
-        width: 1px;
         margin: 0 10px;
+    }
+
+    @media screen and (max-width: 768px) {
+        flex-direction: column;
+
+        & > div,
+        & > button {
+            margin-bottom: 5px;
+            width: 100%;
+
+            & input {
+                height: 40px;
+                width: 100%;
+            }
+        }
+
+        & > .divider {
+            display: none;
+        }
     }
 `;
 
