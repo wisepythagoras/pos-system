@@ -79,18 +79,40 @@ export const OrdersTab = (props: PropsT) => {
             <Heading variant="h3" as="h3" marginBottom="10px">
                 Total Earnings: ${earnings.toFixed(2)}
             </Heading>
-            <Grid templateColumns='repeat(4, 1fr)' gap={5} minWidth="400px" overflowX="auto">
+            <Grid
+                paddingTop="10px"
+                paddingBottom="10px"
+                templateColumns="repeat(4, 1fr)"
+                gap={5}
+                overflowX="auto"
+            >
                 <GridItem>
-                    <EarningsCard day={0} amount={earningsPerDay[0]} />
+                    <EarningsCard
+                        day={0}
+                        amount={earningsPerDay[0]}
+                        prevAmount={earningsPerDay[1]}
+                    />
+               </GridItem>
+                <GridItem>
+                    <EarningsCard
+                        day={1}
+                        amount={earningsPerDay[1]}
+                        prevAmount={earningsPerDay[2]}
+                    />
                 </GridItem>
                 <GridItem>
-                    <EarningsCard day={1} amount={earningsPerDay[1]} />
+                    <EarningsCard
+                        day={2}
+                        amount={earningsPerDay[2]}
+                        prevAmount={earningsPerDay[3]}
+                    />
                 </GridItem>
                 <GridItem>
-                    <EarningsCard day={2} amount={earningsPerDay[2]} />
-                </GridItem>
-                <GridItem>
-                    <EarningsCard day={3} amount={earningsPerDay[3]} />
+                    <EarningsCard
+                        day={3}
+                        amount={earningsPerDay[3]}
+                        prevAmount={earningsPerDay[4]}
+                    />
                 </GridItem>
             </Grid>
             <ControlContainer>

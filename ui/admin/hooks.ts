@@ -113,7 +113,7 @@ export const useGetTotalEarnings = () => {
  * @returns The earnings for the past 4 days.
  */
 export const useGetEarningsPerDay = () => {
-    const [earnings, setEarnings] = useState<number[]>([0, 0, 0, 0]);
+    const [earnings, setEarnings] = useState<number[]>([0, 0, 0, 0, 0]);
 
     useEffect(() => {
         const getEarnings = async (day: number): Promise<number[]> => {
@@ -128,6 +128,7 @@ export const useGetEarningsPerDay = () => {
             getEarnings(1),
             getEarnings(2),
             getEarnings(3),
+            getEarnings(4),
         ]).then((queue) => {
             if (queue.length > 0) {
                 const newEarnings = [...earnings];
