@@ -25,13 +25,24 @@ func (sh *StationHandlers) CreateStation(c *gin.Context) {
 		return
 	}
 
-	sh.DB.Create(&Station{Name: name}).Commit()
+	station := &Station{Name: name}
+	sh.DB.Create(station).Commit()
 
 	apiResponse.Success = true
+
+	if station.ID > 0 {
+		apiResponse.Data = StationJSON{
+			ID:        station.ID,
+			Name:      station.Name,
+			CreatedAt: station.CreatedAt,
+			UpdatedAt: station.UpdatedAt,
+		}
+	}
 
 	c.JSON(http.StatusOK, apiResponse)
 }
 
+// AddProductToStation adds a product to a station.
 func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 	apiResponse := ApiResponse{}
 	stationId, err := getIDFromParams("stationId", c)
@@ -75,6 +86,62 @@ func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 	}).Commit()
 
 	apiResponse.Success = true
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
+// Station returns the station by its id.
+func (sh *StationHandlers) Station(c *gin.Context) {
+	apiResponse := ApiResponse{}
+	stationId, err := getIDFromParams("stationId", c)
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = err.Error()
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	station := &Station{}
+	sh.DB.First(station, "id = ?", stationId)
+
+	apiResponse.Success = true
+
+	if station.ID > 0 {
+		apiResponse.Data = StationJSON{
+			ID:        station.ID,
+			Name:      station.Name,
+			CreatedAt: station.CreatedAt,
+			UpdatedAt: station.UpdatedAt,
+		}
+	}
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
+// Stations returns a list of all stations.
+func (sh *StationHandlers) Stations(c *gin.Context) {
+	apiResponse := ApiResponse{}
+	var stations []Station
+	var stationsJson []StationJSON
+
+	sh.DB.
+		Preload("StationProducts.Product").
+		Order("id desc").
+		Find(&stations)
+
+	for _, station := range stations {
+		newStation := StationJSON{
+			ID:        station.ID,
+			Name:      station.Name,
+			CreatedAt: station.CreatedAt,
+			UpdatedAt: station.UpdatedAt,
+		}
+		stationsJson = append(stationsJson, newStation)
+	}
+
+	apiResponse.Success = true
+	apiResponse.Data = stationsJson
 
 	c.JSON(http.StatusOK, apiResponse)
 }

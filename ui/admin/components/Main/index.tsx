@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon, LockIcon } from '@chakra-ui/icons';
 import debounce from 'lodash/debounce';
+import { AdminWrapper } from './styled';
 import {
     useGetOrdersList,
     useGetEarningsPerDay,
@@ -30,7 +31,7 @@ import {
 } from '../../hooks';
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
-import { AdminWrapper } from './styled';
+import { StationsTab } from '../StationsTab';
 
 export interface IMainProps {};
 
@@ -107,6 +108,14 @@ export const Main = (props: IMainProps) => {
             <Tab onClick={onClose}>
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Products
+                </TabWrapper>
+            </Tab>
+            <Tab
+                marginRight={isCompactView ? undefined : '-1px'}
+                onClick={onClose}
+            >
+                <TabWrapper colorScheme="teal" variant="ghost" width="100%">
+                    Stations
                 </TabWrapper>
             </Tab>
             <Tab
@@ -227,6 +236,9 @@ export const Main = (props: IMainProps) => {
                             products={products}
                             fetchProducts={fetchProducts}
                         />
+                    </TabPanel>
+                    <TabPanel>
+                        <StationsTab />
                     </TabPanel>
                     <TabPanel>{usersTab}</TabPanel>
                 </TabPanels>

@@ -30,3 +30,10 @@ export type RichOrderT = {
     total: number;
     order: OrderT;
 };
+
+export type StationT = {
+    id: number;
+    name: string;
+    created_at: Date;
+    updated_at: Date;
+};

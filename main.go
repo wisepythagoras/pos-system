@@ -163,12 +163,14 @@ func main() {
 	router.DELETE("/api/order/:orderId", authHandler(true, adminAuthToken), orderHandlers.ToggleOrder)
 
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)
-	router.GET("/api/products", productHandlers.ListProducts)
-	router.PUT("/api/product/:productId", productHandlers.UpdateProduct)
-	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
+	router.GET("/api/products", authHandler(false, adminAuthToken), productHandlers.ListProducts)
+	router.PUT("/api/product/:productId", authHandler(false, adminAuthToken), productHandlers.UpdateProduct)
+	router.DELETE("/api/product/:productId", authHandler(false, adminAuthToken), productHandlers.ToggleDiscontinued)
 
 	router.POST("/api/station", authHandler(true, adminAuthToken), stationHandlers.CreateStation)
 	router.POST("/api/station/:stationId/:productId", authHandler(true, adminAuthToken), stationHandlers.AddProductToStation)
+	router.GET("/api/station/:stationId/", authHandler(false, adminAuthToken), stationHandlers.Station)
+	router.GET("/api/stations", authHandler(false, adminAuthToken), stationHandlers.Stations)
 
 	router.GET("/api/printers", func(c *gin.Context) {
 		c.JSON(http.StatusOK, &ApiResponse{

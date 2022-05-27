@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMedia } from "react-use";
-import { ProductT, RichOrderT } from '../app/types';
+import { ProductT, RichOrderT, StationT } from '../app/types';
 
 interface IGetOrdersListState {
     loading: boolean;
@@ -206,4 +206,35 @@ interface IGetProductListState {
  */
 export const useIsCompactView = (): boolean => {
     return useMedia('(max-width: 500px)');
+};
+
+type UseCreateStationReturnT =  {
+    station: StationT | undefined;
+    createStation: (name: string) => Promise<{ success: boolean, data: StationT | null }>;
+};
+
+export const useCreateStation = (): UseCreateStationReturnT => {
+    const [station, setStation] = useState<StationT>();
+
+    const createStation = async (name: string) => {
+        const body = new FormData();
+        body.append('name', name);
+
+        const req = await fetch('/api/station', {
+            method: 'POST',
+            body,
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            setStation(resp.data);
+        }
+
+        return resp;
+    };
+
+    return {
+        station,
+        createStation,
+    };
 };

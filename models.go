@@ -48,21 +48,22 @@ type User struct {
 
 type Station struct {
 	gorm.Model
-	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
-	Name      string    `gorm:"uniqueIndex; index; not_null;"`
-	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
-	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
+	Name      string    `gorm:"uniqueIndex; index; not_null;" json:"name"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"updated_at"`
+	DeletedAt time.Time `gorm:"autoCreateTime:milli" json:"deleted_at"`
 }
 
 type StationProduct struct {
 	gorm.Model
-	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
-	StationID uint64    `gorm:"index; not_null;"`
-	ProductID uint64    `gorm:"index; not_null;"`
-	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
-	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
-	Product   Product
-	Station   Station
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
+	StationID uint64    `gorm:"index; not_null;" json:"station_id"`
+	ProductID uint64    `gorm:"index; not_null;" json:"product_id"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
+	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"updated_at"`
+	Product   Product   `gorm:"one2one:products"`
+	Station   Station   `gorm:"one2one:stations"`
 }
 
 // https://gorm.io/docs/has_one.html#Override-Foreign-Key

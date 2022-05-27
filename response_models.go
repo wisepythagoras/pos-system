@@ -61,3 +61,11 @@ type OrderJSON struct {
 	CreatedAt time.Time     `json:"created_at"`
 	Products  []ProductJSON `json:"products"`
 }
+
+type StationJSON struct {
+	ID        uint64        `json:"id"`
+	Name      string        `json:"name"`
+	CreatedAt time.Time     `json:"created_at"`
+	UpdatedAt time.Time     `json:"updated_at"`
+	Products  []ProductJSON `json:"products"`
+}
