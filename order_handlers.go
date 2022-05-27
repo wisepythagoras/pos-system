@@ -25,23 +25,6 @@ type OrderHandlers struct {
 	Bus    EventBus.Bus
 }
 
-// getIDFromParams parses the order id from the param string.
-func (oh *OrderHandlers) getIDFromParams(name string, c *gin.Context) (int, error) {
-	orderIdStr := c.Param(name)
-
-	if len(orderIdStr) == 0 {
-		return 0, errors.New("Invalid numeric id")
-	}
-
-	orderId, err := strconv.Atoi(orderIdStr)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return orderId, nil
-}
-
 // GetOrderByID retrieves an order by its id.
 func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) {
 	if orderId <= 0 {
@@ -169,7 +152,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 // FetchOrder is supposed to fetch and return the order with the giver id.
 func (oh *OrderHandlers) FetchOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getIDFromParams("orderId", c)
+	orderId, err := getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -409,7 +392,7 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 // ToggleOrder toggles the cancelled field of an order.
 func (oh *OrderHandlers) ToggleOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getIDFromParams("orderId", c)
+	orderId, err := getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -565,7 +548,7 @@ func (oh *OrderHandlers) PublicOrder(c *gin.Context) {
 
 // OrderQRCode returns the QR code for a specific order.
 func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
-	orderId, err := oh.getIDFromParams("orderId", c)
+	orderId, err := getIDFromParams("orderId", c)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -600,7 +583,7 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 // PrintReceipt handles requests for printing a receipt for a specific order.
 func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := oh.getIDFromParams("orderId", c)
+	orderId, err := getIDFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -609,7 +592,7 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 		return
 	}
 
-	printerId, err := oh.getIDFromParams("printerId", c)
+	printerId, err := getIDFromParams("printerId", c)
 
 	if err != nil {
 		printerId = 1

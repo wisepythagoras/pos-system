@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -49,23 +48,6 @@ type ProductHandlers struct {
 	wsUpdates []wsMessage
 	wsClients map[string]*websocket.Conn
 	Bus       EventBus.Bus
-}
-
-// getProductIDFromParams parses the product id from the param string.
-func (ph *ProductHandlers) getProductIDFromParams(c *gin.Context) (int, error) {
-	productIdStr := c.Param("productId")
-
-	if len(productIdStr) == 0 {
-		return 0, errors.New("Invalid or no product id")
-	}
-
-	productId, err := strconv.Atoi(productIdStr)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return productId, nil
 }
 
 // CreateProduct creates a product.
@@ -144,7 +126,7 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 // UpdateProduct updates the fields of a product.
 func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	response := &ApiResponse{}
-	productId, err := ph.getProductIDFromParams(c)
+	productId, err := getIDFromParams("productId", c)
 
 	if err != nil {
 		response.Success = false
@@ -220,7 +202,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 // ToggleDiscontinued turns the discontinued field of a product on and off.
 func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	response := &ApiResponse{}
-	productId, err := ph.getProductIDFromParams(c)
+	productId, err := getIDFromParams("productId", c)
 
 	if err != nil {
 		response.Success = false

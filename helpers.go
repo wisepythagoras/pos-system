@@ -1,8 +1,12 @@
 package main
 
 import (
+	"errors"
 	"log"
 	"net"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func DivMod(numerator, denominator int64) (quotient, remainder int64) {
@@ -35,4 +39,21 @@ func GetOutboundIP() net.IP {
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
 
 	return localAddr.IP
+}
+
+// getIDFromParams parses an id from the param string.
+func getIDFromParams(name string, c *gin.Context) (int, error) {
+	itemIdStr := c.Param(name)
+
+	if len(itemIdStr) == 0 {
+		return 0, errors.New("invalid numeric id")
+	}
+
+	itemId, err := strconv.Atoi(itemIdStr)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return itemId, nil
 }
