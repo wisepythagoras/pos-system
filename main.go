@@ -104,6 +104,10 @@ func main() {
 		DB:     db,
 		Config: config,
 	}
+	stationHandlers := &StationHandlers{
+		DB:     db,
+		Config: config,
+	}
 
 	// Start listeningfor messages and send them to the clients, if there are any.
 	productHandlers.StartWSHandler()
@@ -162,6 +166,9 @@ func main() {
 	router.GET("/api/products", productHandlers.ListProducts)
 	router.PUT("/api/product/:productId", productHandlers.UpdateProduct)
 	router.DELETE("/api/product/:productId", productHandlers.ToggleDiscontinued)
+
+	router.POST("/api/station", authHandler(true, adminAuthToken), stationHandlers.CreateStation)
+	router.POST("/api/station/:stationId/:productId", authHandler(true, adminAuthToken), stationHandlers.AddProductToStation)
 
 	router.GET("/api/printers", func(c *gin.Context) {
 		c.JSON(http.StatusOK, &ApiResponse{
