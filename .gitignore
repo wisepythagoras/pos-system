@@ -12,3 +12,4 @@ config.yaml
 .~lock.*
 receipts/*.pdf
 receipts/*.html
+__debug_bin

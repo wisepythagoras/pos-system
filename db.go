@@ -16,6 +16,8 @@ func ConnectDB() (*gorm.DB, error) {
 	db.AutoMigrate(&OrderProduct{})
 	db.AutoMigrate(&Order{})
 	db.AutoMigrate(&User{})
+	db.AutoMigrate(&Station{})
+	db.AutoMigrate(&StationProduct{})
 
 	return db, nil
 }

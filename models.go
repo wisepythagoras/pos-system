@@ -41,8 +41,33 @@ type User struct {
 	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
 	Username  string    `gorm:"uniqueIndex; index; not_null;"`
 	Password  string    `gorm:"not_null;"`
+	Role      uint8     `gorm:"not_null; default 0"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
 	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
 }
 
+type Station struct {
+	gorm.Model
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
+	Name      string    `gorm:"uniqueIndex; index; not_null;"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
+}
+
+type StationProduct struct {
+	gorm.Model
+	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
+	StationID uint64    `gorm:"index; not_null;"`
+	ProductID uint64    `gorm:"index; not_null;"`
+	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
+	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
+	Product   Product
+	Station   Station
+}
+
 // https://gorm.io/docs/has_one.html#Override-Foreign-Key
+
+const (
+	RoleSales   uint8 = 0
+	RoleStation uint8 = 1
+)
