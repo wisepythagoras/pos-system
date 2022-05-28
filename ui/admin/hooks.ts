@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMedia } from "react-use";
 import { ProductT, RichOrderT, StationT } from '../app/types';
 
@@ -213,6 +213,10 @@ type UseCreateStationReturnT =  {
     createStation: (name: string) => Promise<{ success: boolean, data: StationT | null }>;
 };
 
+/**
+ * This hook handles a station's creation.
+ * @returns The newly created station and the function to create it.
+ */
 export const useCreateStation = (): UseCreateStationReturnT => {
     const [station, setStation] = useState<StationT>();
 
@@ -236,5 +240,33 @@ export const useCreateStation = (): UseCreateStationReturnT => {
     return {
         station,
         createStation,
+    };
+};
+
+/**
+ * This custom hook returns a list of stations that are in the DB.
+ * @returns The stations and the function to manually get them.
+ */
+export const useGetStations = () => {
+    const [stations, setStations] = useState<StationT[]>([]);
+
+    const getStations = useCallback(async () => {
+        const req = await fetch('/api/stations');
+        const resp = await req.json();
+
+        if (resp.success) {
+            setStations(resp.data);
+        }
+
+        return resp;
+    }, []);
+
+    useEffect(() => {
+        getStations();
+    }, []);
+
+    return {
+        stations,
+        getStations,
     };
 };

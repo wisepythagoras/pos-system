@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, FormControl, FormHelperText, FormLabel, Heading, Input, Table, TableContainer, Tbody, Th, Thead, Tr } from '@chakra-ui/react';
-import { useCreateStation, useIsCompactView } from '../../hooks';
+import { Box, Button, Container, FormControl, FormHelperText, FormLabel, Heading, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from '@chakra-ui/react';
+import { useCreateStation, useGetStations, useIsCompactView } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
 
 type PropsT = {};
@@ -9,8 +9,10 @@ export const StationsTab = (props: PropsT) => {
     const [newStationName, setNewStationName] = useState("");
     const isCompactView = useIsCompactView();
     const { station, createStation } = useCreateStation();
+    const { stations, getStations } = useGetStations();
+    const toast = useToast();
 
-    console.log(station);
+    console.log(stations);
 
     return (
         <Container
@@ -38,7 +40,29 @@ export const StationsTab = (props: PropsT) => {
                         leftIcon={<AddIcon />}
                         colorScheme="blue"
                         variant="solid"
-                        onClick={() => createStation(newStationName)}
+                        onClick={async () => {
+                            const res = await createStation(newStationName);
+
+                            if (res.success && res.data) {
+                                toast({
+                                    title: 'Created new station',
+                                    description: `Station "${res.data.name}" with id ${res.data.id}`,
+                                    status: 'success',
+                                    duration: 5000,
+                                    isClosable: true,
+                                });
+                                getStations();
+                                setNewStationName('');
+                            } else {
+                                toast({
+                                    title: 'Uh, oh!',
+                                    description: 'Unable to create station',
+                                    status: 'error',
+                                    duration: 5000,
+                                    isClosable: true,
+                                });
+                            }
+                        }}
                         disabled={!newStationName}
                         marginTop="10px"
                     >

@@ -52,7 +52,6 @@ type Station struct {
 	Name      string    `gorm:"uniqueIndex; index; not_null;" json:"name"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"updated_at"`
-	DeletedAt time.Time `gorm:"autoCreateTime:milli" json:"deleted_at"`
 }
 
 type StationProduct struct {
@@ -62,8 +61,6 @@ type StationProduct struct {
 	ProductID uint64    `gorm:"index; not_null;" json:"product_id"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"updated_at"`
-	Product   Product   `gorm:"one2one:products"`
-	Station   Station   `gorm:"one2one:stations"`
 }
 
 // https://gorm.io/docs/has_one.html#Override-Foreign-Key

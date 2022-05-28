@@ -126,7 +126,6 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 	var stationsJson []StationJSON
 
 	sh.DB.
-		Preload("StationProducts.Product").
 		Order("id desc").
 		Find(&stations)
 
@@ -142,6 +141,30 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 
 	apiResponse.Success = true
 	apiResponse.Data = stationsJson
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
+// Delete removes a station by its id.
+func (sh *StationHandlers) Delete(c *gin.Context) {
+	apiResponse := ApiResponse{}
+	stationId, err := getIDFromParams("stationId", c)
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = err.Error()
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	// TODO: Also remove the station products from here.
+
+	result := sh.DB.Delete(&Station{ID: uint64(stationId)})
+	apiResponse.Success = false
+
+	if result.RowsAffected > 0 {
+		apiResponse.Success = true
+	}
 
 	c.JSON(http.StatusOK, apiResponse)
 }
