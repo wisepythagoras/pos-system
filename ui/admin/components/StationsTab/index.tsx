@@ -1,5 +1,20 @@
 import React, { useState } from 'react';
-import { Box, Button, Container, FormControl, FormHelperText, FormLabel, Heading, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from '@chakra-ui/react';
+import { Box,
+    Button,
+    Container,
+    FormControl,
+    FormHelperText,
+    FormLabel,
+    Heading,
+    Input,
+    Table,
+    TableContainer,
+    Tbody,
+    Th,
+    Thead,
+    Tr,
+    useToast,
+} from '@chakra-ui/react';
 import { useCreateStation, useGetStations, useIsCompactView } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
 import { StationRow } from './StationRow';
@@ -9,7 +24,7 @@ type PropsT = {};
 export const StationsTab = (props: PropsT) => {
     const [newStationName, setNewStationName] = useState("");
     const isCompactView = useIsCompactView();
-    const { station, createStation } = useCreateStation();
+    const { createStation } = useCreateStation();
     const { stations, getStations } = useGetStations();
     const toast = useToast();
 
