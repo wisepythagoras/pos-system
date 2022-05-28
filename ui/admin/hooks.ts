@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useMedia } from "react-use";
-import { ProductT, RichOrderT, StationT } from '../app/types';
+import { ApiResponse, ProductT, RichOrderT, StationT } from '../app/types';
 
 interface IGetOrdersListState {
     loading: boolean;
@@ -208,46 +208,19 @@ export const useIsCompactView = (): boolean => {
     return useMedia('(max-width: 500px)');
 };
 
-type UseCreateStationReturnT =  {
-    station: StationT | undefined;
-    createStation: (name: string) => Promise<{ success: boolean, data: StationT | null }>;
+type UseStationsT =  {
+    stations: StationT[];
+    createStation: (name: string) => Promise<ApiResponse<StationT | null>>;
+    getStations: () => Promise<ApiResponse<StationT[] | null>>;
+    deleteStation: (id: number) => Promise<ApiResponse<null>>;
 };
 
 /**
- * This hook handles a station's creation.
- * @returns The newly created station and the function to create it.
- */
-export const useCreateStation = (): UseCreateStationReturnT => {
-    const [station, setStation] = useState<StationT>();
-
-    const createStation = async (name: string) => {
-        const body = new FormData();
-        body.append('name', name);
-
-        const req = await fetch('/api/station', {
-            method: 'POST',
-            body,
-        });
-        const resp = await req.json();
-
-        if (resp.success) {
-            setStation(resp.data);
-        }
-
-        return resp;
-    };
-
-    return {
-        station,
-        createStation,
-    };
-};
-
-/**
- * This custom hook returns a list of stations that are in the DB.
+ * This custom hook returns a list of stations that are in the DB. It also handles the
+ * creation and deletion of stations.
  * @returns The stations and the function to manually get them.
  */
-export const useGetStations = () => {
+export const useStations = (shouldGetList = true): UseStationsT => {
     const [stations, setStations] = useState<StationT[]>([]);
 
     const getStations = useCallback(async () => {
@@ -261,12 +234,46 @@ export const useGetStations = () => {
         return resp;
     }, []);
 
+    const createStation = async (name: string) => {
+        const body = new FormData();
+        body.append('name', name);
+
+        const req = await fetch('/api/station', {
+            method: 'POST',
+            body,
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getStations();
+        }
+
+        return resp;
+    };
+
+    const deleteStation = async (id: number) => {
+        const req = await fetch(`/api/station/${id}`, { method: 'DELETE' });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getStations();
+        }
+
+        return resp;
+    };
+
     useEffect(() => {
+        if (!shouldGetList) {
+            return;
+        }
+
         getStations();
     }, []);
 
     return {
         stations,
         getStations,
+        createStation,
+        deleteStation,
     };
 };

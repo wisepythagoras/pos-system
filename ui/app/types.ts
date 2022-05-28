@@ -1,3 +1,8 @@
+export type ApiResponse<T> = {
+    success: boolean;
+    data: T;
+};
+
 export type ProductTypeT = 'food' | 'drink' | 'pastry';
 
 export type ProductT = {
