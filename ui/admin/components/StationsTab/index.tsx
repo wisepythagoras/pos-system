@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Button, Container, FormControl, FormHelperText, FormLabel, Heading, Input, Table, TableContainer, Tbody, Th, Thead, Tr, useToast } from '@chakra-ui/react';
 import { useCreateStation, useGetStations, useIsCompactView } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
+import { StationRow } from './StationRow';
 
 type PropsT = {};
 
@@ -33,6 +34,7 @@ export const StationsTab = (props: PropsT) => {
                         id="station-name"
                         type="text"
                         maxWidth="400px"
+                        placeholder="Enter here"
                         onChange={(e) => setNewStationName(e.target.value)}
                     />
                     <FormHelperText>This needs to be unique.</FormHelperText>
@@ -82,7 +84,7 @@ export const StationsTab = (props: PropsT) => {
                             </Tr>
                         </Thead>
                         <Tbody>
-                            {/* {orders.map((order, i) => <RichOrder key={i} order={order} />)} */}
+                            {stations.map((station, i) => <StationRow key={i} station={station} />)}
                         </Tbody>
                     </Table>
                 </TableContainer>

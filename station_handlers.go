@@ -34,6 +34,7 @@ func (sh *StationHandlers) CreateStation(c *gin.Context) {
 		apiResponse.Data = StationJSON{
 			ID:        station.ID,
 			Name:      station.Name,
+			Products:  []ProductJSON{},
 			CreatedAt: station.CreatedAt,
 			UpdatedAt: station.UpdatedAt,
 		}
@@ -111,6 +112,7 @@ func (sh *StationHandlers) Station(c *gin.Context) {
 		apiResponse.Data = StationJSON{
 			ID:        station.ID,
 			Name:      station.Name,
+			Products:  []ProductJSON{},
 			CreatedAt: station.CreatedAt,
 			UpdatedAt: station.UpdatedAt,
 		}
