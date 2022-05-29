@@ -49,7 +49,10 @@ export const StationRow = (props: PropsT) => {
                 <Box>
                     <StationProducts
                         products={props.station.products}
-                        onRemove={(productId) => props.removeProductFromStation(props.station.id, productId)}
+                        onRemove={(productId) => {
+                            console.log(props.station);
+                            return props.removeProductFromStation(props.station.id, productId);
+                        }}
                     />
                 </Box>
                 <Box>
@@ -59,7 +62,7 @@ export const StationRow = (props: PropsT) => {
                         size="md"
                         onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
                             return props.addProductToStation(props.station.id, parseInt(e.target.value, 10));
-                        }, [])}
+                        }, [props.station])}
                     >
                         {props.products
                             .filter((p) => {

@@ -112,9 +112,10 @@ func (sh *StationHandlers) RemoveProductFromStation(c *gin.Context) {
 		return
 	}
 
-	result := sh.DB.
-		Where("station_id = ? and product_id = ?", stationId, productId).
-		Delete(&StationProduct{})
+	result := sh.DB.Exec(`
+		delete from station_products
+		where station_id = ? and product_id = ?
+	`, stationId, productId)
 
 	// Error out if either the station or the product didn't load.
 	if result.RowsAffected == 0 {
@@ -223,10 +224,11 @@ func (sh *StationHandlers) Delete(c *gin.Context) {
 		return
 	}
 
-	// TODO: Also remove the station products from here.
+	sh.DB.Exec("delete from station_products where station_id = ?", stationId)
+	result := sh.DB.Exec("delete from stations where id = ?", stationId)
 
-	result := sh.DB.Delete(&Station{ID: uint64(stationId)})
 	apiResponse.Success = false
+	apiResponse.Error = result.Commit().Error.Error()
 
 	if result.RowsAffected > 0 {
 		apiResponse.Success = true

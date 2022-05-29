@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Box,
     Button,
     Container,
@@ -29,11 +29,11 @@ export const StationsTab = (props: PropsT) => {
         stations,
         createStation,
         deleteStation,
-        getStations,
         addProductToStation,
         removeProductFromStation,
     } = useStations();
     const toast = useToast();
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     return (
         <Container
@@ -55,6 +55,7 @@ export const StationsTab = (props: PropsT) => {
                         type="text"
                         maxWidth="400px"
                         placeholder="Enter here"
+                        ref={inputRef}
                         onChange={(e) => setNewStationName(e.target.value)}
                     />
                     <FormHelperText>This needs to be unique.</FormHelperText>
@@ -66,6 +67,7 @@ export const StationsTab = (props: PropsT) => {
                             const res = await createStation(newStationName);
 
                             if (res.success && res.data) {
+                                setNewStationName('');
                                 toast({
                                     title: 'Created new station',
                                     description: `Station "${res.data.name}" with id ${res.data.id}`,
@@ -73,8 +75,10 @@ export const StationsTab = (props: PropsT) => {
                                     duration: 5000,
                                     isClosable: true,
                                 });
-                                getStations();
-                                setNewStationName('');
+
+                                if (inputRef.current) {
+                                    inputRef.current.value = '';
+                                }
                             } else {
                                 toast({
                                     title: 'Uh, oh!',
