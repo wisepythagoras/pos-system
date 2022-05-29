@@ -169,6 +169,7 @@ func main() {
 
 	router.POST("/api/station", authHandler(true, adminAuthToken), stationHandlers.CreateStation)
 	router.POST("/api/station/:stationId/:productId", authHandler(true, adminAuthToken), stationHandlers.AddProductToStation)
+	router.DELETE("/api/station/:stationId/:productId", authHandler(true, adminAuthToken), stationHandlers.RemoveProductFromStation)
 	router.GET("/api/station/:stationId", authHandler(false, adminAuthToken), stationHandlers.Station)
 	router.DELETE("/api/station/:stationId", authHandler(true, adminAuthToken), stationHandlers.Delete)
 	router.GET("/api/stations", authHandler(false, adminAuthToken), stationHandlers.Stations)

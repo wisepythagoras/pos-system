@@ -91,6 +91,45 @@ func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 	c.JSON(http.StatusOK, apiResponse)
 }
 
+// RemoveProductFromStation removes a product from a station.
+func (sh *StationHandlers) RemoveProductFromStation(c *gin.Context) {
+	apiResponse := ApiResponse{}
+	stationId, err := getIDFromParams("stationId", c)
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = err.Error()
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	productId, err := getIDFromParams("productId", c)
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = err.Error()
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	result := sh.DB.Delete(&StationProduct{
+		StationID: uint64(stationId),
+		ProductID: uint64(productId),
+	})
+
+	// Error out if either the station or the product didn't load.
+	if result.RowsAffected == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "No such station product"
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	apiResponse.Success = true
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
 func (sh *StationHandlers) constructProductsArray(station *Station) []ProductJSON {
 	products := []ProductJSON{}
 

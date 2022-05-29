@@ -2,7 +2,7 @@ import React from 'react';
 import { Interpolation } from '@emotion/react';
 import { css } from 'styled-components';
 import { HStack, Tag } from '@chakra-ui/react';
-import { ProductT, ProductAggregateT } from '../../../app/types';
+import { ProductT } from '../../../app/types';
 
 export type PropsT = {
     products: ProductT[];
