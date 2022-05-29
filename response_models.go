@@ -33,7 +33,7 @@ type ProductJSON struct {
 // SetFromProductModel converts a product to a JSON formattable object.
 func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 	if product == nil {
-		return errors.New("Invalid product instance")
+		return errors.New("invalid product instance")
 	}
 
 	pj.ID = product.ID

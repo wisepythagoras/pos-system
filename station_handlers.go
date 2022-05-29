@@ -91,6 +91,24 @@ func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 	c.JSON(http.StatusOK, apiResponse)
 }
 
+func (sh *StationHandlers) constructProductsArray(station *Station) []ProductJSON {
+	products := []ProductJSON{}
+
+	for _, product := range station.StationProducts {
+		productJSON := ProductJSON{
+			ID:           product.Product.ID,
+			Name:         product.Product.Name,
+			Type:         product.Product.Type,
+			Price:        product.Product.Price,
+			Discontinued: product.Product.Discontinued == 1,
+			SoldOut:      product.Product.SoldOut == 1,
+		}
+		products = append(products, productJSON)
+	}
+
+	return products
+}
+
 // Station returns the station by its id.
 func (sh *StationHandlers) Station(c *gin.Context) {
 	apiResponse := ApiResponse{}
@@ -104,15 +122,19 @@ func (sh *StationHandlers) Station(c *gin.Context) {
 	}
 
 	station := &Station{}
-	sh.DB.First(station, "id = ?", stationId)
+	sh.DB.
+		Preload("StationProducts.Product").
+		First(station, "id = ?", stationId)
 
 	apiResponse.Success = true
 
 	if station.ID > 0 {
+		products := sh.constructProductsArray(station)
+
 		apiResponse.Data = StationJSON{
 			ID:        station.ID,
 			Name:      station.Name,
-			Products:  []ProductJSON{},
+			Products:  products,
 			CreatedAt: station.CreatedAt,
 			UpdatedAt: station.UpdatedAt,
 		}
@@ -128,14 +150,17 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 	var stationsJson []StationJSON = []StationJSON{}
 
 	sh.DB.
+		Preload("StationProducts.Product").
 		Order("id desc").
 		Find(&stations)
 
 	for _, station := range stations {
+		products := sh.constructProductsArray(&station)
+
 		newStation := StationJSON{
 			ID:        station.ID,
 			Name:      station.Name,
-			Products:  []ProductJSON{},
+			Products:  products,
 			CreatedAt: station.CreatedAt,
 			UpdatedAt: station.UpdatedAt,
 		}
