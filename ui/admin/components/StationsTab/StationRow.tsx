@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
 import { ApiResponse, ProductT, StationT } from '../../../app/types';
-import { useStations } from '../../hooks';
+import { StationProducts } from './StationProducts';
 
 type PropsT = {
     station: StationT;
@@ -45,7 +45,9 @@ export const StationRow = (props: PropsT) => {
                 {props.station.name}
             </Td>
             <Td>
-                <Box></Box>
+                <Box marginBottom="10px">
+                    <StationProducts products={props.station.products} />
+                </Box>
                 <Box>
                     <Select
                         maxWidth="300px"
