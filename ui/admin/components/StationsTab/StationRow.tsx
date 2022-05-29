@@ -46,8 +46,11 @@ export const StationRow = (props: PropsT) => {
                 {props.station.name}
             </Td>
             <Td>
-                <Box marginBottom="10px">
-                    <StationProducts products={props.station.products} />
+                <Box>
+                    <StationProducts
+                        products={props.station.products}
+                        onRemove={(productId) => props.removeProductFromStation(props.station.id, productId)}
+                    />
                 </Box>
                 <Box>
                     <Select
@@ -62,7 +65,7 @@ export const StationRow = (props: PropsT) => {
                             .filter((p) => {
                                 return props.station.products.findIndex((sp) => {
                                     return sp.id === p.id;
-                                }) < 0;
+                                }) < 0 && !p.discontinued;
                             })
                             .map((p) => {
                                 return (
@@ -75,7 +78,7 @@ export const StationRow = (props: PropsT) => {
                     </Select>
                 </Box>
             </Td>
-            <Td>
+            <Td width="136px">
                 <Button
                     leftIcon={<DeleteIcon />}
                     colorScheme="red"

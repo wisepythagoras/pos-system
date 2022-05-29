@@ -1,11 +1,12 @@
 import React from 'react';
 import { Interpolation } from '@emotion/react';
 import { css } from 'styled-components';
-import { HStack, Tag } from '@chakra-ui/react';
+import { HStack, Tag, TagCloseButton, TagLabel } from '@chakra-ui/react';
 import { ProductT } from '../../../app/types';
 
 export type PropsT = {
     products: ProductT[];
+    onRemove: (productId: number) => void;
 };
 
 /**
@@ -13,16 +14,13 @@ export type PropsT = {
  * @param props The props.
  */
 export const StationProducts = (props: PropsT) => {
-    const { products } = props;
+    const { products, onRemove } = props;
     const productPills: JSX.Element[] = [];
     const specialStyles = css`
         & > span {
             margin-inline-start: 0 !important;
             margin-inline-end: 0.5rem !important;
-
-            @media screen and (max-width: 768px) {
-                margin-bottom: 5px !important;
-            }
+            margin-bottom: 5px !important;
         }
     ` as Interpolation<{}>;
 
@@ -48,7 +46,10 @@ export const StationProducts = (props: PropsT) => {
                 variant="solid"
                 colorScheme={colorSheme}
             >
-                {product.name}
+                <TagLabel>
+                    {product.name}
+                </TagLabel>
+                <TagCloseButton onClick={() => onRemove(product.id)} />
             </Tag>
         );
     });
