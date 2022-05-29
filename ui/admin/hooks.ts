@@ -214,6 +214,7 @@ type UseStationsT =  {
     getStations: () => Promise<ApiResponse<StationT[] | null>>;
     deleteStation: (id: number) => Promise<ApiResponse<null>>;
     addProductToStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
+    removeProductFromStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
 };
 
 /**
@@ -235,7 +236,7 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         return resp;
     }, []);
 
-    const createStation = async (name: string) => {
+    const createStation = useCallback(async (name: string) => {
         const body = new FormData();
         body.append('name', name);
 
@@ -250,9 +251,9 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         }
 
         return resp;
-    };
+    }, []);
 
-    const deleteStation = async (id: number) => {
+    const deleteStation = useCallback(async (id: number) => {
         const req = await fetch(`/api/station/${id}`, { method: 'DELETE' });
         const resp = await req.json();
 
@@ -261,9 +262,9 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         }
 
         return resp;
-    };
+    }, []);
 
-    const addProductToStation = async (stationId: number, productId: number) => {;
+    const addProductToStation = useCallback(async (stationId: number, productId: number) => {;
         const req = await fetch(`/api/station/${stationId}/${productId}`, {
             method: 'POST',
         });
@@ -274,7 +275,20 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         }
 
         return resp;
-    };
+    }, []);
+
+    const removeProductFromStation = useCallback(async (stationId: number, productId: number) => {;
+        const req = await fetch(`/api/station/${stationId}/${productId}`, {
+            method: 'DELETE',
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getStations();
+        }
+
+        return resp;
+    }, []);
 
     useEffect(() => {
         if (!shouldGetList) {
@@ -290,5 +304,6 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         createStation,
         deleteStation,
         addProductToStation,
+        removeProductFromStation,
     };
 };

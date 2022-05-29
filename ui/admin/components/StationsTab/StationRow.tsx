@@ -22,6 +22,7 @@ type PropsT = {
     products: ProductT[];
     deleteStation: (id: number) => Promise<ApiResponse<null>>;
     addProductToStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
+    removeProductFromStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
 };
 
 export const StationRow = (props: PropsT) => {

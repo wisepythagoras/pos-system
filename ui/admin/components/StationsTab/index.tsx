@@ -31,10 +31,9 @@ export const StationsTab = (props: PropsT) => {
         deleteStation,
         getStations,
         addProductToStation,
+        removeProductFromStation,
     } = useStations();
     const toast = useToast();
-
-    console.log(stations);
 
     return (
         <Container
@@ -113,6 +112,7 @@ export const StationsTab = (props: PropsT) => {
                                         products={products}
                                         deleteStation={deleteStation}
                                         addProductToStation={addProductToStation}
+                                        removeProductFromStation={removeProductFromStation}
                                     />
                                 );
                             })}
