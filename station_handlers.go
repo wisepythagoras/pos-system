@@ -124,8 +124,8 @@ func (sh *StationHandlers) Station(c *gin.Context) {
 // Stations returns a list of all stations.
 func (sh *StationHandlers) Stations(c *gin.Context) {
 	apiResponse := ApiResponse{}
-	var stations []Station
-	var stationsJson []StationJSON
+	var stations []Station = []Station{}
+	var stationsJson []StationJSON = []StationJSON{}
 
 	sh.DB.
 		Order("id desc").
@@ -135,6 +135,7 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 		newStation := StationJSON{
 			ID:        station.ID,
 			Name:      station.Name,
+			Products:  []ProductJSON{},
 			CreatedAt: station.CreatedAt,
 			UpdatedAt: station.UpdatedAt,
 		}

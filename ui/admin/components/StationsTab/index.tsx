@@ -15,7 +15,7 @@ import { Box,
     Tr,
     useToast,
 } from '@chakra-ui/react';
-import { useStations, useIsCompactView } from '../../hooks';
+import { useStations, useIsCompactView, useGetProductsList } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
 import { StationRow } from './StationRow';
 
@@ -24,11 +24,13 @@ type PropsT = {};
 export const StationsTab = (props: PropsT) => {
     const [newStationName, setNewStationName] = useState("");
     const isCompactView = useIsCompactView();
+    const { products } = useGetProductsList();
     const {
         stations,
         createStation,
         deleteStation,
         getStations,
+        addProductToStation,
     } = useStations();
     const toast = useToast();
 
@@ -108,7 +110,9 @@ export const StationsTab = (props: PropsT) => {
                                     <StationRow
                                         key={i}
                                         station={station}
+                                        products={products}
                                         deleteStation={deleteStation}
+                                        addProductToStation={addProductToStation}
                                     />
                                 );
                             })}

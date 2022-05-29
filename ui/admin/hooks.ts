@@ -213,6 +213,7 @@ type UseStationsT =  {
     createStation: (name: string) => Promise<ApiResponse<StationT | null>>;
     getStations: () => Promise<ApiResponse<StationT[] | null>>;
     deleteStation: (id: number) => Promise<ApiResponse<null>>;
+    addProductToStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
 };
 
 /**
@@ -262,6 +263,19 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         return resp;
     };
 
+    const addProductToStation = async (stationId: number, productId: number) => {;
+        const req = await fetch(`/api/station/${stationId}/${productId}`, {
+            method: 'POST',
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getStations();
+        }
+
+        return resp;
+    };
+
     useEffect(() => {
         if (!shouldGetList) {
             return;
@@ -275,5 +289,6 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         getStations,
         createStation,
         deleteStation,
+        addProductToStation,
     };
 };

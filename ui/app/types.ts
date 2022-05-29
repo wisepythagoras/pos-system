@@ -39,6 +39,7 @@ export type RichOrderT = {
 export type StationT = {
     id: number;
     name: string;
+    products: ProductT[];
     created_at: Date;
     updated_at: Date;
 };

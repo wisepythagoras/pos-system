@@ -1,7 +1,8 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client'
 import { Home } from './Home';
 
-const root = document.getElementById('root');
+const rootElement = document.getElementById('root') as unknown as Element | DocumentFragment;
+const root = createRoot(rootElement);
 
-render(<Home />, root);
+root.render(<Home />);

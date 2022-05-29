@@ -6,18 +6,22 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogOverlay,
+    Box,
     Button,
+    Select,
     Td,
     Tr,
     useDisclosure,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { ApiResponse, StationT } from '../../../app/types';
+import { ApiResponse, ProductT, StationT } from '../../../app/types';
 import { useStations } from '../../hooks';
 
 type PropsT = {
     station: StationT;
+    products: ProductT[];
     deleteStation: (id: number) => Promise<ApiResponse<null>>;
+    addProductToStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
 };
 
 export const StationRow = (props: PropsT) => {
@@ -34,13 +38,40 @@ export const StationRow = (props: PropsT) => {
 
     return (
         <Tr>
-            <Td>
+            <Td width="150px">
                 {props.station.id}
             </Td>
-            <Td>
+            <Td width="250px">
                 {props.station.name}
             </Td>
-            <Td></Td>
+            <Td>
+                <Box></Box>
+                <Box>
+                    <Select
+                        maxWidth="300px"
+                        placeholder="Select a product"
+                        size="md"
+                        onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+                            return props.addProductToStation(props.station.id, parseInt(e.target.value, 10));
+                        }, [])}
+                    >
+                        {props.products
+                            .filter((p) => {
+                                return props.station.products.findIndex((sp) => {
+                                    return sp.id === p.id;
+                                });
+                            })
+                            .map((p) => {
+                                return (
+                                    <option value={p.id} key={p.id}>
+                                        {p.name}
+                                    </option>
+                                );
+                            })
+                        }
+                    </Select>
+                </Box>
+            </Td>
             <Td>
                 <Button
                     leftIcon={<DeleteIcon />}
