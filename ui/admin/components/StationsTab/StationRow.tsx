@@ -61,7 +61,7 @@ export const StationRow = (props: PropsT) => {
                             .filter((p) => {
                                 return props.station.products.findIndex((sp) => {
                                     return sp.id === p.id;
-                                });
+                                }) < 0;
                             })
                             .map((p) => {
                                 return (
