@@ -50,5 +50,6 @@ export type UserT = {
     username: string;
     created_at: Date;
     updated_at: Date;
-    station_id: number;
+    station_id: number | null;
+    station?: StationT;
 };

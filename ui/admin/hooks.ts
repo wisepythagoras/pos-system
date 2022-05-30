@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useMedia } from "react-use";
-import { ApiResponse, ProductT, RichOrderT, StationT } from '../app/types';
+import {
+    ApiResponse,
+    ProductT,
+    RichOrderT,
+    StationT,
+    UserT,
+} from '../app/types';
 
 interface IGetOrdersListState {
     loading: boolean;
@@ -309,14 +315,27 @@ export const useStations = (shouldGetList = true): UseStationsT => {
 };
 
 type UseUsersReturnT = {
+    users: UserT[];
     createUser: (u: string, p: string, s?: number) => Promise<ApiResponse<null>>;
+    getUsers: () => Promise<ApiResponse<UserT[]>>;
 };
 
 /**
  * A hook that provides methods for managing users.
  */
 export const useUsers = (): UseUsersReturnT => {
-    const getUsers = useCallback(() => {}, []);
+    const [users, setUsers] = useState<UserT[]>([]);
+
+    const getUsers = useCallback(async () => {
+        const req = await fetch('/api/users');
+        const resp = await req.json();
+
+        if (resp.success && !!resp.data) {
+            setUsers(resp.data);
+        }
+
+        return resp;
+    }, []);
 
     const createUser = useCallback(async (
         username: string,
@@ -342,6 +361,8 @@ export const useUsers = (): UseUsersReturnT => {
     }, []);
 
     return {
+        users,
         createUser,
+        getUsers,
     };
 };
