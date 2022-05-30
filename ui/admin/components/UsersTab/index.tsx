@@ -88,6 +88,7 @@ export const UsersTab = (props: PropsT) => {
                                         stationId: parseInt(e.target.value, 10),
                                     });
                                 }}
+                                value={newUser.stationId}
                             >
                                 <option value="0">Not assigned</option>
                                 {stations.map((station) => {
