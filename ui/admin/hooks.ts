@@ -362,7 +362,7 @@ export const useUsers = (): UseUsersReturnT => {
     }, []);
 
     const deleteUser = useCallback(async (userId: number) => {;
-        const req = await fetch(`/api/station/${userId}`, {
+        const req = await fetch(`/api/user/${userId}`, {
             method: 'DELETE',
         });
         const resp = await req.json();
@@ -372,6 +372,10 @@ export const useUsers = (): UseUsersReturnT => {
         }
 
         return resp;
+    }, []);
+
+    useEffect(() => {
+        getUsers();
     }, []);
 
     return {

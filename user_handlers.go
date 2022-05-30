@@ -203,6 +203,7 @@ func (uh *UserHandlers) List(c *gin.Context) {
 		jsonUsers = append(jsonUsers, jsonUser)
 	}
 
+	apiResponse.Success = true
 	apiResponse.Data = jsonUsers
 
 	c.JSON(http.StatusOK, apiResponse)

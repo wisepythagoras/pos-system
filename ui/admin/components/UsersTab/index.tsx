@@ -1,5 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { Box,
+import React, { useCallback, useRef, useState } from 'react';
+import {
+    AlertDialog,
+    AlertDialogBody,
+    AlertDialogContent,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogOverlay,
+    Box,
     Button,
     Container,
     FormControl,
@@ -12,9 +19,11 @@ import { Box,
     Table,
     TableContainer,
     Tbody,
+    Td,
     Th,
     Thead,
     Tr,
+    useDisclosure,
     useToast,
     VStack,
 } from '@chakra-ui/react';
@@ -33,11 +42,43 @@ export const UsersTab = (props: PropsT) => {
     const [newUser, setNewUser] = useState(stubUserObj);
     const isCompactView = useIsCompactView();
     const { stations } = useStations();
-    const { createUser } = useUsers();
+    const { createUser, deleteUser, users } = useUsers();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const userIdToDeleteRef = useRef<number | undefined>();
+    const cancelRef = useRef<any>();
 
     const TargetStack = isCompactView ? VStack : HStack;
+
+    const onDelete = useCallback(async () => {
+        if (!userIdToDeleteRef.current) {
+            return;
+        }
+
+        const res = await deleteUser(userIdToDeleteRef.current);
+
+        if (res.success) {
+            onClose();
+
+            toast({
+                title: 'Success',
+                description: `User ${userIdToDeleteRef.current} was deleted`,
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+        } else {
+            toast({
+                title: 'Error',
+                description: `Error: ${res.error}`,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+        }
+
+        userIdToDeleteRef.current = undefined;
+    }, []);
 
     return (
         <Container
@@ -61,7 +102,6 @@ export const UsersTab = (props: PropsT) => {
                                     type="text"
                                     maxWidth="400px"
                                     placeholder="Username"
-                                    ref={inputRef}
                                     value={newUser.username}
                                     onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                                 />
@@ -124,10 +164,6 @@ export const UsersTab = (props: PropsT) => {
                                     isClosable: true,
                                 });
                                 setNewUser(stubUserObj);
-
-                                if (inputRef.current) {
-                                    inputRef.current.value = '';
-                                }
                             } else {
                                 toast({
                                     title: 'Uh, oh!',
@@ -161,9 +197,56 @@ export const UsersTab = (props: PropsT) => {
                             </Tr>
                         </Thead>
                         <Tbody>
+                            {users.map((user) => {
+                                return (
+                                    <Tr key={user.id}>
+                                        <Td>{user.id}</Td>
+                                        <Td>{user.username}</Td>
+                                        <Td>
+                                            {user.station?.name || 'Not assigned'}
+                                        </Td>
+                                        <Td>
+                                            <Button
+                                                colorScheme='red'
+                                                ml={3}
+                                                onClick={() => {
+                                                    userIdToDeleteRef.current = user.id;
+                                                    onOpen();
+                                                }}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </Td>
+                                    </Tr>
+                                );
+                            })}
                         </Tbody>
                     </Table>
                 </TableContainer>
+                <AlertDialog
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    leastDestructiveRef={cancelRef}
+                >
+                    <AlertDialogOverlay>
+                        <AlertDialogContent>
+                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                                Delete Station
+                            </AlertDialogHeader>
+                            <AlertDialogBody>
+                                Are you sure you want to delete this user?
+                            </AlertDialogBody>
+                            <AlertDialogFooter>
+                                <Button ref={cancelRef} onClick={onClose}>
+                                    Cancel
+                                </Button>
+                                <Button colorScheme='red' onClick={onDelete} ml={3}>
+                                    Delete
+                                </Button>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialogOverlay>
+                </AlertDialog>
             </Box>
         </Container>
     );
