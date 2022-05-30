@@ -33,6 +33,7 @@ import { AddIcon } from '@chakra-ui/icons';
 const stubUserObj = {
     username: '',
     password: '',
+    confirmPassword: '',
     stationId: 0,
 };
 
@@ -116,8 +117,23 @@ export const UsersTab = (props: PropsT) => {
                                     onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                                 />
                                 <FormHelperText>
-                                    The password needs to be 8 characters or more.
+                                    Passwords should be 8 characters or more.
                                 </FormHelperText>
+                            </Box>
+                            <Box>
+                                <Input
+                                    type="password"
+                                    maxWidth="400px"
+                                    minWidth={!isCompactView ? '260px' : undefined}
+                                    placeholder="Confirm password"
+                                    value={newUser.confirmPassword}
+                                    onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })}
+                                />
+                                {newUser.password !== newUser.confirmPassword ? (
+                                    <FormHelperText textColor="red">
+                                        The passwords need to match.
+                                    </FormHelperText>
+                                ) : undefined}
                             </Box>
                         </TargetStack>
                         <Box>
@@ -177,7 +193,8 @@ export const UsersTab = (props: PropsT) => {
                         disabled={
                             !newUser.username ||
                             !newUser.password ||
-                            newUser.password.length < 8
+                            newUser.password.length < 8 ||
+                            newUser.password !== newUser.confirmPassword
                         }
                         marginTop="10px"
                     >
