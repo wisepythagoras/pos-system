@@ -318,6 +318,7 @@ type UseUsersReturnT = {
     users: UserT[];
     createUser: (u: string, p: string, s?: number) => Promise<ApiResponse<null>>;
     getUsers: () => Promise<ApiResponse<UserT[]>>;
+    deleteUser: (u: number) => Promise<ApiResponse<null>>;
 };
 
 /**
@@ -360,9 +361,23 @@ export const useUsers = (): UseUsersReturnT => {
         return resp;
     }, []);
 
+    const deleteUser = useCallback(async (userId: number) => {;
+        const req = await fetch(`/api/station/${userId}`, {
+            method: 'DELETE',
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getUsers();
+        }
+
+        return resp;
+    }, []);
+
     return {
         users,
         createUser,
         getUsers,
+        deleteUser,
     };
 };

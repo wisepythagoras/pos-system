@@ -207,3 +207,28 @@ func (uh *UserHandlers) List(c *gin.Context) {
 
 	c.JSON(http.StatusOK, apiResponse)
 }
+
+// Delete hard removes a user record from the DB.
+func (uh *UserHandlers) Delete(c *gin.Context) {
+	apiResponse := ApiResponse{}
+
+	userId, err := getIDFromParams("userId", c)
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = err.Error()
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	result := uh.DB.Exec("delete from users where id = ?", userId)
+
+	apiResponse.Success = true
+
+	if result.RowsAffected == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "Unable to remove user"
+	}
+
+	c.JSON(http.StatusOK, apiResponse)
+}
