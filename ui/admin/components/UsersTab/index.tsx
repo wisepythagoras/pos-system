@@ -114,7 +114,7 @@ export const UsersTab = (props: PropsT) => {
                                 newUser.stationId
                             );
 
-                            if (res.success && res.data) {
+                            if (res.success) {
                                 toast({
                                     title: 'Created new station',
                                     description: `User "${newUser.username}" was created`,

@@ -75,6 +75,6 @@ type UserJSON struct {
 	Username  string       `json:"username"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`
-	StationId uint64       `json:"station_id"`
+	StationID uint64       `json:"station_id"`
 	Station   *StationJSON `json:"station"`
 }

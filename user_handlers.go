@@ -165,3 +165,45 @@ func (uh *UserHandlers) Create(c *gin.Context) {
 
 	c.JSON(http.StatusOK, apiResponse)
 }
+
+// List returns a list of users.
+func (uh *UserHandlers) List(c *gin.Context) {
+	apiResponse := ApiResponse{}
+
+	var users []User
+	jsonUsers := []UserJSON{}
+
+	uh.
+		DB.
+		Preload("Station").
+		Order("id desc").
+		Find(&users)
+
+	for _, user := range users {
+		var station *StationJSON
+
+		if user.Station.ID > 0 {
+			station = &StationJSON{
+				ID:        user.Station.ID,
+				Name:      user.Station.Name,
+				CreatedAt: user.Station.CreatedAt,
+				UpdatedAt: user.Station.UpdatedAt,
+			}
+		}
+
+		jsonUser := UserJSON{
+			ID:        user.ID,
+			Username:  user.Username,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+			StationID: uint64(user.StationID),
+			Station:   station,
+		}
+
+		jsonUsers = append(jsonUsers, jsonUser)
+	}
+
+	apiResponse.Data = jsonUsers
+
+	c.JSON(http.StatusOK, apiResponse)
+}

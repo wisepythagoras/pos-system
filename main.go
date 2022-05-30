@@ -151,6 +151,7 @@ func main() {
 	router.GET("/logout", userHandlers.Logout)
 
 	router.POST("/api/user", authHandler(true, adminAuthToken), userHandlers.Create)
+	router.GET("/api/users", authHandler(true, adminAuthToken), userHandlers.List)
 
 	router.GET("/api/orders/earnings", authHandler(true, adminAuthToken), orderHandlers.GetTotalEarnings)
 	router.GET("/api/orders/earnings/:day", authHandler(true, adminAuthToken), orderHandlers.EarningsPerDay)
