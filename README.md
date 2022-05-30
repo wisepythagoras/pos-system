@@ -53,19 +53,7 @@ Make sure that your printer settings are valid. You can check the settings by na
 
 ### User Management
 
-There is no admin panel for managing users (creating and deleting them). You can do this manually, until the admin page for this is created. Simply open `pos.db` with [SQLite Database Browser](https://sqlitebrowser.org/), or any other app that can open sqlite databases, and then click on the "Execute SQL" tab.
-
-Then, open your terminal and generate the SHA3-512 of your desired password:
-
-``` sh
-echo -n 'test password' | openssl dgst -sha3-512
-```
-
-Finally, in the "Execute SQL" tab run a query that looks like this:
-
-``` sql
-insert into users (username, password, created_at) values ('testuser', '7103a07e72ee...e6794ecd0b704d0', date());
-```
+There is an admin panel for creating and deleting users, but updating them is not supported at the moment. You can either delete the previous user and re-create one, or update the user record in the database. Simply open `pos.db` with [SQLite Database Browser](https://sqlitebrowser.org/), or any other app that can open sqlite databases, and then click on the "Execute SQL" tab or go to the "Browse" tab and update the record you wish.
 
 ### Product Management
 
@@ -85,5 +73,5 @@ Read [this](/startup/README.md) guide.
 
 1. [x] Receipt printer support.
 2. [x] Manage products from the admin panel.
-3. [ ] Manage users through the admin panel.
-4. [ ] Allow cashiers to select between multiple printers.
+3. [x] Manage users through the admin panel.
+4. [x] Allow cashiers to select between multiple printers.
