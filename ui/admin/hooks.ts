@@ -307,3 +307,41 @@ export const useStations = (shouldGetList = true): UseStationsT => {
         removeProductFromStation,
     };
 };
+
+type UseUsersReturnT = {
+    createUser: (u: string, p: string, s?: number) => Promise<ApiResponse<null>>;
+};
+
+/**
+ * A hook that provides methods for managing users.
+ */
+export const useUsers = (): UseUsersReturnT => {
+    const getUsers = useCallback(() => {}, []);
+
+    const createUser = useCallback(async (
+        username: string,
+        password: string,
+        stationId = 0
+    ) => {
+        const body = new FormData();
+        body.append('username', username);
+        body.append('password', password);
+        body.append('station_id', stationId.toString());
+
+        const req = await fetch('/api/user', {
+            method: 'POST',
+            body,
+        });
+        const resp = await req.json();
+
+        if (resp.success) {
+            getUsers();
+        }
+
+        return resp;
+    }, []);
+
+    return {
+        createUser,
+    };
+};

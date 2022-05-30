@@ -44,3 +44,11 @@ export type StationT = {
     created_at: Date;
     updated_at: Date;
 };
+
+export type UserT = {
+    id: number;
+    username: string;
+    created_at: Date;
+    updated_at: Date;
+    station_id: number;
+};

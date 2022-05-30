@@ -69,3 +69,12 @@ type StationJSON struct {
 	UpdatedAt time.Time     `json:"updated_at"`
 	Products  []ProductJSON `json:"products"`
 }
+
+type UserJSON struct {
+	ID        uint64       `json:"id"`
+	Username  string       `json:"username"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
+	StationId uint64       `json:"station_id"`
+	Station   *StationJSON `json:"station"`
+}

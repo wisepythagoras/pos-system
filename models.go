@@ -41,9 +41,10 @@ type User struct {
 	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
 	Username  string    `gorm:"uniqueIndex; index; not_null;"`
 	Password  string    `gorm:"not_null;"`
-	Role      uint8     `gorm:"not_null; default 0"`
+	StationID uint8     `gorm:"not_null; default 0"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
 	UpdatedAt time.Time `gorm:"autoCreateTime:milli"`
+	Station   Station   `gorm:"one2one:stations"`
 }
 
 type Station struct {

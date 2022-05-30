@@ -32,6 +32,7 @@ import {
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
 import { StationsTab } from '../StationsTab';
+import { UsersTab } from '../UsersTab';
 
 export interface IMainProps {};
 
@@ -240,7 +241,9 @@ export const Main = (props: IMainProps) => {
                     <TabPanel>
                         <StationsTab />
                     </TabPanel>
-                    <TabPanel>{usersTab}</TabPanel>
+                    <TabPanel>
+                        <UsersTab />
+                    </TabPanel>
                 </TabPanels>
             </Tabs>
         </AdminWrapper>

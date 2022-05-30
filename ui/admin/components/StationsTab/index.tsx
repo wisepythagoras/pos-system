@@ -33,7 +33,6 @@ export const StationsTab = (props: PropsT) => {
         removeProductFromStation,
     } = useStations();
     const toast = useToast();
-    const inputRef = useRef<HTMLInputElement | null>(null);
 
     return (
         <Container
@@ -55,7 +54,7 @@ export const StationsTab = (props: PropsT) => {
                         type="text"
                         maxWidth="400px"
                         placeholder="Enter here"
-                        ref={inputRef}
+                        value={newStationName}
                         onChange={(e) => setNewStationName(e.target.value)}
                     />
                     <FormHelperText>This needs to be unique.</FormHelperText>
@@ -75,10 +74,6 @@ export const StationsTab = (props: PropsT) => {
                                     duration: 5000,
                                     isClosable: true,
                                 });
-
-                                if (inputRef.current) {
-                                    inputRef.current.value = '';
-                                }
                             } else {
                                 toast({
                                     title: 'Uh, oh!',

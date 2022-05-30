@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -114,4 +115,53 @@ func (uh *UserHandlers) Logout(c *gin.Context) {
 	}
 
 	c.Redirect(http.StatusMovedPermanently, "/?m=Logged out!")
+}
+
+// Create will handle the request to create a new user.
+func (uh *UserHandlers) Create(c *gin.Context) {
+	apiResponse := ApiResponse{}
+
+	username := c.PostForm("username")
+	password := c.PostForm("password")
+	stationId, _ := strconv.Atoi(c.PostForm("station_id"))
+
+	if len(username) == 0 || len(password) == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "The username or password is empty"
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	if len(password) < 8 {
+		apiResponse.Success = false
+		apiResponse.Error = "The password is too short"
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	hash, err := crypto.GetSHA3512Hash([]byte(password))
+
+	if err != nil {
+		apiResponse.Success = false
+		apiResponse.Error = "Unknown error"
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	newUser := &User{
+		Username:  username,
+		Password:  crypto.ByteArrayToHex(hash),
+		StationID: uint8(stationId),
+	}
+
+	result := uh.DB.Save(newUser)
+
+	if result.RowsAffected == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "Unable to add user to the database"
+	}
+
+	apiResponse.Success = true
+
+	c.JSON(http.StatusOK, apiResponse)
 }
