@@ -75,3 +75,5 @@ Read [this](/startup/README.md) guide.
 2. [x] Manage products from the admin panel.
 3. [x] Manage users through the admin panel.
 4. [x] Allow cashiers to select between multiple printers.
+5. [ ] Separate app/page for stations to fulfill orders.
+6. [ ] Extension/module engine.
