@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { OrderT, ProductT } from './types';
+import { OrderT, PrinterT, ProductT } from './types';
 
 type GetProductsStateT = {
     products: ProductT[];
@@ -176,11 +176,6 @@ export const useCreateOrder = () => {
     return { ...state, createOrder };
 };
 
-export type PrinterT = {
-    id: number;
-    name: string;
-};
-
 /**
  * This custom hook retrieves the list of printers.
  * @returns The printers and a function to manually get them.
@@ -201,3 +196,5 @@ export const useGetPrinters = () => {
 
     return { printers, getPrinters };
 };
+
+export const useGetUser = () => {};

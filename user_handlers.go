@@ -117,6 +117,63 @@ func (uh *UserHandlers) Logout(c *gin.Context) {
 	c.Redirect(http.StatusMovedPermanently, "/?m=Logged out!")
 }
 
+// GetLoggedInUser will return the currently logged in user.
+func (uh *UserHandlers) GetLoggedInUser(c *gin.Context) {
+	session := sessions.Default(c)
+	apiResponse := ApiResponse{}
+
+	currentUser := session.Get("user")
+	apiResponse.Success = false
+
+	if currentUser != nil {
+		userStruct := &UserStruct{}
+		user := &User{}
+		err := json.Unmarshal([]byte(currentUser.(string)), userStruct)
+
+		if err != nil {
+			apiResponse.Success = false
+			apiResponse.Error = err.Error()
+		} else if userStruct.ID == 0 {
+			apiResponse.Success = true
+			apiResponse.Data = UserJSON{
+				ID:        userStruct.ID,
+				Username:  userStruct.Username,
+				StationID: 0,
+				Station:   nil,
+			}
+		} else {
+			uh.
+				DB.
+				Preload("Station").
+				Where("id = ?", userStruct.ID).
+				Find(&user)
+
+			var station *StationJSON
+
+			if user.Station.ID > 0 {
+				station = &StationJSON{
+					ID:        user.Station.ID,
+					Name:      user.Station.Name,
+					CreatedAt: user.Station.CreatedAt,
+					UpdatedAt: user.Station.UpdatedAt,
+				}
+			}
+
+			apiResponse.Success = true
+			apiResponse.Data = UserJSON{
+				ID:        userStruct.ID,
+				Username:  userStruct.Username,
+				StationID: uint64(user.StationID),
+				CreatedAt: user.CreatedAt,
+				UpdatedAt: user.UpdatedAt,
+				Station:   station,
+			}
+		}
+	}
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
 // Create will handle the request to create a new user.
 func (uh *UserHandlers) Create(c *gin.Context) {
 	apiResponse := ApiResponse{}

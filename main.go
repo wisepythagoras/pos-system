@@ -150,6 +150,7 @@ func main() {
 	router.GET("/login", userHandlers.LoginPage)
 	router.GET("/logout", userHandlers.Logout)
 
+	router.GET("/api/user", authHandler(false, adminAuthToken), userHandlers.GetLoggedInUser)
 	router.POST("/api/user", authHandler(true, adminAuthToken), userHandlers.Create)
 	router.DELETE("/api/user/:userId", authHandler(true, adminAuthToken), userHandlers.Delete)
 	router.GET("/api/users", authHandler(true, adminAuthToken), userHandlers.List)
