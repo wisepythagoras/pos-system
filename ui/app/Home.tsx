@@ -15,8 +15,8 @@ import {
     ModalOverlay,
     Spinner,
 } from '@chakra-ui/react';
-import { ProductT, ProductAggregateT } from './types';
-import { useGetProducts, useCreateOrder, PrinterT } from './hooks';
+import { ProductT, ProductAggregateT, PrinterT } from './types';
+import { useGetProducts, useCreateOrder } from './hooks';
 import { ProductList } from './components/ProductList';
 import { SmallProductCard } from './components/SmallProductCard';
 import { useLocalStorage } from 'react-use';

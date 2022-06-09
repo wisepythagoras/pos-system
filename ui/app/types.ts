@@ -54,23 +54,6 @@ export type UserT = {
     station?: StationT;
 };
 
-export type StationT = {
-    id: number;
-    name: string;
-    products: ProductT[];
-    created_at: Date;
-    updated_at: Date;
-};
-
-export type UserT = {
-    id: number;
-    username: string;
-    created_at: Date;
-    updated_at: Date;
-    station_id: number | null;
-    station?: StationT;
-};
-
 export type PrinterT = {
     id: number;
     name: string;

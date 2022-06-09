@@ -24,7 +24,8 @@ import { CheckCircleIcon, MinusIcon, Search2Icon, SettingsIcon } from '@chakra-u
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
 import { useLocalStorage, useLockBodyScroll } from 'react-use';
-import { PrinterT, useGetPrinters } from '../../hooks';
+import { useGetPrinters } from '../../hooks';
+import { PrinterT } from '../../types';
 
 const SearchField = styled.div`
     width: calc(100% - 10px);
