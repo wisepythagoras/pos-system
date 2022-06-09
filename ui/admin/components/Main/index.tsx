@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     Box,
     Button,
@@ -18,6 +18,7 @@ import {
     useDisclosure,
     HStack,
     Heading,
+    useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon, LockIcon } from '@chakra-ui/icons';
 import debounce from 'lodash/debounce';
@@ -55,6 +56,18 @@ export const Main = (props: IMainProps) => {
     const earnings = useGetTotalEarnings();
     const isCompactView = useIsCompactView();
     const lastOrderRef = useRef(0);
+    const { colorMode, toggleColorMode } = useColorMode();
+
+    // @ts-ignore
+    window._toggle = toggleColorMode;
+
+    useEffect(() => {
+        // This ugly solution is needed because Chakra's `LightMode` HOC or `extendTheme` method for setting
+        // the theme to light mode doesn't work, for some reason.
+        if (colorMode !== 'light') {
+            toggleColorMode();
+        }
+    }, [colorMode]);
 
     if (page === 1 && !loading && orders.length > 0) {
         lastOrderRef.current = orders[0].order_id;
