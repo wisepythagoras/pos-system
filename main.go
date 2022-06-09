@@ -159,7 +159,6 @@ func main() {
 	router.GET("/api/orders/earnings/:day", authHandler(true, adminAuthToken), orderHandlers.EarningsPerDay)
 	router.GET("/api/orders/totals/export", authHandler(true, adminAuthToken), orderHandlers.ExportTotalEarnings)
 	router.GET("/api/orders", authHandler(true, adminAuthToken), orderHandlers.GetOrders)
-	router.GET("/api/orders/stream", authHandler(true, adminAuthToken), orderHandlers.OrderStream)
 	router.POST("/api/order", authHandler(false, adminAuthToken), orderHandlers.CreateOrder)
 	router.GET("/api/order/:orderId", authHandler(false, adminAuthToken), orderHandlers.FetchOrder)
 	router.GET("/api/order/:orderId/receipt/:printerId", authHandler(false, adminAuthToken), orderHandlers.PrintReceipt)
@@ -186,9 +185,10 @@ func main() {
 		})
 	})
 
-	// The websocket endpoint for product updates.
-	router.GET("/api/products/ws", productHandlers.ProductUpdateWS)
-	router.GET("/api/products/stream", productHandlers.ProductUpdateStream)
+	// The websocket and streaming endpoints.
+	router.GET("/api/products/ws", authHandler(false, adminAuthToken), productHandlers.ProductUpdateWS)
+	router.GET("/api/products/stream", authHandler(false, adminAuthToken), productHandlers.ProductUpdateStream)
+	router.GET("/api/orders/stream", authHandler(false, adminAuthToken), orderHandlers.OrderStream)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }

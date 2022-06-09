@@ -14,6 +14,7 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/asaskevich/EventBus"
 	"github.com/gin-gonic/gin"
+	"github.com/samber/lo"
 	"github.com/skip2/go-qrcode"
 	"github.com/wisepythagoras/pos-system/crypto"
 	"gorm.io/gorm"
@@ -101,8 +102,12 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	// Create the new order.
 	oh.DB.Create(newOrder).Commit()
 
+	// The original productIds array can contain multiple of the same product id. Just to be
+	// more efficient, I get the unique ids.
+	uniqueProductIds := lo.Uniq(productIds)
+
 	result := oh.DB.
-		Where("id in (?) AND discontinued = 0 AND sold_out = 0", productIds).
+		Where("id in (?) AND discontinued = 0 AND sold_out = 0", uniqueProductIds).
 		Find(&dbProducts)
 
 	if result.RowsAffected == 0 {
@@ -115,15 +120,19 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	}
 
 	var orderProducts []OrderProduct
+	var productsArr []Product
 
-	for _, product := range dbProducts {
-		for _, productId := range productIds {
-			if productId == product.ID {
-				orderProducts = append(orderProducts, OrderProduct{
-					ProductID: product.ID,
-					OrderID:   newOrder.ID,
-				})
-			}
+	for _, productId := range productIds {
+		product, productFound := lo.Find(dbProducts, func(p Product) bool {
+			return p.ID == productId
+		})
+
+		if productFound {
+			orderProducts = append(orderProducts, OrderProduct{
+				ProductID: product.ID,
+				OrderID:   newOrder.ID,
+			})
+			productsArr = append(productsArr, product)
 		}
 	}
 
@@ -133,7 +142,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	// With the products that were find, create a new set of order products,
 	// and use the order that was created earlier, to create the association.
 
-	jsonProducts = ProductsToJSONFormat(dbProducts)
+	jsonProducts = ProductsToJSONFormat(productsArr)
 	orderJSON := &OrderJSON{
 		ID:        newOrder.ID,
 		Cancelled: false,
