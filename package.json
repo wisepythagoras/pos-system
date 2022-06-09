@@ -20,8 +20,8 @@
   },
   "homepage": "https://github.com/wisepythagoras/pos-system#readme",
   "dependencies": {
-    "@chakra-ui/icons": "^1.1.7",
-    "@chakra-ui/react": "^1.8.8",
+    "@chakra-ui/icons": "^2.0.2",
+    "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
     "@material-ui/core": "^4.12.3",
@@ -29,10 +29,6 @@
     "@material-ui/lab": "^4.0.0-alpha.60",
     "@mui/material": "^5.3.0",
     "@mui/styles": "^5.3.0",
-    "@types/lodash": "^4.14.171",
-    "@types/react": "^18.0.8",
-    "@types/react-dom": "^18.0.3",
-    "@types/styled-components": "^5.1.20",
     "dayjs": "^1.10.7",
     "framer-motion": "^6.2.8",
     "lodash": "^4.17.21",
@@ -45,5 +41,11 @@
     "typescript": "^4.6.4",
     "webpack": "^5.39.1",
     "webpack-cli": "^4.7.2"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.171",
+    "@types/react": "^18.0.8",
+    "@types/react-dom": "^18.0.3",
+    "@types/styled-components": "^5.1.20"
   }
 }
