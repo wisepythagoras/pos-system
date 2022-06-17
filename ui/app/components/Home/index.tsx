@@ -4,9 +4,9 @@ import {
     Center,
     useColorMode,
 } from '@chakra-ui/react';
-import { POSHome } from './pos_home';
+import { POSHome } from './POSHome';
+import { StationHome } from './StationHome';
 import { useGetUser } from '../../hooks';
-import { StationHome } from './station_home';
 
 export const Home = () => {
     const { colorMode, toggleColorMode } = useColorMode();
