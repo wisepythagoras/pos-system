@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { OrderT, PrinterT, ProductT } from './types';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ApiResponse, OrderT, PrinterT, ProductT, StationT, UserT } from './types';
 
 type GetProductsStateT = {
     products: ProductT[];
@@ -197,4 +197,29 @@ export const useGetPrinters = () => {
     return { printers, getPrinters };
 };
 
-export const useGetUser = () => {};
+/**
+ * A hook that returns the currently logged in user.
+ * @returns The user and the function to manually get the user.
+ */
+export const useGetUser = () => {
+    const [user, setUser] = useState<UserT | undefined>();
+
+    const getUser = useCallback(async () => {
+        const req = await fetch('/api/user');
+        const resp = await req.json() as ApiResponse<UserT | null>;
+
+        if (!resp.data) {
+            return;
+        }
+
+        setUser(resp.data);
+
+        return resp.data;
+    }, []);
+
+    useEffect(() => {
+        getUser();
+    }, []);
+
+    return { user, getUser };
+};
