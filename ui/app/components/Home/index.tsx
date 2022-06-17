@@ -19,7 +19,7 @@ export const Home = () => {
         }
     }, [user, colorMode]);
 
-    if (!user && loading) {
+    if (!user && !loading) {
         return (
             <Center>
                 <Alert status="error">
