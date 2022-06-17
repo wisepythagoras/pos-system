@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/react';
 import { POSHome } from './pos_home';
 import { useGetUser } from '../../hooks';
+import { StationHome } from './station_home';
 
 export const Home = () => {
     const { colorMode, toggleColorMode } = useColorMode();
@@ -37,13 +38,7 @@ export const Home = () => {
     }
 
     if (user.station) {
-        return (
-            <Center>
-                <Alert status="info">
-                    You are assigned to {user.station.name}.
-                </Alert>
-            </Center>
-        )
+        return <StationHome user={user} />;
     }
 
     return <POSHome />;
