@@ -23,8 +23,8 @@ export const Home = () => {
         return (
             <Center>
                 <Alert status="error">
-                    There was an error loading the user. Please{' '}
-                    <a href="/login">login</a> again.
+                    There was an error loading the user. Please&nbsp;
+                    <a href="/login">login</a>&nbsp;again.
                 </Alert>
             </Center>
         );
