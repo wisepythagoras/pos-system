@@ -197,22 +197,32 @@ export const useGetPrinters = () => {
     return { printers, getPrinters };
 };
 
+type UserStateT = {
+    user: UserT | undefined;
+    loading: boolean;
+    error: string | undefined;
+}
+
 /**
  * A hook that returns the currently logged in user.
  * @returns The user and the function to manually get the user.
  */
 export const useGetUser = () => {
-    const [user, setUser] = useState<UserT | undefined>();
+    const [state, setState] = useState<UserStateT>({
+        user: undefined,
+        loading: true,
+        error: undefined,
+    });
 
     const getUser = useCallback(async () => {
         const req = await fetch('/api/user');
         const resp = await req.json() as ApiResponse<UserT | null>;
 
-        if (!resp.data) {
-            return;
-        }
-
-        setUser(resp.data);
+        setState({
+            user: resp.data || undefined,
+            loading: false,
+            error: resp.error,
+        });
 
         return resp.data;
     }, []);
@@ -221,5 +231,5 @@ export const useGetUser = () => {
         getUser();
     }, []);
 
-    return { user, getUser };
+    return { ...state, getUser };
 };
