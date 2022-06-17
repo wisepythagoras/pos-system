@@ -23,33 +23,34 @@ export const StationHome = (props: PropsT) => {
     return (
         <Box>
             <Box
-                paddingTop="30px"
-                paddingBottom="30px"
+                paddingTop="10px"
+                paddingBottom="10px"
                 bgColor={DEEP_BLUE}
                 color={WHITE}
             >
                 <Container maxW="8xl">
                     <Stack direction={['column', 'row']} spacing='24px'>
-                        <Box w="100%" paddingTop="20px">
+                        <Box w="100%">
                             <Heading size="lg">
                                 Tap on each order item to complete it.
                             </Heading>
                         </Box>
                         <Box>
                             <Center>
-                                <Box w="79px" h="79px" bgColor={WHITE} borderRadius="3px">
-                                    <Heading
-                                        size="lg"
-                                        cursor="pointer"
-                                        color={LIGHT_BLUE}
-                                        textTransform="uppercase"
-                                        overflowWrap="break-word"
-                                        paddingLeft="6px"
-                                        paddingTop="2px"
-                                        fontWeight="900"
-                                    >
-                                        See All
-                                    </Heading>
+                                <Box w="38px" h="38px" bgColor={WHITE} borderRadius="3px">
+                                    <Center>
+                                        <Heading
+                                            size="sm"
+                                            cursor="pointer"
+                                            color={LIGHT_BLUE}
+                                            textTransform="uppercase"
+                                            overflowWrap="break-word"
+                                            paddingLeft="2px"
+                                            fontWeight="900"
+                                        >
+                                            See All
+                                        </Heading>
+                                    </Center>
                                 </Box>
                             </Center>
                         </Box>
