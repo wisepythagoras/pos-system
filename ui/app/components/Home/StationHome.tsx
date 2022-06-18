@@ -4,11 +4,14 @@ import {
     Box,
     Center,
     Container,
+    Heading,
+    VStack,
 } from '@chakra-ui/react';
 import { UserT } from '../../types';
 import { StationNavbar } from '../StationNavbar';
-import { DEEP_BLUE, LIGHT_BLUE, WHITE } from './stationTheme';
+import { DEEP_BLUE, LIGHTER_BLUE, WHITE } from './stationTheme';
 import { useOrdersEventSource } from '../../hooks';
+import { StationOrderBox } from '../StationOrderBox';
 
 type PropsT = {
     user: UserT;
@@ -37,13 +40,6 @@ export const StationHome = (props: PropsT) => {
         <Box>
             <StationNavbar />
             <Container maxW="8xl">
-                <Center background="aliceblue">
-                    <Box>
-                        <Alert status="info" maxW="400px">
-                            You are assigned to the station "{user.station.name}".
-                        </Alert>
-                    </Box>
-                </Center>
                 <Center>
                     <Box>
                         {!connected ? (
@@ -53,17 +49,13 @@ export const StationHome = (props: PropsT) => {
                         ) : undefined}
                     </Box>
                 </Center>
-                <Center>
-                    <Box>
+                <Box marginTop="16px">
+                    <VStack spacing="16px" width="100%">
                         {orders.map((o) => {
-                            return (
-                                <Box key={o.id}>
-                                    {JSON.stringify(o)}
-                                </Box>
-                            );
+                            return <StationOrderBox order={o} key={o.id} />;
                         })}
-                    </Box>
-                </Center>
+                    </VStack>
+                </Box>
             </Container>
         </Box>
     );
