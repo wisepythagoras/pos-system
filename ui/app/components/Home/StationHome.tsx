@@ -39,7 +39,13 @@ export const StationHome = (props: PropsT) => {
     return (
         <Box>
             <StationNavbar />
-            <Container maxW="8xl">
+            <Container
+                maxW="8xl"
+                overflowY="auto"
+                maxH="calc(100vh - 58px)"
+                paddingTop="16px"
+                paddingBottom="36px"
+            >
                 <Center>
                     <Box>
                         {!connected ? (
@@ -49,7 +55,7 @@ export const StationHome = (props: PropsT) => {
                         ) : undefined}
                     </Box>
                 </Center>
-                <Box marginTop="16px">
+                <Box>
                     <VStack spacing="16px" width="100%">
                         {orders.map((o) => {
                             return <StationOrderBox order={o} key={o.id} />;

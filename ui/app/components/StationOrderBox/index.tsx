@@ -1,5 +1,5 @@
-import { Box, Heading } from '@chakra-ui/react';
 import React from 'react';
+import { Box, Heading } from '@chakra-ui/react';
 import { OrderT } from '../../types';
 import { DEEP_BLUE, LIGHTER_BLUE, WHITE } from '../Home/stationTheme';
 
@@ -12,7 +12,6 @@ export const StationOrderBox = (props: PropsT) => {
 
     return (
         <Box
-            border="1px"
             bgColor={LIGHTER_BLUE}
             padding="8px 10px"
             borderRadius="10px"
