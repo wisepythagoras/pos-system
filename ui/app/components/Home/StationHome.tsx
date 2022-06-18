@@ -21,6 +21,8 @@ export const StationHome = (props: PropsT) => {
         orders,
     } = useOrdersEventSource(user);
 
+    // Add a spinner state for when the user is disconnected.
+
     if (!user.station) {
         return (
             <Center>

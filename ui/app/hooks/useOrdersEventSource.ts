@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useGetOrdersList } from '../../admin/hooks';
 import { OrderT, RichOrderT, UserT } from '../types';
 
 /**
@@ -12,6 +13,8 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     const [retries, setRetries] = useState(0);
     const ordersRef = useRef(orders);
     ordersRef.current = orders;
+
+    const { loading, orders: apiOrders } = useGetOrdersList(1);
 
     const messageHandler = (e: MessageEvent<any>) => {
         const orders = ordersRef.current;
@@ -47,14 +50,16 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     };
 
     useEffect(() => {
+        setOrders([ ...ordersRef.current, ...apiOrders.map((ro) => ro.order)]);
+    }, [apiOrders]);
+
+    useEffect(() => {
         if (!user) {
             return;
         }
 
         let isClosing = false;
         const ordersStream = connectToEventStream();
-
-        console.log(`Connecting - try ${retries}`);
 
         ordersStream.onerror = () => {
             if (ordersStream.readyState === ordersStream.CLOSED && !isClosing) {
