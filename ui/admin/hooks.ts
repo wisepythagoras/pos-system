@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useMedia } from "react-use";
+import { useState, useEffect, useCallback } from 'react';
+import { useMedia } from 'react-use';
 import {
     ApiResponse,
     ProductT,

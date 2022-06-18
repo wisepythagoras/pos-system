@@ -1,7 +1,14 @@
-import { Alert, Box, Center, Container, Heading, Stack } from '@chakra-ui/react';
 import React from 'react';
+import {
+    Alert,
+    Box,
+    Center,
+    Container,
+} from '@chakra-ui/react';
 import { UserT } from '../../types';
+import { StationNavbar } from '../StationNavbar';
 import { DEEP_BLUE, LIGHT_BLUE, WHITE } from './stationTheme';
+import { useOrdersEventSource } from '../../hooks';
 
 type PropsT = {
     user: UserT;
@@ -9,6 +16,10 @@ type PropsT = {
 
 export const StationHome = (props: PropsT) => {
     const { user } = props;
+    const {
+        connected,
+        orders,
+    } = useOrdersEventSource(user);
 
     if (!user.station) {
         return (
@@ -22,46 +33,34 @@ export const StationHome = (props: PropsT) => {
 
     return (
         <Box>
-            <Box
-                paddingTop="10px"
-                paddingBottom="10px"
-                bgColor={DEEP_BLUE}
-                color={WHITE}
-            >
-                <Container maxW="8xl">
-                    <Stack direction={['column', 'row']} spacing='24px'>
-                        <Box w="100%">
-                            <Heading size="lg">
-                                Tap on each order item to complete it.
-                            </Heading>
-                        </Box>
-                        <Box>
-                            <Center>
-                                <Box w="38px" h="38px" bgColor={WHITE} borderRadius="3px">
-                                    <Center>
-                                        <Heading
-                                            size="sm"
-                                            cursor="pointer"
-                                            color={LIGHT_BLUE}
-                                            textTransform="uppercase"
-                                            overflowWrap="break-word"
-                                            paddingLeft="2px"
-                                            fontWeight="900"
-                                        >
-                                            See All
-                                        </Heading>
-                                    </Center>
-                                </Box>
-                            </Center>
-                        </Box>
-                    </Stack>
-                </Container>
-            </Box>
+            <StationNavbar />
             <Container maxW="8xl">
                 <Center background="aliceblue">
-                    <Alert status="info" maxW="400px">
-                        You are assigned to the station "{user.station.name}".
-                    </Alert>
+                    <Box>
+                        <Alert status="info" maxW="400px">
+                            You are assigned to the station "{user.station.name}".
+                        </Alert>
+                    </Box>
+                </Center>
+                <Center>
+                    <Box>
+                        {!connected ? (
+                            <Alert status="error">
+                                You have been disconnected.
+                            </Alert>
+                        ) : undefined}
+                    </Box>
+                </Center>
+                <Center>
+                    <Box>
+                        {orders.map((o) => {
+                            return (
+                                <Box key={o.id}>
+                                    {JSON.stringify(o)}
+                                </Box>
+                            );
+                        })}
+                    </Box>
                 </Center>
             </Container>
         </Box>
