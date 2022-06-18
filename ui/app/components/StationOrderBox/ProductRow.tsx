@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, HStack } from '@chakra-ui/react';
+import { Box, Checkbox, HStack, useBoolean } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 import { DEEP_BLUE, WHITE } from '../Home/stationTheme';
 
@@ -10,6 +10,7 @@ type PropsT = {
 
 export const ProductRow = (props: PropsT) => {
     const { amount, product } = props;
+    const [checked, setChecked] = useBoolean(false);
 
     return (
         <Box
@@ -22,8 +23,17 @@ export const ProductRow = (props: PropsT) => {
         >
             <HStack>
                 <Box>&times;{amount}</Box>
-                <Box>{product.name}</Box>
-                <Box></Box>
+                <Box width="100%">{product.name}</Box>
+                <Box>
+                    <Checkbox
+                        colorScheme="green"
+                        size="lg"
+                        checked={checked}
+                        onChange={(e) => {
+                            setChecked.toggle();
+                        }}
+                    />
+                </Box>
             </HStack>
         </Box>
     );
