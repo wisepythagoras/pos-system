@@ -145,17 +145,32 @@ func (uh *UserHandlers) GetLoggedInUser(c *gin.Context) {
 			uh.
 				DB.
 				Preload("Station").
+				Preload("Station.StationProducts.Product").
 				Where("id = ?", userStruct.ID).
 				Find(&user)
 
 			var station *StationJSON
 
 			if user.Station.ID > 0 {
+				products := []ProductJSON{}
+
+				for _, sp := range user.Station.StationProducts {
+					products = append(products, ProductJSON{
+						ID:           sp.Product.ID,
+						Name:         sp.Product.Name,
+						Discontinued: sp.Product.Discontinued == 1,
+						Price:        sp.Product.Price,
+						SoldOut:      sp.Product.SoldOut == 1,
+						Type:         sp.Product.Type,
+					})
+				}
+
 				station = &StationJSON{
 					ID:        user.Station.ID,
 					Name:      user.Station.Name,
 					CreatedAt: user.Station.CreatedAt,
 					UpdatedAt: user.Station.UpdatedAt,
+					Products:  products,
 				}
 			}
 

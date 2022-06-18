@@ -58,7 +58,14 @@ export const StationHome = (props: PropsT) => {
                 <Box>
                     <VStack spacing="16px" width="100%">
                         {orders.map((o) => {
-                            return <StationOrderBox order={o} key={o.id} />;
+                            return (
+                                <StationOrderBox
+                                    order={o}
+                                    key={o.id}
+                                    // @ts-ignore - The station will exist at this point.
+                                    station={user.station}
+                                />
+                            );
                         })}
                     </VStack>
                 </Box>
