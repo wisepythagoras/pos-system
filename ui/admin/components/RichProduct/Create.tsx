@@ -1,25 +1,25 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { ProductT } from '../../../app/types';
 import {
-    Chip,
+    Button,
     FormControl,
     Input,
-    InputAdornment,
-    MenuItem,
+    InputGroup,
+    InputLeftElement,
     Select,
-    TableCell,
-    TableRow,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { ProductT } from '../../../app/types';
+    Td,
+    Tr,
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
 
 type ShortProductT = Omit<ProductT, 'id' | 'sold_out' | 'discontinued'>;
 
-export interface ICreateRichProductProps {
+export type PropsT = {
     onSave: (response: any) => void;
 };
 
-export const CreateRichProduct = (props: ICreateRichProductProps) => {
+export const CreateRichProduct = (props: PropsT) => {
     const {
         register,
         handleSubmit,
@@ -54,49 +54,56 @@ export const CreateRichProduct = (props: ICreateRichProductProps) => {
     };
 
     return (
-        <TableRow>
-            <TableCell></TableCell>
-            <TableCell>
+        <Tr>
+            <Td></Td>
+            <Td>
                 <FormControl variant="outlined">
                     <Input
                         {...register('name', { required: true })}
                         placeholder="Product Name"
                     />
                 </FormControl>
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
                 <FormControl variant="outlined" size="small">
                     <Select
                         {...register('type', { required: true })}
                         defaultValue="food"
                     >
-                        <MenuItem value="food">Food</MenuItem>
-                        <MenuItem value="drink">Drink</MenuItem>
-                        <MenuItem value="pastry">Pastry</MenuItem>
+                        <option value="food">Food</option>
+                        <option value="drink">Drink</option>
+                        <option value="pastry">Pastry</option>
                     </Select>
                 </FormControl>
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
                 <FormControl variant="outlined">
-                    <Input
-                        {...register('price', { required: true })}
-                        placeholder="0.00"
-                        startAdornment={(
-                            <InputAdornment position="start">$</InputAdornment>
-                        )}
-                    />
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            color="gray.200"
+                            fontSize="1.2em"
+                            children="$"
+                        />
+                        <Input
+                            {...register('price', { required: true })}
+                            placeholder="0.00"
+                        />
+                    </InputGroup>
                 </FormControl>
-            </TableCell>
-            <TableCell></TableCell>
-            <TableCell></TableCell>
-            <TableCell>
-                <Chip
-                    icon={<AddIcon />}
-                    label="Create"
+            </Td>
+            <Td></Td>
+            <Td></Td>
+            <Td>
+                <Button
+                    leftIcon={<AddIcon />}
+                    colorScheme="blue"
                     // @ts-ignore
                     onClick={handleSubmit(onSubmit)}
-                />
-            </TableCell>
-        </TableRow>
+                >
+                    Save
+                </Button>
+            </Td>
+        </Tr>
     );
 };
