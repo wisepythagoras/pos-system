@@ -37,8 +37,6 @@ import { RichOrderT } from '../../../app/types';
 import { useIsCompactView } from '../../hooks';
 
 type PropsT = {
-    earnings: number;
-    earningsPerDay: number[];
     error: string | null;
     exportTotals: (pastDay?: boolean) => void;
     lastOrder: number;
@@ -56,8 +54,6 @@ type PropsT = {
  */
 export const OrdersTab = (props: PropsT) => {
     const {
-        earnings,
-        earningsPerDay,
         error,
         exportTotals,
         lastOrder,
@@ -76,45 +72,9 @@ export const OrdersTab = (props: PropsT) => {
             paddingInlineStart={isCompactView ? 0 : undefined}
             paddingInlineEnd={isCompactView ? 0 : undefined}
         >
-            <Heading variant="h3" as="h3" marginBottom="10px">
-                Total Earnings: ${earnings.toFixed(2)}
+            <Heading as='h3' size='lg' marginBottom="15px">
+                Orders History
             </Heading>
-            <Grid
-                paddingTop="10px"
-                paddingBottom="10px"
-                templateColumns="repeat(4, 1fr)"
-                gap={5}
-                overflowX="auto"
-            >
-                <GridItem>
-                    <EarningsCard
-                        day={0}
-                        amount={earningsPerDay[0]}
-                        prevAmount={earningsPerDay[1]}
-                    />
-               </GridItem>
-                <GridItem>
-                    <EarningsCard
-                        day={1}
-                        amount={earningsPerDay[1]}
-                        prevAmount={earningsPerDay[2]}
-                    />
-                </GridItem>
-                <GridItem>
-                    <EarningsCard
-                        day={2}
-                        amount={earningsPerDay[2]}
-                        prevAmount={earningsPerDay[3]}
-                    />
-                </GridItem>
-                <GridItem>
-                    <EarningsCard
-                        day={3}
-                        amount={earningsPerDay[3]}
-                        prevAmount={earningsPerDay[4]}
-                    />
-                </GridItem>
-            </Grid>
             <ControlContainer>
                 <Box>
                     <InputGroup height="100%">

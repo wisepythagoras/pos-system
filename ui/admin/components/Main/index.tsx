@@ -34,6 +34,7 @@ import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
 import { StationsTab } from '../StationsTab';
 import { UsersTab } from '../UsersTab';
+import { HomeTab } from '../HomeTab';
 
 export interface IMainProps {};
 
@@ -97,10 +98,6 @@ export const Main = (props: IMainProps) => {
         fetchOrders(id);
     }, 500);
 
-    const usersTab = (
-        <div>Hello</div>
-    );
-
     const TabWrapper = isCompactView ? Button : Box;
 
     const tabList = (
@@ -115,6 +112,11 @@ export const Main = (props: IMainProps) => {
                 marginTop={isCompactView ? undefined : '-2px'}
                 onClick={onClose}
             >
+                <TabWrapper colorScheme="teal" variant="ghost" width="100%">
+                    Home
+                </TabWrapper>
+            </Tab>
+            <Tab onClick={onClose}>
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Orders
                 </TabWrapper>
@@ -230,9 +232,13 @@ export const Main = (props: IMainProps) => {
                     overflowY="auto"
                 >
                     <TabPanel>
-                        <OrdersTab
+                        <HomeTab
                             earnings={earnings}
                             earningsPerDay={earningsPerDay}
+                        />
+                    </TabPanel>
+                    <TabPanel>
+                        <OrdersTab
                             error={error}
                             exportTotals={exportTotals}
                             lastOrder={lastOrderRef.current}
