@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import {
-    Chip,
+    Button,
+    Center,
+    Checkbox,
     FormControl,
     Input,
-    InputAdornment,
-    MenuItem,
+    InputGroup,
+    InputLeftElement,
     Select,
-    Switch,
-    TableCell,
-    TableRow,
-} from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
+    Td,
+    Tr,
+} from '@chakra-ui/react';
+import { CheckIcon } from '@chakra-ui/icons';
 import { ProductT, ProductTypeT } from '../../../app/types';
 
-export interface IRichProductProps {
+type PropsT = {
     product: ProductT;
     onSave: (newProduct: ProductT) => void;
 };
@@ -22,7 +23,7 @@ export interface IRichProductProps {
  * Render the RichProduct card.
  * @param props The props.
  */
-export const RichProduct = (props: IRichProductProps) => {
+export const RichProduct = (props: PropsT) => {
     const [product, setProduct] = useState<ProductT>(props.product);
 
     const onSave = async () => {
@@ -41,9 +42,9 @@ export const RichProduct = (props: IRichProductProps) => {
     };
 
     return (
-        <TableRow>
-            <TableCell>{product.id}</TableCell>
-            <TableCell>
+        <Tr>
+            <Td>{product.id}</Td>
+            <Td>
                 <FormControl variant="outlined">
                     <Input
                         value={product.name}
@@ -53,10 +54,12 @@ export const RichProduct = (props: IRichProductProps) => {
                                 name: e.target.value,
                             });
                         }}
+                        borderColor="gray.300"
+                        placeholder="Product name"
                     />
                 </FormControl>
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
                 <FormControl variant="outlined" size="small">
                     <Select
                         value={product.type}
@@ -66,75 +69,93 @@ export const RichProduct = (props: IRichProductProps) => {
                                 type: e.target.value as ProductTypeT,
                             });
                         }}
+                        placeholder="-Select-"
                     >
-                        <MenuItem>-Select-</MenuItem>
-                        <MenuItem value="food">Food</MenuItem>
-                        <MenuItem value="drink">Drink</MenuItem>
-                        <MenuItem value="pastry">Pastry</MenuItem>
+                        <option value="food">Food</option>
+                        <option value="drink">Drink</option>
+                        <option value="pastry">Pastry</option>
                     </Select>
                 </FormControl>
-            </TableCell>
-            <TableCell>
+            </Td>
+            <Td>
                 <FormControl variant="outlined">
-                    <Input
-                        value={product.price.toFixed(2)}
-                        onChange={(e) => {
-                            const priceString = e.target.value.replace(/\.{2,}/, '.');
-                            const price = parseFloat(priceString);
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            color="gray.200"
+                            fontSize="1.2em"
+                            children="$"
+                        />
+                        <Input
+                            value={product.price.toFixed(2)}
+                            onChange={(e) => {
+                                const priceString = e.target.value.replace(/\.{2,}/, '.');
+                                const price = parseFloat(priceString);
 
-                            if (!price) {
-                                return;
-                            }
+                                if (!price) {
+                                    return;
+                                }
 
+                                setProduct({
+                                    ...product,
+                                    price,
+                                });
+                            }}
+                        />
+                    </InputGroup>
+                </FormControl>
+            </Td>
+            <Td>
+                <Center>
+                    <Checkbox
+                        checked={product.sold_out}
+                        onChange={() => {
                             setProduct({
                                 ...product,
-                                price,
+                                sold_out: !product.sold_out,
                             });
                         }}
-                        startAdornment={(
-                            <InputAdornment position="start">$</InputAdornment>
-                        )}
+                        size="lg"
+                        defaultChecked={product.sold_out}
                     />
-                </FormControl>
-            </TableCell>
-            <TableCell>
-                <Switch
-                    checked={product.sold_out}
-                    onChange={() => {
-                        setProduct({
-                            ...product,
-                            sold_out: !product.sold_out,
-                        });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <Switch
-                    checked={product.discontinued}
-                    onChange={() => {
-                        setProduct({
-                            ...product,
-                            discontinued: !product.discontinued,
-                        });
-                    }}
-                />
-            </TableCell>
-            <TableCell>
-                <Chip
-                    icon={<SaveIcon />}
-                    label="Save"
+                </Center>
+            </Td>
+            <Td>
+                <Center>
+                    <Checkbox
+                        checked={product.discontinued}
+                        onChange={() => {
+                            setProduct({
+                                ...product,
+                                discontinued: !product.discontinued,
+                            });
+                        }}
+                        size="lg"
+                        defaultChecked={product.discontinued}
+                    />
+                </Center>
+            </Td>
+            <Td>
+                <Button
+                    leftIcon={<CheckIcon />}
+                    colorScheme="blue"
                     disabled={(() => {
                         return (
                             (product.type === props.product.type &&
                             product.sold_out === props.product.sold_out &&
                             product.discontinued === props.product.discontinued &&
                             product.name === props.product.name) ||
-                            !product.name || !product.price || product.price < 0
+                            !product.type ||
+                            !product.name ||
+                            !product.price ||
+                            product.price < 0
                         )
                     })()}
                     onClick={onSave}
-                />
-            </TableCell>
-        </TableRow>
+                >
+                    Save
+                </Button>
+            </Td>
+        </Tr>
     );
 };
