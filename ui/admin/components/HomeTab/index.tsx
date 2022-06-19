@@ -83,20 +83,25 @@ export const HomeTab = (props: PropsT) => {
                     />
                 </GridItem>
             </Grid>
-            <Box
-                marginTop="10px"
-                borderRadius="3px"
-                borderWidth="1px"
-                p="6"
-            >
-               <Stack direction={isCompactView ? 'column' : 'row'}>
-                    <Box w={isCompactView ? '100%' : '50%'}>
+            <Box marginTop="10px">
+               <Stack direction={isCompactView ? 'column' : 'row'} spacing={5}>
+                    <Box
+                        w={isCompactView ? '100%' : '50%'}
+                        borderRadius="lg"
+                        borderWidth="1px"
+                        p="6"
+                    >
                         <div ref={hexRef} />
                         <Box>
                             <Center>Sales per hour</Center>
                         </Box>
                     </Box>
-                    <Box w={isCompactView ? '100%' : '50%'}>
+                    <Box
+                        w={isCompactView ? '100%' : '50%'}
+                        borderRadius="lg"
+                        borderWidth="1px"
+                        p="6"
+                    >
                         <div ref={heatRef} />
                         <Box>
                             <Center>Orders per hour</Center>
