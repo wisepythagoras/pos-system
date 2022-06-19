@@ -35,7 +35,7 @@ export const EarningsCard = (props: IEarningsCardProps) => {
             borderWidth="1px"
             borderRadius="lg"
             overflow="hidden"
-            minWidth="200px"
+            minWidth="210px"
             p="6"
         >
             <Stat>

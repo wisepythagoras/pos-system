@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMedia } from 'react-use';
+// @ts-ignore - No Typescript types.
+import * as Plot from '@observablehq/plot';
 import {
     ApiResponse,
+    OrderT,
     ProductT,
     RichOrderT,
     StationT,
@@ -383,5 +386,120 @@ export const useUsers = (): UseUsersReturnT => {
         createUser,
         getUsers,
         deleteUser,
+    };
+};
+
+type OrdersStateT = {
+    loading: boolean;
+    error: string | null;
+    orders: OrderT[];
+};
+
+/**
+ * Gets the orders from the past year and also provides a function
+ * to create an SVG graph of it.
+ * @returns
+ */
+export const useGetOrdersPastYear = () => {
+    const [state, setState] = useState<OrdersStateT>({
+        loading: true,
+        error: null,
+        orders: [],
+    });
+
+    const getOrders = async () => {
+        const req = await fetch(`/api/orders/past_year`);
+        const resp = await req.json();
+
+        if (resp.success === true) {
+            const orders = (resp.data as OrderT[] || []).map((o) => {
+                return {
+                    ...o,
+                    timeOfDay: (new Date(o.created_at)).getHours(),
+                    productsLen: o.products.length,
+                    total: o.products.map((p) => p.price).reduce((a, b) => a + b, 0),
+                };
+            });
+
+            setState({
+                ...state,
+                loading: false,
+                orders,
+            });
+
+            return resp.data as RichOrderT[];
+        } else {
+            setState({
+                ...state,
+                loading: false,
+                error: resp.error || 'Unable to fetch orders',
+            });
+
+            return null;
+        }
+    };
+
+    const getHexGraph = (): SVGElement => {
+        return Plot.plot({
+            grid: true,
+            inset: 10,
+            color: {
+                scheme: 'RdYlBu'
+            },
+            marks: [
+                Plot.hexagon(
+                    state.orders,
+                    Plot.hexbin({
+                        fill: 'count',
+                    }, {
+                        x: 'timeOfDay',
+                        y: 'total',
+                        stroke: 'rgba(0, 0, 0, 0.1)',
+                        strokeWidth: 1,
+                    })
+                )
+            ]
+        });
+    };
+
+    const getBoxOpaqueGraph = (): SVGElement => {
+        return Plot.plot({
+            y: {
+                label: '↑ Amount of orders',
+            },
+            marks: [
+                Plot.rectY(
+                    state.orders,
+                    Plot.binX({
+                        y: 'count',
+                    }, {
+                        x: 'timeOfDay',
+                        fill: '#1d54a8',
+                    })
+                ),
+                Plot.ruleY([0])
+            ]
+        })
+        // return Plot.rect(
+        //     state.orders,
+        //     Plot.bin({
+        //         fillOpacity: 'count',
+        //     }, {
+        //         x: 'timeOfDay',
+        //         y: 'total',
+        //         fill: 'productsLen',
+        //     })
+        // ).plot();
+    };
+
+    useEffect(() => {
+        getOrders();
+    }, []);
+
+    return {
+        ...state,
+        getOrders,
+        getHexGraph,
+        getBoxOpaqueGraph,
     };
 };

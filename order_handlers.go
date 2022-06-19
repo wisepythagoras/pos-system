@@ -29,7 +29,7 @@ type OrderHandlers struct {
 // GetOrderByID retrieves an order by its id.
 func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) {
 	if orderId <= 0 {
-		return nil, 0, errors.New("Invalid order id")
+		return nil, 0, errors.New("invalid order id")
 	}
 
 	order := &Order{}
@@ -40,7 +40,7 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 		Find(&order)
 
 	if result.RowsAffected < 0 {
-		return nil, 0, errors.New("No such order")
+		return nil, 0, errors.New("no such order")
 	}
 
 	orderJSON := &OrderJSON{
@@ -277,6 +277,57 @@ func (oh *OrderHandlers) GetTotalEarnings(c *gin.Context) {
 
 	response.Success = true
 	response.Data = totalSales
+
+	c.JSON(http.StatusOK, response)
+}
+
+// OrdersPastYear returns all orders from the past year.
+func (oh *OrderHandlers) OrdersPastYear(c *gin.Context) {
+	response := &ApiResponse{}
+	var orders []Order
+	var products []Product
+	productMap := make(map[uint64]Product)
+
+	oh.DB.
+		Where("created_at > DATE('now', '-1 year')").
+		Where("cancelled = 0").
+		Find(&orders)
+
+	// Get the list of products.
+	oh.DB.Find(&products)
+
+	orders = lo.Map(orders, func(o Order, i int) Order {
+		var orderProducts []OrderProduct
+		oh.DB.Where("order_id = ?", o.ID).Find(&orderProducts)
+		o.OrderProducts = orderProducts
+
+		return o
+	})
+
+	for _, p := range products {
+		productMap[p.ID] = p
+	}
+
+	ordersJSON := lo.Map(orders, func(o Order, i int) OrderJSON {
+		products := lo.Map(o.OrderProducts, func(op OrderProduct, i int) ProductJSON {
+			product := productMap[op.ProductID]
+
+			return ProductJSON{
+				ID:    product.ID,
+				Price: product.Price,
+			}
+		})
+
+		return OrderJSON{
+			ID:        o.ID,
+			Cancelled: o.Cancelled == 1,
+			CreatedAt: o.CreatedAt,
+			Products:  products,
+		}
+	})
+
+	response.Success = true
+	response.Data = ordersJSON
 
 	c.JSON(http.StatusOK, response)
 }

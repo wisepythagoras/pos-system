@@ -149,7 +149,7 @@ export const UsersTab = (props: PropsT) => {
                                 <option value="0">Not assigned</option>
                                 {stations.map((station) => {
                                     return (
-                                        <option value={station.id}>
+                                        <option value={station.id} key={`station_${station.id}`}>
                                             {station.name}
                                         </option>
                                     );

@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     Box,
+    Center,
     Container,
     Grid,
     GridItem,
     Heading,
+    Stack,
 } from '@chakra-ui/react';
 import { EarningsCard } from '../EarningsCard';
-import { useIsCompactView } from '../../hooks';
+import { useGetOrdersPastYear, useIsCompactView } from '../../hooks';
 
 type PropsT = {
     earnings: number;
@@ -20,6 +22,20 @@ export const HomeTab = (props: PropsT) => {
         earningsPerDay,
     } = props;
     const isCompactView = useIsCompactView();
+    const { loading, getHexGraph, getBoxOpaqueGraph } = useGetOrdersPastYear();
+    const hexRef = useRef<HTMLDivElement | null>(null);
+    const heatRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (loading || !hexRef.current || !heatRef.current) {
+            return;
+        }
+
+        hexRef.current.innerHTML = '';
+        heatRef.current.innerHTML = '';
+        hexRef.current.appendChild(getHexGraph());
+        heatRef.current.appendChild(getBoxOpaqueGraph());
+    }, [loading]);
 
     return (
         <Container
@@ -67,6 +83,27 @@ export const HomeTab = (props: PropsT) => {
                     />
                 </GridItem>
             </Grid>
+            <Box
+                marginTop="10px"
+                borderRadius="3px"
+                borderWidth="1px"
+                p="6"
+            >
+               <Stack direction={isCompactView ? 'column' : 'row'}>
+                    <Box w={isCompactView ? '100%' : '50%'}>
+                        <div ref={hexRef} />
+                        <Box>
+                            <Center>Sales per hour</Center>
+                        </Box>
+                    </Box>
+                    <Box w={isCompactView ? '100%' : '50%'}>
+                        <div ref={heatRef} />
+                        <Box>
+                            <Center>Orders per hour</Center>
+                        </Box>
+                    </Box>
+                </Stack>
+            </Box>
         </Container>
     );
 };
