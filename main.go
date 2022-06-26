@@ -165,6 +165,7 @@ func main() {
 	router.GET("/api/order/:orderId/receipt/:printerId", authHandler(false, adminAuthToken), orderHandlers.PrintReceipt)
 	router.GET("/api/order/:orderId/pub", orderHandlers.PublicOrder)
 	router.GET("/api/order/:orderId/qrcode", authHandler(false, adminAuthToken), orderHandlers.OrderQRCode)
+	router.PUT("/api/order/:orderId/product/:productId/:state", authHandler(false, adminAuthToken), orderHandlers.UpdateFulfilled)
 	router.DELETE("/api/order/:orderId", authHandler(true, adminAuthToken), orderHandlers.ToggleOrder)
 
 	router.POST("/api/product", authHandler(true, adminAuthToken), productHandlers.CreateProduct)

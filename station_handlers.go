@@ -46,7 +46,7 @@ func (sh *StationHandlers) CreateStation(c *gin.Context) {
 // AddProductToStation adds a product to a station.
 func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 	apiResponse := ApiResponse{}
-	stationId, err := getIDFromParams("stationId", c)
+	stationId, err := getIntFromParams("stationId", c)
 
 	if err != nil {
 		apiResponse.Success = false
@@ -55,7 +55,7 @@ func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 		return
 	}
 
-	productId, err := getIDFromParams("productId", c)
+	productId, err := getIntFromParams("productId", c)
 
 	if err != nil {
 		apiResponse.Success = false
@@ -94,7 +94,7 @@ func (sh *StationHandlers) AddProductToStation(c *gin.Context) {
 // RemoveProductFromStation removes a product from a station.
 func (sh *StationHandlers) RemoveProductFromStation(c *gin.Context) {
 	apiResponse := ApiResponse{}
-	stationId, err := getIDFromParams("stationId", c)
+	stationId, err := getIntFromParams("stationId", c)
 
 	if err != nil {
 		apiResponse.Success = false
@@ -103,7 +103,7 @@ func (sh *StationHandlers) RemoveProductFromStation(c *gin.Context) {
 		return
 	}
 
-	productId, err := getIDFromParams("productId", c)
+	productId, err := getIntFromParams("productId", c)
 
 	if err != nil {
 		apiResponse.Success = false
@@ -151,7 +151,7 @@ func (sh *StationHandlers) constructProductsArray(station *Station) []ProductJSO
 // Station returns the station by its id.
 func (sh *StationHandlers) Station(c *gin.Context) {
 	apiResponse := ApiResponse{}
-	stationId, err := getIDFromParams("stationId", c)
+	stationId, err := getIntFromParams("stationId", c)
 
 	if err != nil {
 		apiResponse.Success = false
@@ -215,7 +215,7 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 // Delete removes a station by its id.
 func (sh *StationHandlers) Delete(c *gin.Context) {
 	apiResponse := ApiResponse{}
-	stationId, err := getIDFromParams("stationId", c)
+	stationId, err := getIntFromParams("stationId", c)
 
 	if err != nil {
 		apiResponse.Success = false

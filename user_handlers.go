@@ -285,7 +285,7 @@ func (uh *UserHandlers) List(c *gin.Context) {
 func (uh *UserHandlers) Delete(c *gin.Context) {
 	apiResponse := ApiResponse{}
 
-	userId, err := getIDFromParams("userId", c)
+	userId, err := getIntFromParams("userId", c)
 
 	if err != nil {
 		apiResponse.Success = false

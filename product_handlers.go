@@ -126,7 +126,7 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 // UpdateProduct updates the fields of a product.
 func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	response := &ApiResponse{}
-	productId, err := getIDFromParams("productId", c)
+	productId, err := getIntFromParams("productId", c)
 
 	if err != nil {
 		response.Success = false
@@ -202,7 +202,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 // ToggleDiscontinued turns the discontinued field of a product on and off.
 func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	response := &ApiResponse{}
-	productId, err := getIDFromParams("productId", c)
+	productId, err := getIntFromParams("productId", c)
 
 	if err != nil {
 		response.Success = false

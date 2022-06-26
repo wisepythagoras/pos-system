@@ -170,7 +170,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 // FetchOrder is supposed to fetch and return the order with the giver id.
 func (oh *OrderHandlers) FetchOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := getIDFromParams("orderId", c)
+	orderId, err := getIntFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -343,6 +343,57 @@ func (oh *OrderHandlers) OrdersPastYear(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (oh *OrderHandlers) UpdateFulfilled(c *gin.Context) {
+	response := &ApiResponse{}
+	errors := []error{}
+
+	orderId, err := getIntFromParams("orderId", c)
+
+	if err != nil {
+		errors = append(errors, err)
+	}
+
+	productId, err := getIntFromParams("productId", c)
+
+	if err != nil {
+		errors = append(errors, err)
+	}
+
+	state, err := getIntFromParams("state", c)
+
+	if err != nil || len(errors) > 0 {
+		errors = append(errors, err)
+		err := errors[0]
+
+		response.Success = false
+		response.Error = err.Error()
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	res := oh.DB.
+		Model(&OrderProduct{}).
+		Where("order_id = ? and product_id = ?", orderId, productId).
+		Update("fulfilled", uint8(state)).
+		Commit()
+
+	if res.RowsAffected == 0 {
+		response.Success = false
+
+		if res.Error != nil {
+			response.Error = res.Error.Error()
+		} else {
+			response.Error = "Invalid order or product id"
+		}
+
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	response.Success = true
+	c.JSON(http.StatusOK, response)
+}
+
 // ExportTotalEarnings returns the total earnings for day or year to date.
 func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 	// Get total earnings for day or year to date.
@@ -463,7 +514,7 @@ func (oh *OrderHandlers) ExportTotalEarnings(c *gin.Context) {
 // ToggleOrder toggles the cancelled field of an order.
 func (oh *OrderHandlers) ToggleOrder(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := getIDFromParams("orderId", c)
+	orderId, err := getIntFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -619,7 +670,7 @@ func (oh *OrderHandlers) PublicOrder(c *gin.Context) {
 
 // OrderQRCode returns the QR code for a specific order.
 func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
-	orderId, err := getIDFromParams("orderId", c)
+	orderId, err := getIntFromParams("orderId", c)
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -654,7 +705,7 @@ func (oh *OrderHandlers) OrderQRCode(c *gin.Context) {
 // PrintReceipt handles requests for printing a receipt for a specific order.
 func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 	response := &ApiResponse{}
-	orderId, err := getIDFromParams("orderId", c)
+	orderId, err := getIntFromParams("orderId", c)
 
 	if err != nil {
 		response.Success = false
@@ -663,7 +714,7 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 		return
 	}
 
-	printerId, err := getIDFromParams("printerId", c)
+	printerId, err := getIntFromParams("printerId", c)
 
 	if err != nil {
 		printerId = 1

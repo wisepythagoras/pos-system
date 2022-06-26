@@ -41,8 +41,8 @@ func GetOutboundIP() net.IP {
 	return localAddr.IP
 }
 
-// getIDFromParams parses an id from the param string.
-func getIDFromParams(name string, c *gin.Context) (int, error) {
+// getIntFromParams parses an id from the param string.
+func getIntFromParams(name string, c *gin.Context) (int, error) {
 	itemIdStr := c.Param(name)
 
 	if len(itemIdStr) == 0 {
