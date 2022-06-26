@@ -46,6 +46,18 @@ func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 	return nil
 }
 
+// OrderProductJSON describes the Product DB model alongwith the field that indicates
+// if it has been fulfilled, but in a JSON-ifiable format.
+type OrderProductJSON struct {
+	ID           uint64  `json:"id"`
+	Name         string  `json:"name"`
+	Price        float64 `json:"price"`
+	Type         string  `json:"type"`
+	Discontinued bool    `json:"discontinued"`
+	SoldOut      bool    `json:"sold_out"`
+	Fulfilled    bool    `json:"fulfilled"` // This is an OrderProduct level field.
+}
+
 type AggregateProduct struct {
 	ID       uint64  `json:"id"`
 	Name     string  `json:"name"`
@@ -56,10 +68,10 @@ type AggregateProduct struct {
 
 // OrderJSON describes the Order DB model, but in a JSON-ifiable format.
 type OrderJSON struct {
-	ID        uint64        `json:"id"`
-	Cancelled bool          `json:"cancelled"`
-	CreatedAt time.Time     `json:"created_at"`
-	Products  []ProductJSON `json:"products"`
+	ID        uint64             `json:"id"`
+	Cancelled bool               `json:"cancelled"`
+	CreatedAt time.Time          `json:"created_at"`
+	Products  []OrderProductJSON `json:"products"`
 }
 
 type StationJSON struct {

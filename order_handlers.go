@@ -57,13 +57,14 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 
 		totalCost += orderProduct.Product.Price
 
-		productJSON := ProductJSON{
+		productJSON := OrderProductJSON{
 			ID:           orderProduct.Product.ID,
 			Name:         orderProduct.Product.Name,
 			Type:         orderProduct.Product.Type,
 			Price:        orderProduct.Product.Price,
 			Discontinued: orderProduct.Product.Discontinued == 1,
 			SoldOut:      orderProduct.Product.SoldOut == 1,
+			Fulfilled:    orderProduct.Fulfilled == 1,
 		}
 		orderJSON.Products = append(orderJSON.Products, productJSON)
 	}
@@ -94,7 +95,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	}
 
 	var dbProducts []Product
-	var jsonProducts *[]ProductJSON
+	var jsonProducts []OrderProductJSON
 	newOrder := &Order{
 		CreatedAt: time.Now(),
 	}
@@ -121,6 +122,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 
 	var orderProducts []OrderProduct
 	var productsArr []Product
+	jsonProducts = make([]OrderProductJSON, 0)
 
 	for _, productId := range productIds {
 		product, productFound := lo.Find(dbProducts, func(p Product) bool {
@@ -133,6 +135,15 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 				OrderID:   newOrder.ID,
 			})
 			productsArr = append(productsArr, product)
+			jsonProducts = append(jsonProducts, OrderProductJSON{
+				ID:           product.ID,
+				Name:         product.Name,
+				Price:        product.Price,
+				Type:         product.Type,
+				Discontinued: product.Discontinued == 0,
+				SoldOut:      product.SoldOut == 0,
+				Fulfilled:    false,
+			})
 		}
 	}
 
@@ -141,13 +152,11 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 
 	// With the products that were find, create a new set of order products,
 	// and use the order that was created earlier, to create the association.
-
-	jsonProducts = ProductsToJSONFormat(productsArr)
 	orderJSON := &OrderJSON{
 		ID:        newOrder.ID,
 		Cancelled: false,
 		CreatedAt: newOrder.CreatedAt,
-		Products:  *jsonProducts,
+		Products:  jsonProducts,
 	}
 
 	response.Success = true
@@ -231,13 +240,14 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 
 			totalCost += orderProduct.Product.Price
 
-			productJSON := ProductJSON{
+			productJSON := OrderProductJSON{
 				ID:           orderProduct.Product.ID,
 				Name:         orderProduct.Product.Name,
 				Type:         orderProduct.Product.Type,
 				Price:        orderProduct.Product.Price,
 				Discontinued: orderProduct.Product.Discontinued == 1,
 				SoldOut:      orderProduct.Product.SoldOut == 1,
+				Fulfilled:    orderProduct.Fulfilled == 1,
 			}
 
 			orderJSON.Products = append(orderJSON.Products, productJSON)
@@ -309,12 +319,13 @@ func (oh *OrderHandlers) OrdersPastYear(c *gin.Context) {
 	}
 
 	ordersJSON := lo.Map(orders, func(o Order, i int) OrderJSON {
-		products := lo.Map(o.OrderProducts, func(op OrderProduct, i int) ProductJSON {
+		products := lo.Map(o.OrderProducts, func(op OrderProduct, i int) OrderProductJSON {
 			product := productMap[op.ProductID]
 
-			return ProductJSON{
-				ID:    product.ID,
-				Price: product.Price,
+			return OrderProductJSON{
+				ID:        product.ID,
+				Price:     product.Price,
+				Fulfilled: op.Fulfilled == 1,
 			}
 		})
 

@@ -32,6 +32,7 @@ type OrderProduct struct {
 	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
 	ProductID uint64    `gorm:"not_null;"` // index;
 	OrderID   uint64    `gorm:"not_null;"` // index;
+	Fulfilled uint8     `gorm:"not_null; default:0"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli"`
 	Product   Product
 }

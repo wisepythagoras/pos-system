@@ -127,7 +127,14 @@ func (r *Receipt) Print() (int, error) {
 			aggregateMap[product.ID] = val + 1
 		} else {
 			aggregateMap[product.ID] = 1
-			products[product.ID] = product
+			products[product.ID] = ProductJSON{
+				ID:           product.ID,
+				Name:         product.Name,
+				Price:        product.Price,
+				Type:         product.Type,
+				Discontinued: product.Discontinued,
+				SoldOut:      product.SoldOut,
+			}
 		}
 	}
 
