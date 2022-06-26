@@ -13,12 +13,13 @@ export type ProductT = {
     type: ProductTypeT;
     discontinued: boolean;
     sold_out: boolean;
+    fulfilled: boolean;
 };
 
 export type ProductAggregateT = {
     product: ProductT;
     amount: number;
-}
+};
 
 export type ProductMapT = {
     [key: string]: ProductAggregateT;

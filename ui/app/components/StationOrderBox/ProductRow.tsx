@@ -10,7 +10,7 @@ type PropsT = {
 
 export const ProductRow = (props: PropsT) => {
     const { amount, product } = props;
-    const [checked, setChecked] = useBoolean(false);
+    const [checked, setChecked] = useBoolean(product.fulfilled || false);
 
     return (
         <Box
@@ -29,6 +29,7 @@ export const ProductRow = (props: PropsT) => {
                         colorScheme="green"
                         size="lg"
                         checked={checked}
+                        defaultChecked={product.fulfilled}
                         onChange={(e) => {
                             setChecked.toggle();
                         }}
