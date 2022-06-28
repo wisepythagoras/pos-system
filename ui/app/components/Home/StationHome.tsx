@@ -9,7 +9,6 @@ import {
 } from '@chakra-ui/react';
 import { UserT } from '../../types';
 import { StationNavbar } from '../StationNavbar';
-import { DEEP_BLUE, LIGHTER_BLUE, WHITE } from './stationTheme';
 import { useOrdersEventSource } from '../../hooks';
 import { StationOrderBox } from '../StationOrderBox';
 

@@ -24,8 +24,8 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         const resp = await req.json() as ApiResponse<null>;
 
         if (resp.success) {
-            const newOrders = { ...ordersRef.current };
-            const idx = orders.findIndex((o) => o.id === orderId);
+            const newOrders = [ ...ordersRef.current ];
+            const idx = newOrders.findIndex((o) => o.id === orderId);
 
             if (idx < 0) {
                 return;
@@ -42,7 +42,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
                 ...order.products[pIdx],
                 fulfilled: val,
             };
-            newOrders[idx] = order;
+            newOrders[idx] = { ...order };
 
             setOrders(newOrders);
         }

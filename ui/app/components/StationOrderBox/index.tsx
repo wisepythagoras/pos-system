@@ -1,8 +1,9 @@
 import React from 'react';
-import { Box, Heading, VStack } from '@chakra-ui/react';
+import { Box, Center, Heading, VStack } from '@chakra-ui/react';
 import { ApiResponse, OrderT, ProductT, RichOrderT, StationT } from '../../types';
 import { DEEP_BLUE, LIGHTER_BLUE, WHITE } from '../Home/stationTheme';
 import { ProductRow } from './ProductRow';
+import { DoneCard } from './styled';
 
 type PropsT = {
     order: OrderT;
@@ -32,6 +33,7 @@ export const StationOrderBox = (props: PropsT) => {
             padding="15px"
             borderRadius="10px"
             width="100%"
+            position="relative"
         >
             <Heading size="md" textTransform="uppercase" color={DEEP_BLUE}>
                 Order number #{order.id}
@@ -54,6 +56,15 @@ export const StationOrderBox = (props: PropsT) => {
                     })}
                 </VStack>
             </Box>
+            {products.length && products.every((p) => p.fulfilled) ? (
+                <DoneCard>
+                    <Center>
+                        <h2 className="notice">
+                            Done!
+                        </h2>
+                    </Center>
+                </DoneCard>
+            ) : undefined}
         </Box>
     );
 };
