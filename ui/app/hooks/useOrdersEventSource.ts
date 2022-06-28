@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetOrdersList } from '../../admin/hooks';
-import { OrderT, RichOrderT, UserT } from '../types';
+import { ApiResponse, OrderT, RichOrderT, UserT } from '../types';
 
 /**
  * A custom hook that handles the event stream for the orders.
@@ -14,7 +14,41 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     const ordersRef = useRef(orders);
     ordersRef.current = orders;
 
-    const { loading, orders: apiOrders } = useGetOrdersList(1);
+    const { loading, orders: apiOrders, fetchOrders } = useGetOrdersList(1);
+
+    const toggleFulfilled = useCallback(async (orderId: number, productId: number, val: boolean) => {
+        const endpoint = `/api/order/${orderId}/product/${productId}/${val ? 1 : 0}`;
+        const req = await fetch(endpoint, {
+            method: 'PUT',
+        });
+        const resp = await req.json() as ApiResponse<null>;
+
+        if (resp.success) {
+            const newOrders = { ...ordersRef.current };
+            const idx = orders.findIndex((o) => o.id === orderId);
+
+            if (idx < 0) {
+                return;
+            }
+
+            const order = newOrders[idx];
+            const pIdx = order.products.findIndex((p) => p.id === productId);
+
+            if (pIdx < 0) {
+                return;
+            }
+
+            order.products[pIdx] = {
+                ...order.products[pIdx],
+                fulfilled: val,
+            };
+            newOrders[idx] = order;
+
+            setOrders(newOrders);
+        }
+
+        return resp;
+    }, []);
 
     const messageHandler = (e: MessageEvent<any>) => {
         const orders = ordersRef.current;
@@ -50,7 +84,20 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     };
 
     useEffect(() => {
-        setOrders([ ...ordersRef.current, ...apiOrders.map((ro) => ro.order)]);
+        const newOrders = [ ...ordersRef.current ];
+        const newApiOrders = apiOrders.map((ro) => ro.order);
+
+        newApiOrders.forEach((order) => {
+            const idx = newOrders.findIndex((o) => o.id === order.id);
+
+            if (idx >= 0) {
+                newOrders[idx] = order;
+            } else {
+                newOrders.push(order);
+            }
+        });
+
+        setOrders(newOrders);
     }, [apiOrders]);
 
     useEffect(() => {
@@ -78,5 +125,10 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         };
     }, [user, retries]);
 
-    return { connected, orders };
+    return {
+        connected,
+        orders,
+        fetchOrders,
+        toggleFulfilled,
+    };
 };

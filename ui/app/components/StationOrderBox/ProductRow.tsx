@@ -1,16 +1,17 @@
 import React from 'react';
-import { Box, Checkbox, HStack, useBoolean } from '@chakra-ui/react';
+import { Box, Checkbox, HStack, Spinner, useBoolean } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 import { DEEP_BLUE, WHITE } from '../Home/stationTheme';
 
 type PropsT = {
     amount: number;
     product: ProductT;
+    onToggle: (val: boolean) => Promise<void>;
 };
 
 export const ProductRow = (props: PropsT) => {
-    const { amount, product } = props;
-    const [checked, setChecked] = useBoolean(product.fulfilled || false);
+    const { amount, product, onToggle } = props;
+    const [isLoading, setIsLoading] = useBoolean(false);
 
     return (
         <Box
@@ -28,12 +29,16 @@ export const ProductRow = (props: PropsT) => {
                     <Checkbox
                         colorScheme="green"
                         size="lg"
-                        checked={checked}
+                        checked={product.fulfilled}
                         defaultChecked={product.fulfilled}
-                        onChange={(e) => {
-                            setChecked.toggle();
+                        onChange={async (e) => {
+                            setIsLoading.toggle();
+                            await onToggle(!product.fulfilled);
+                            setIsLoading.toggle();
                         }}
+                        display={isLoading ? 'none' : 'visible'}
                     />
+                    <Spinner size='sm' display={isLoading ? 'visible' : 'none'} />
                 </Box>
             </HStack>
         </Box>

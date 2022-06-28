@@ -1,16 +1,17 @@
 import React from 'react';
 import { Box, Heading, VStack } from '@chakra-ui/react';
-import { OrderT, ProductT, StationT } from '../../types';
+import { ApiResponse, OrderT, ProductT, RichOrderT, StationT } from '../../types';
 import { DEEP_BLUE, LIGHTER_BLUE, WHITE } from '../Home/stationTheme';
 import { ProductRow } from './ProductRow';
 
 type PropsT = {
     order: OrderT;
     station: StationT;
+    toggleFulfilled: (orderId: number, productId: number, val: boolean) => Promise<ApiResponse<null> | undefined>;
 };
 
 export const StationOrderBox = (props: PropsT) => {
-    const { order, station } = props;
+    const { order, station, toggleFulfilled } = props;
     const products: ProductT[] = [];
     const amountsPerProduct: Record<number, number> = {};
 
@@ -43,6 +44,11 @@ export const StationOrderBox = (props: PropsT) => {
                                 key={`${order.id}_p_${p.id}`}
                                 product={p}
                                 amount={amountsPerProduct[p.id]}
+                                onToggle={async (val) => {
+                                    // This will toggle the value and then the hook should automatically
+                                    // fetch the orders again.
+                                    await toggleFulfilled(order.id, p.id, val);
+                                }}
                             />
                         );
                     })}

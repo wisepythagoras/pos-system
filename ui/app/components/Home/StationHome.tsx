@@ -22,6 +22,7 @@ export const StationHome = (props: PropsT) => {
     const {
         connected,
         orders,
+        toggleFulfilled,
     } = useOrdersEventSource(user);
 
     // Add a spinner state for when the user is disconnected.
@@ -61,9 +62,10 @@ export const StationHome = (props: PropsT) => {
                             return (
                                 <StationOrderBox
                                     order={o}
-                                    key={o.id}
+                                    key={`station-order-${o.id}`}
                                     // @ts-ignore - The station will exist at this point.
                                     station={user.station}
+                                    toggleFulfilled={toggleFulfilled}
                                 />
                             );
                         })}
