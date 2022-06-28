@@ -63,7 +63,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         } else if (!!existingOrder) {
             newOrders[existingIdx] = newOrder;
         } else {
-            newOrders.push(newOrder);
+            newOrders.unshift(newOrder);
         }
 
         setOrders(newOrders);
