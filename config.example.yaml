@@ -23,6 +23,9 @@ name: "The name of your store"
 address1: "123 Something Blvd"
 address2: "Suite #12"
 
+# Add a percentage here if you want to charge customers more when they use a credit card.
+ccsurcharge: 4.5
+
 # This works with a CUPS server.
 printer:
     - id: 0

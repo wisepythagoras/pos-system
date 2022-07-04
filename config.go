@@ -20,12 +20,13 @@ type Printer struct {
 }
 
 type Config struct {
-	Server   ServerConfig
-	Admin    AdminUser
-	Printers []Printer
-	Secret   string
-	Key      string
-	Name     string
-	Address1 string
-	Address2 string
+	Server      ServerConfig
+	Admin       AdminUser
+	Printers    []Printer
+	Secret      string
+	Key         string
+	Name        string
+	Address1    string
+	Address2    string
+	CCSurcharge uint
 }
