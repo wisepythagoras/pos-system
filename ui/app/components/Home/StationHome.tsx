@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     Alert,
     Box,
@@ -8,6 +8,7 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
+    ToastId,
     useToast,
     VStack,
 } from '@chakra-ui/react';
@@ -30,10 +31,11 @@ export const StationHome = (props: PropsT) => {
         onSearchChange,
     } = useOrdersEventSource(user);
     const toast = useToast();
+    const disconnectedToastIdRef = useRef<ToastId>(0);
 
     useEffect(() => {
-        if (!connected && !toast.isActive) {
-            toast({
+        if (!connected && !toast.isActive(disconnectedToastIdRef.current)) {
+            disconnectedToastIdRef.current = toast({
                 title: 'You have been disconnected',
                 description: 'Your station has lost connection to the server',
                 status: 'error',
