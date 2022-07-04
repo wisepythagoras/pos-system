@@ -52,7 +52,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         return resp;
     }, []);
 
-    const onSearchChange = debounce((e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const onSearchChange = debounce(async (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const idStr = e.target.value || '0';
         const id = parseInt(idStr);
         
@@ -62,12 +62,17 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
 
         searchRef.current = id;
 
+        let matchingOrders: RichOrderT[] | null = [];
+
         if (id <= 0) {
-            fetchOrders();
-            return;
+            matchingOrders = await fetchOrders();
+        } else {
+            matchingOrders = await fetchOrders(id);
         }
 
-        fetchOrders(id);
+        if (matchingOrders){
+            setOrders(matchingOrders.map((ro) => ro.order));
+        }
     }, 500);
 
     const messageHandler = (e: MessageEvent<any>) => {
