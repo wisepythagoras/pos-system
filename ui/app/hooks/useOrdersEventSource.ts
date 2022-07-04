@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import debounce from 'lodash/debounce';
 import { useGetOrdersList } from '../../admin/hooks';
 import { ApiResponse, OrderT, RichOrderT, UserT } from '../types';
 
@@ -12,6 +13,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     const [orders, setOrders] = useState<OrderT[]>([]);
     const [retries, setRetries] = useState(0);
     const ordersRef = useRef(orders);
+    const searchRef = useRef(0);
     ordersRef.current = orders;
 
     const { loading, orders: apiOrders, fetchOrders } = useGetOrdersList(1);
@@ -50,7 +52,30 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         return resp;
     }, []);
 
+    const onSearchChange = debounce((e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+        const idStr = e.target.value || '0';
+        const id = parseInt(idStr);
+        
+        if (isNaN(id)) {
+            return;
+        }
+
+        searchRef.current = id;
+
+        if (id <= 0) {
+            fetchOrders();
+            return;
+        }
+
+        fetchOrders(id);
+    }, 500);
+
     const messageHandler = (e: MessageEvent<any>) => {
+        // If there is an active search query, then don't process any messages.
+        if (searchRef.current > 0) {
+            return;
+        }
+
         const orders = ordersRef.current;
         const newOrder = JSON.parse(e.data) as OrderT;
         const newOrders = [...orders];
@@ -130,5 +155,6 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
         orders,
         fetchOrders,
         toggleFulfilled,
+        onSearchChange,
     };
 };

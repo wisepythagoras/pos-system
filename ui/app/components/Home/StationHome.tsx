@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Alert,
     Box,
     Center,
     Container,
     Heading,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    useToast,
     VStack,
 } from '@chakra-ui/react';
 import { UserT } from '../../types';
 import { StationNavbar } from '../StationNavbar';
 import { useOrdersEventSource } from '../../hooks';
 import { StationOrderBox } from '../StationOrderBox';
+import { SearchIcon } from '@chakra-ui/icons';
 
 type PropsT = {
     user: UserT;
@@ -22,7 +27,21 @@ export const StationHome = (props: PropsT) => {
         connected,
         orders,
         toggleFulfilled,
+        onSearchChange,
     } = useOrdersEventSource(user);
+    const toast = useToast();
+
+    useEffect(() => {
+        if (!connected && !toast.isActive) {
+            toast({
+                title: 'You have been disconnected',
+                description: 'Your station has lost connection to the server',
+                status: 'error',
+                isClosable: true,
+                // duration: 10000,
+            });
+        }
+    }, [connected]);
 
     // Add a spinner state for when the user is disconnected.
 
@@ -46,15 +65,15 @@ export const StationHome = (props: PropsT) => {
                 paddingTop="16px"
                 paddingBottom="36px"
             >
-                <Center>
-                    <Box>
-                        {!connected ? (
-                            <Alert status="error">
-                                You have been disconnected.
-                            </Alert>
-                        ) : undefined}
-                    </Box>
-                </Center>
+                <Box marginBottom="20px">
+                    <InputGroup>
+                        <InputLeftElement
+                            pointerEvents="none"
+                            children={<SearchIcon color="gray.300" />}
+                        />
+                        <Input placeholder="Order number" onChange={onSearchChange} />
+                    </InputGroup>
+                </Box>
                 <Box>
                     <VStack spacing="16px" width="100%">
                         {orders.map((o) => {

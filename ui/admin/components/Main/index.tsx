@@ -84,7 +84,6 @@ export const Main = (props: IMainProps) => {
     const onSearchChange = debounce((e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         const idStr = e.target.value || '0';
         const id = parseInt(idStr);
-        console.log(idStr);
         
         if (isNaN(id)) {
             return;
