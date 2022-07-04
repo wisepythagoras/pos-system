@@ -31,7 +31,7 @@ export const StationNavbar = (props: PropsT) => {
                         </Heading>
                     </Box>
                     <Box>
-                        <Center>
+                        {/* <Center>
                             <Box w="38px" h="38px" bgColor={WHITE} borderRadius="3px">
                                 <Center>
                                     <Heading
@@ -47,7 +47,7 @@ export const StationNavbar = (props: PropsT) => {
                                     </Heading>
                                 </Center>
                             </Box>
-                        </Center>
+                        </Center> */}
                     </Box>
                 </Stack>
             </Container>
