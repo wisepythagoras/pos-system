@@ -27,6 +27,12 @@ export const StationOrderBox = (props: PropsT) => {
         }
     });
 
+    // Nothing to show if there are no products. This means that it's probably an order
+    // for a different station.
+    if (products.length === 0) {
+        return <></>;
+    }
+
     return (
         <Box
             bgColor={LIGHTER_BLUE}
@@ -55,6 +61,9 @@ export const StationOrderBox = (props: PropsT) => {
                         );
                     })}
                 </VStack>
+                <Heading size="sm" color={DEEP_BLUE} paddingTop="10px">
+                    Showing {products.length} of {order.products.length} products.
+                </Heading>
             </Box>
             {products.length && products.every((p) => p.fulfilled) ? (
                 <DoneCard>

@@ -14,6 +14,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     const [retries, setRetries] = useState(0);
     const ordersRef = useRef(orders);
     const searchRef = useRef(0);
+    const previouslyConnectedRef = useRef(false);
     ordersRef.current = orders;
 
     const { loading, orders: apiOrders, fetchOrders } = useGetOrdersList(1);
@@ -104,9 +105,13 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
 
         ordersStream.addEventListener('message', messageHandler);
 
-        ordersStream.onopen = () => setConnected(true);
+        ordersStream.onopen = () => {
+            previouslyConnectedRef.current = true;
+            setConnected(true);
+        };
 
         setTimeout(() => {
+            previouslyConnectedRef.current = true;
             setConnected(true);
         }, 5);
 
@@ -144,6 +149,7 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
 
                 // Wait a second before rertrying.
                 setTimeout(() => {
+                    previouslyConnectedRef.current = false;
                     setRetries(retries + 1);
                 }, 1000);
             }
@@ -158,8 +164,10 @@ export const useOrdersEventSource = (user: UserT | null | undefined) => {
     return {
         connected,
         orders,
+        retries,
         fetchOrders,
         toggleFulfilled,
         onSearchChange,
+        previouslyConnected: previouslyConnectedRef.current,
     };
 };

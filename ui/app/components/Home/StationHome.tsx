@@ -26,6 +26,7 @@ export const StationHome = (props: PropsT) => {
     const { user } = props;
     const {
         connected,
+        previouslyConnected,
         orders,
         toggleFulfilled,
         onSearchChange,
@@ -34,6 +35,10 @@ export const StationHome = (props: PropsT) => {
     const disconnectedToastIdRef = useRef<ToastId>(0);
 
     useEffect(() => {
+        if (!previouslyConnected) {
+            return;
+        }
+
         if (!connected && !toast.isActive(disconnectedToastIdRef.current)) {
             disconnectedToastIdRef.current = toast({
                 title: 'You have been disconnected',
@@ -43,7 +48,7 @@ export const StationHome = (props: PropsT) => {
                 // duration: 10000,
             });
         }
-    }, [connected]);
+    }, [previouslyConnected, connected]);
 
     // Add a spinner state for when the user is disconnected.
 

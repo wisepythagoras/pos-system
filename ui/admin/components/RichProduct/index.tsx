@@ -144,6 +144,7 @@ export const RichProduct = (props: PropsT) => {
                             (product.type === props.product.type &&
                             product.sold_out === props.product.sold_out &&
                             product.discontinued === props.product.discontinued &&
+                            product.price === props.product.price &&
                             product.name === props.product.name) ||
                             !product.type ||
                             !product.name ||
