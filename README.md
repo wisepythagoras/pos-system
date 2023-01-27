@@ -6,7 +6,7 @@ This POS app, with its administrative panel, was meant to be a simple to use alt
 
 ## Building
 
-This app was built with Go 1.16, so make sure you have that installed.
+This app was built with Go 1.18, so make sure you have that installed.
 
 ``` sh
 git clone https://github.com/wisepythagoras/pos-system && cd pos-system
