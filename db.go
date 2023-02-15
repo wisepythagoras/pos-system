@@ -12,6 +12,7 @@ func ConnectDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	db.AutoMigrate(&ProductType{})
 	db.AutoMigrate(&Product{})
 	db.AutoMigrate(&OrderProduct{})
 	db.AutoMigrate(&Order{})
