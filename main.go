@@ -173,6 +173,7 @@ func main() {
 	router.PUT("/api/product/:productId", authHandler(false, adminAuthToken), productHandlers.UpdateProduct)
 	router.DELETE("/api/product/:productId", authHandler(false, adminAuthToken), productHandlers.ToggleDiscontinued)
 	router.PUT("/api/product/type", authHandler(true, adminAuthToken), productHandlers.CreateProductType)
+	router.GET("/api/product/types", productHandlers.ListProductTypes)
 
 	router.POST("/api/station", authHandler(true, adminAuthToken), stationHandlers.CreateStation)
 	router.POST("/api/station/:stationId/:productId", authHandler(true, adminAuthToken), stationHandlers.AddProductToStation)

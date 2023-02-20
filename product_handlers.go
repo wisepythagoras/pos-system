@@ -326,11 +326,35 @@ func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 	})
 }
 
+func (ph *ProductHandlers) ListProductTypes(c *gin.Context) {
+	apiResponse := new(ApiResponse)
+	returnableProductTypes := []any{}
+	var productTypes []*ProductType
+
+	ph.DB.Order("title asc").
+		Order("name asc").
+		Find(&productTypes)
+
+	for _, pt := range productTypes {
+		ptj := gin.H{
+			"id":    pt.ID,
+			"name":  pt.Name,
+			"title": pt.Title,
+		}
+		returnableProductTypes = append(returnableProductTypes, ptj)
+	}
+
+	apiResponse.Success = true
+	apiResponse.Data = returnableProductTypes
+
+	c.JSON(http.StatusOK, apiResponse)
+}
+
 func (ph *ProductHandlers) CreateProductType(c *gin.Context) {
 	apiResponse := new(ApiResponse)
 	name := c.PostForm("name")
 	title := c.PostForm("title")
-	
+
 	if len(name) == 0 || len(title) == 0 {
 		apiResponse.Success = false
 		apiResponse.Error = "No name or title"
@@ -347,6 +371,6 @@ func (ph *ProductHandlers) CreateProductType(c *gin.Context) {
 	} else {
 		apiResponse.Success = true
 	}
-	
+
 	c.JSON(http.StatusOK, apiResponse)
 }
