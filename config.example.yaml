@@ -27,7 +27,7 @@ address2: "Suite #12"
 ccsurcharge: 4.5
 
 # This works with a CUPS server.
-printer:
+printers:
     - id: 0
       name: "Printer name"
       server: "localhost"

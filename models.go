@@ -8,8 +8,9 @@ import (
 
 type ProductType struct {
 	gorm.Model
-	ID   uint64 `gorm:"primaryKey; autoIncrement; not_null;"`
-	Name string `gorm:"uniqueIndex; index; type:mediumtext not null"`
+	ID   uint64 `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
+	Name string `gorm:"uniqueIndex; index; type:mediumtext not null" json:"name"`
+	Title string `gorm:"type:mediumtext" json:"title"`
 }
 
 type Product struct {

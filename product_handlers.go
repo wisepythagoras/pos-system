@@ -95,7 +95,7 @@ func (ph *ProductHandlers) CreateProduct(c *gin.Context) {
 // ListProducts returns a complete list of products.
 func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	var productObjs []*Product
-	var products []interface{}
+	var products []any = []any{}
 
 	// The GET param that tells us to get all products or not.
 	allProducts := c.Query("all") != ""
@@ -324,4 +324,29 @@ func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 			return false
 		}
 	})
+}
+
+func (ph *ProductHandlers) CreateProductType(c *gin.Context) {
+	apiResponse := new(ApiResponse)
+	name := c.PostForm("name")
+	title := c.PostForm("title")
+	
+	if len(name) == 0 || len(title) == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "No name or title"
+		c.JSON(http.StatusOK, apiResponse)
+		return
+	}
+
+	newProductType := &ProductType{Name: name, Title: title}
+	result := ph.DB.Save(newProductType).Commit()
+
+	if result.RowsAffected == 0 {
+		apiResponse.Success = false
+		apiResponse.Error = "The new product type was not saved"
+	} else {
+		apiResponse.Success = true
+	}
+	
+	c.JSON(http.StatusOK, apiResponse)
 }
