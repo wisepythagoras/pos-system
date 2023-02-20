@@ -13,7 +13,7 @@ git clone https://github.com/wisepythagoras/pos-system && cd pos-system
 make current_arch
 ```
 
-If the build completes without any issues, you should have an executable file in `./bin`:
+If the build completes without any issues, you should have an executable file in `./bin`. Also, create a config based on `config.example.yaml` and then run:
 
 ```
 ./bin/pos-system
