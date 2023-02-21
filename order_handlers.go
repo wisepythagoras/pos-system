@@ -36,6 +36,7 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 
 	result := oh.DB.
 		Preload("OrderProducts.Product").
+		Preload("OrderProducts.Product.ProductType").
 		Where("orders.id = ?", orderId).
 		Find(&order)
 
@@ -60,7 +61,7 @@ func (oh *OrderHandlers) GetOrderByID(orderId int) (*OrderJSON, float64, error) 
 		productJSON := OrderProductJSON{
 			ID:           orderProduct.Product.ID,
 			Name:         orderProduct.Product.Name,
-			Type:         orderProduct.Product.Type,
+			Type:         orderProduct.Product.ProductType.Name,
 			Price:        orderProduct.Product.Price,
 			Discontinued: orderProduct.Product.Discontinued == 1,
 			SoldOut:      orderProduct.Product.SoldOut == 1,
@@ -108,6 +109,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 	uniqueProductIds := lo.Uniq(productIds)
 
 	result := oh.DB.
+		Preload("ProductType").
 		Where("id in (?) AND discontinued = 0 AND sold_out = 0", uniqueProductIds).
 		Find(&dbProducts)
 
@@ -139,7 +141,7 @@ func (oh *OrderHandlers) CreateOrder(c *gin.Context) {
 				ID:           product.ID,
 				Name:         product.Name,
 				Price:        product.Price,
-				Type:         product.Type,
+				Type:         product.ProductType.Name,
 				Discontinued: product.Discontinued == 0,
 				SoldOut:      product.SoldOut == 0,
 				Fulfilled:    false,
@@ -219,6 +221,7 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 
 	oh.DB.
 		Preload("OrderProducts.Product").
+		Preload("OrderProducts.Product.ProductType").
 		Order("id desc").
 		Limit(50).
 		Offset((page - 1) * 50).
@@ -243,11 +246,16 @@ func (oh *OrderHandlers) GetOrders(c *gin.Context) {
 			productJSON := OrderProductJSON{
 				ID:           orderProduct.Product.ID,
 				Name:         orderProduct.Product.Name,
-				Type:         orderProduct.Product.Type,
+				Type:         orderProduct.Product.ProductType.Name,
 				Price:        orderProduct.Product.Price,
 				Discontinued: orderProduct.Product.Discontinued == 1,
 				SoldOut:      orderProduct.Product.SoldOut == 1,
 				Fulfilled:    orderProduct.Fulfilled == 1,
+				ProductType: ProductTypeJSON{
+					ID:    orderProduct.Product.ProductType.ID,
+					Name:  orderProduct.Product.ProductType.Name,
+					Title: orderProduct.Product.ProductType.Title,
+				},
 			}
 
 			orderJSON.Products = append(orderJSON.Products, productJSON)
@@ -750,9 +758,10 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 
 // OrderStream handles the streaming endpoint connections.
 // const stream = new EventSource("/api/orders/stream");
-// stream.addEventListener("message", (e) => {
-//     console.log(e.data);
-// });
+//
+//	stream.addEventListener("message", (e) => {
+//	    console.log(e.data);
+//	});
 func (oh *OrderHandlers) OrderStream(c *gin.Context) {
 	streamUpdates := make(chan *OrderJSON)
 

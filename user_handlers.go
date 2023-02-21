@@ -146,6 +146,7 @@ func (uh *UserHandlers) GetLoggedInUser(c *gin.Context) {
 				DB.
 				Preload("Station").
 				Preload("Station.StationProducts.Product").
+				Preload("Station.StationProducts.Product.ProductType").
 				Where("id = ?", userStruct.ID).
 				Find(&user)
 
@@ -161,7 +162,12 @@ func (uh *UserHandlers) GetLoggedInUser(c *gin.Context) {
 						Discontinued: sp.Product.Discontinued == 1,
 						Price:        sp.Product.Price,
 						SoldOut:      sp.Product.SoldOut == 1,
-						Type:         sp.Product.Type,
+						Type:         sp.Product.ProductType.Name,
+						ProductType: ProductTypeJSON{
+							ID:    sp.Product.ProductType.ID,
+							Name:  sp.Product.ProductType.Name,
+							Title: sp.Product.ProductType.Title,
+						},
 					})
 				}
 

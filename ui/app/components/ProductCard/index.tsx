@@ -4,11 +4,11 @@ import {
     Box,
     Heading,
 } from '@chakra-ui/react';
-import { ProductT, ProductTypeT } from '../../types';
+import { ProductT, ProductTypeOldT } from '../../types';
 
 export interface IProductProps {
     product: ProductT;
-    type: ProductTypeT;
+    type: ProductTypeOldT;
     isSoldOut?: boolean;
 }
 

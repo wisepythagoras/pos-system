@@ -4,16 +4,17 @@ export type ApiResponse<T> = {
     error?: string;
 };
 
-export type ProductTypeT = 'food' | 'drink' | 'pastry';
+export type ProductTypeOldT = 'food' | 'drink' | 'pastry';
 
 export type ProductT = {
     id: number;
     name: string;
     price: number;
-    type: ProductTypeT;
+    type: ProductTypeOldT;
     discontinued: boolean;
     sold_out: boolean;
     fulfilled: boolean;
+    product_type: ProductTypeT;
 };
 
 export type ProductAggregateT = {
@@ -58,4 +59,11 @@ export type UserT = {
 export type PrinterT = {
     id: number;
     name: string;
+};
+
+export type ProductTypeT = {
+    id: number;
+    name: string;
+    title: string;
+    created_at: Date;
 };

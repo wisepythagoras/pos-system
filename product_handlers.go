@@ -35,10 +35,15 @@ func ProductFormatter(product *Product) interface{} {
 		"id":           product.ID,
 		"name":         product.Name,
 		"price":        product.Price,
-		"type":         product.Type,
+		"type":         product.ProductType.Name,
 		"created_at":   product.CreatedAt,
 		"discontinued": product.Discontinued == 1,
 		"sold_out":     product.SoldOut == 1,
+		"product_type": gin.H{
+			"id":    product.ProductType.ID,
+			"name":  product.ProductType.Name,
+			"title": product.ProductType.Title,
+		},
 	}
 }
 
@@ -54,18 +59,25 @@ type ProductHandlers struct {
 func (ph *ProductHandlers) CreateProduct(c *gin.Context) {
 	name := c.PostForm("name")
 	priceStr := c.PostForm("price")
-	productType := c.PostForm("type")
+	productTypeStr := c.PostForm("type")
 
 	apiResponse := ApiResponse{}
 
-	if name == "" || priceStr == "" || productType == "" {
+	if name == "" || priceStr == "" || productTypeStr == "" {
 		apiResponse.Success = false
 		apiResponse.Error = "Invalid inputs"
 		c.JSON(http.StatusOK, apiResponse)
 		return
 	}
 
-	if productType != "food" && productType != "drink" && productType != "pastry" {
+	productTypeID, err := strconv.Atoi(productTypeStr)
+	var productType ProductType
+
+	if err == nil {
+		ph.DB.Where("id = ?", productTypeID).Find(&productType)
+	}
+
+	if err != nil || productType.ID == 0 {
 		apiResponse.Success = false
 		apiResponse.Error = "Invalid product type"
 		c.JSON(http.StatusOK, apiResponse)
@@ -82,9 +94,9 @@ func (ph *ProductHandlers) CreateProduct(c *gin.Context) {
 	}
 
 	ph.DB.Create(&Product{
-		Name:  name,
-		Price: price,
-		Type:  productType,
+		Name:          name,
+		Price:         price,
+		ProductTypeID: productType.ID,
 	}).Commit()
 
 	apiResponse.Success = true
@@ -100,12 +112,15 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	// The GET param that tells us to get all products or not.
 	allProducts := c.Query("all") != ""
 
-	if allProducts == true {
-		ph.DB.Order("type asc").
+	if allProducts {
+		ph.DB.
+			Preload("ProductType").
+			Order("type asc").
 			Order("name asc").
 			Find(&productObjs)
 	} else {
 		ph.DB.Where("discontinued = 0").
+			Preload("ProductType").
 			Order("type asc").
 			Order("name asc").
 			Find(&productObjs)
@@ -137,7 +152,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 
 	name := c.PostForm("name")
 	priceStr := c.PostForm("price")
-	productType := c.PostForm("type")
+	productTypeStr := c.PostForm("type")
 	soldOutStr := c.PostForm("sold_out")
 
 	// Convert the price string to a float.
@@ -150,7 +165,14 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	if productType != "food" && productType != "drink" && productType != "pastry" {
+	productTypeID, err := strconv.Atoi(productTypeStr)
+	var productType ProductType
+
+	if err == nil {
+		ph.DB.Where("id = ?", productTypeID).Find(&productType)
+	}
+
+	if err != nil || productType.ID == 0 {
 		response.Success = false
 		response.Error = "Invalid product type"
 		c.JSON(http.StatusOK, response)
@@ -176,11 +198,13 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 	// Update our fields field.
 	product.Name = name
 	product.Price = price
-	product.Type = productType
 	product.SoldOut = soldOut
+	product.ProductTypeID = productType.ID
 
 	// Finally save.
 	ph.DB.Save(&product)
+
+	product.ProductType = productType
 
 	// This is so that users get updates over the socket.
 	productJSON := ProductJSON{}
@@ -212,7 +236,7 @@ func (ph *ProductHandlers) ToggleDiscontinued(c *gin.Context) {
 	}
 
 	product := Product{ID: uint64(productId)}
-	ph.DB.First(&product)
+	ph.DB.Preload("ProductType").First(&product)
 
 	if len(product.Name) == 0 {
 		response.Success = false
@@ -297,9 +321,10 @@ func (ph *ProductHandlers) ProductUpdateWS(c *gin.Context) {
 
 // ProductUpdateStream handles the streaming endpoint connections.
 // const stream = new EventSource("/api/products/stream");
-// stream.addEventListener("message", (e) => {
-//     console.log(e.data);
-// });
+//
+//	stream.addEventListener("message", (e) => {
+//	    console.log(e.data);
+//	});
 func (ph *ProductHandlers) ProductUpdateStream(c *gin.Context) {
 	streamUpdates := make(chan wsMessage)
 	// defer close(streamUpdates)

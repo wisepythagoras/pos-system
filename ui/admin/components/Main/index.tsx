@@ -29,6 +29,7 @@ import {
     useGetTotalEarnings,
     useGetProductsList,
     useIsCompactView,
+    useProductTypes,
 } from '../../hooks';
 import { ProductsTab } from '../ProductsTab';
 import { OrdersTab } from '../OrdersTab';
@@ -53,11 +54,14 @@ export const Main = (props: IMainProps) => {
         products,
         fetchProducts,
     } = useGetProductsList();
+    const { productTypes } = useProductTypes();
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
     const isCompactView = useIsCompactView();
     const lastOrderRef = useRef(0);
     const { colorMode, toggleColorMode } = useColorMode();
+
+    console.log(productTypes);
 
     // @ts-ignore
     window._toggle = toggleColorMode;
@@ -254,6 +258,7 @@ export const Main = (props: IMainProps) => {
                             loadingProductsError={loadingProductsError}
                             products={products}
                             fetchProducts={fetchProducts}
+                            productTypes={productTypes}
                         />
                     </TabPanel>
                     <TabPanel>

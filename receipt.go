@@ -61,7 +61,7 @@ func (r *Receipt) GetPrinter() int {
 // ConnectToPrinter connects to the printer server.
 func (r *Receipt) ConnectToPrinter() error {
 	if len(r.Config.Printers) == 0 {
-		return errors.New("No printers were specified in the config")
+		return errors.New("no printers were specified in the config")
 	}
 
 	printerIdx := r.GetPrinter()
@@ -131,7 +131,7 @@ func (r *Receipt) Print() (int, error) {
 				ID:           product.ID,
 				Name:         product.Name,
 				Price:        product.Price,
-				Type:         product.Type,
+				Type:         product.ProductType.Name,
 				Discontinued: product.Discontinued,
 				SoldOut:      product.SoldOut,
 			}
@@ -146,7 +146,7 @@ func (r *Receipt) Print() (int, error) {
 			ID:       product.ID,
 			Name:     product.Name,
 			Price:    float64(quantity) * product.Price,
-			Type:     product.Type,
+			Type:     product.ProductType.Name,
 		}
 
 		aggregateProducts = append(aggregateProducts, aggregateProduct)

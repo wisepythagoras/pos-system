@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+type ProductTypeJSON struct {
+	ID    uint64 `json:"id"`
+	Name  string `json:"name"`
+	Title string `json:"title"`
+}
+
 // ProductsToJSONFormat converts an array of product models to a JSON-ifiable
 // format.
 func ProductsToJSONFormat(products []Product) *[]ProductJSON {
@@ -22,12 +28,13 @@ func ProductsToJSONFormat(products []Product) *[]ProductJSON {
 
 // ProductJSON describes the Product DB model, but in a JSON-ifiable format.
 type ProductJSON struct {
-	ID           uint64  `json:"id"`
-	Name         string  `json:"name"`
-	Price        float64 `json:"price"`
-	Type         string  `json:"type"`
-	Discontinued bool    `json:"discontinued"`
-	SoldOut      bool    `json:"sold_out"`
+	ID           uint64          `json:"id"`
+	Name         string          `json:"name"`
+	Price        float64         `json:"price"`
+	Type         string          `json:"type"`
+	Discontinued bool            `json:"discontinued"`
+	SoldOut      bool            `json:"sold_out"`
+	ProductType  ProductTypeJSON `json:"product_type"`
 }
 
 // SetFromProductModel converts a product to a JSON formattable object.
@@ -38,10 +45,15 @@ func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 
 	pj.ID = product.ID
 	pj.Name = product.Name
-	pj.Type = product.Type
+	pj.Type = product.ProductType.Name
 	pj.Price = product.Price
 	pj.Discontinued = product.Discontinued == 1
 	pj.SoldOut = product.SoldOut == 1
+	pj.ProductType = ProductTypeJSON{
+		ID:    product.ProductType.ID,
+		Name:  product.ProductType.Name,
+		Title: product.ProductType.Title,
+	}
 
 	return nil
 }
@@ -49,13 +61,14 @@ func (pj *ProductJSON) SetFromProductModel(product *Product) error {
 // OrderProductJSON describes the Product DB model alongwith the field that indicates
 // if it has been fulfilled, but in a JSON-ifiable format.
 type OrderProductJSON struct {
-	ID           uint64  `json:"id"`
-	Name         string  `json:"name"`
-	Price        float64 `json:"price"`
-	Type         string  `json:"type"`
-	Discontinued bool    `json:"discontinued"`
-	SoldOut      bool    `json:"sold_out"`
-	Fulfilled    bool    `json:"fulfilled"` // This is an OrderProduct level field.
+	ID           uint64          `json:"id"`
+	Name         string          `json:"name"`
+	Price        float64         `json:"price"`
+	Type         string          `json:"type"`
+	Discontinued bool            `json:"discontinued"`
+	SoldOut      bool            `json:"sold_out"`
+	Fulfilled    bool            `json:"fulfilled"` // This is an OrderProduct level field.
+	ProductType  ProductTypeJSON `json:"product_type"`
 }
 
 type AggregateProduct struct {

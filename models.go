@@ -20,13 +20,13 @@ type Product struct {
 	ID            uint64    `gorm:"primaryKey; autoIncrement; not_null;"`
 	Name          string    `gorm:"uniqueIndex; index; type:mediumtext not null"`
 	Price         float64   `gorm:"not_null;"`
-	Type          string    `gorm:"not_null; default:'food'"`
 	Discontinued  uint8     `gorm:"not_null; default:0"`
 	ProductTypeID uint64    `gorm:"not_null; default:0"`
 	SoldOut       uint8     `gorm:"not_null; default:0"`
 	CreatedAt     time.Time `gorm:"autoCreateTime:milli"`
 	UpdatedAt     time.Time `gorm:"autoCreateTime:milli"`
-	ProductType   ProductType
+	// Type          string    `gorm:"not_null; default:'food'"`
+	ProductType ProductType
 }
 
 type Order struct {

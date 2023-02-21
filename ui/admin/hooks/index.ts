@@ -9,7 +9,9 @@ import {
     RichOrderT,
     StationT,
     UserT,
-} from '../app/types';
+} from '../../app/types';
+
+export * from './useProductTypes';
 
 interface IGetOrdersListState {
     loading: boolean;

@@ -12,10 +12,11 @@ import {
     Tr,
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
-import { ProductT, ProductTypeT } from '../../../app/types';
+import { ProductT, ProductTypeOldT, ProductTypeT } from '../../../app/types';
 
 type PropsT = {
     product: ProductT;
+    productTypes: ProductTypeT[];
     onSave: (newProduct: ProductT) => void;
 };
 
@@ -62,18 +63,22 @@ export const RichProduct = (props: PropsT) => {
             <Td>
                 <FormControl variant="outlined" size="small">
                     <Select
-                        value={product.type}
+                        value={product.product_type.id}
                         onChange={(e) => {
                             setProduct({
                                 ...product,
-                                type: e.target.value as ProductTypeT,
+                                type: e.target.value as ProductTypeOldT,
                             });
                         }}
                         placeholder="-Select-"
                     >
-                        <option value="food">Food</option>
-                        <option value="drink">Drink</option>
-                        <option value="pastry">Pastry</option>
+                        {props.productTypes.map((pt) => {
+                            return (
+                                <option value={pt.id} key={pt.id}>
+                                    {pt.title}
+                                </option>
+                            );
+                        })}
                     </Select>
                 </FormControl>
             </Td>

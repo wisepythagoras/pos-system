@@ -32,8 +32,10 @@ export const useGetProducts = () => {
 
             if (index < 0) {
                 products.push(data);
-            } else {
+            } else if (!data.discontinued) {
                 products[index] = data;
+            } else if (data.discontinued) {
+                products.splice(index, 1);
             }
 
             setState({

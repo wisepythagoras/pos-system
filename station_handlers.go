@@ -137,10 +137,15 @@ func (sh *StationHandlers) constructProductsArray(station *Station) []ProductJSO
 		productJSON := ProductJSON{
 			ID:           product.Product.ID,
 			Name:         product.Product.Name,
-			Type:         product.Product.Type,
+			Type:         product.Product.ProductType.Name,
 			Price:        product.Product.Price,
 			Discontinued: product.Product.Discontinued == 1,
 			SoldOut:      product.Product.SoldOut == 1,
+			ProductType: ProductTypeJSON{
+				ID:    product.Product.ProductType.ID,
+				Name:  product.Product.ProductType.Name,
+				Title: product.Product.ProductType.Title,
+			},
 		}
 		products = append(products, productJSON)
 	}
@@ -163,6 +168,7 @@ func (sh *StationHandlers) Station(c *gin.Context) {
 	station := &Station{}
 	sh.DB.
 		Preload("StationProducts.Product").
+		Preload("StationProducts.Product.ProductType").
 		First(station, "id = ?", stationId)
 
 	apiResponse.Success = true
@@ -190,6 +196,7 @@ func (sh *StationHandlers) Stations(c *gin.Context) {
 
 	sh.DB.
 		Preload("StationProducts.Product").
+		Preload("StationProducts.Product.ProductType").
 		Order("id desc").
 		Find(&stations)
 

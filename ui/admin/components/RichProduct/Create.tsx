@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ProductT } from '../../../app/types';
+import { ProductT, ProductTypeT } from '../../../app/types';
 import {
     Button,
     FormControl,
@@ -16,6 +16,7 @@ import { AddIcon } from '@chakra-ui/icons';
 type ShortProductT = Omit<ProductT, 'id' | 'sold_out' | 'discontinued'>;
 
 export type PropsT = {
+    productTypes: ProductTypeT[];
     onSave: (response: any) => void;
 };
 
@@ -70,9 +71,13 @@ export const CreateRichProduct = (props: PropsT) => {
                         {...register('type', { required: true })}
                         defaultValue="food"
                     >
-                        <option value="food">Food</option>
-                        <option value="drink">Drink</option>
-                        <option value="pastry">Pastry</option>
+                        {props.productTypes.map((pt) => {
+                            return (
+                                <option value={pt.id} key={pt.id}>
+                                    {pt.title}
+                                </option>
+                            );
+                        })}
                     </Select>
                 </FormControl>
             </Td>
