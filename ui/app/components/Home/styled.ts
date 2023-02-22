@@ -16,19 +16,30 @@ export const DisplayGrid = styled.div`
         display: grid;
         overflow: none;
         /* grid-template-rows: calc(80vh - 100px) 50px calc(20vh - 50px) 100px; */
-        grid-template-rows: calc(80vh - 50px) calc(20vh - 50px) 100px;
+        grid-template-rows: 50px calc(80vh - 100px) calc(20vh - 50px) 100px;
 
         @media screen and (max-height: 768px) {
             grid-template-rows: calc(80vh - 100px) 20vh 100px;
         }
 
         & > div:first-child {
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            padding: 0 10px;
+
+            & > button > span {
+                padding-top: 3px;
+            }
+        }
+
+        & > div:nth-child(2) {
             padding: 10px;
             overflow: auto;
             background-color: var(--chakra-colors-gray-800);
         }
 
-        & > div:nth-child(2) {
+        & > div:nth-child(3) {
             text-align: center;
             background-color: #171d28;
             color: #fff;

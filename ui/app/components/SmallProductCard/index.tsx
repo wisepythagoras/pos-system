@@ -1,7 +1,8 @@
 import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Avatar, Box, Center, CloseButton, Heading } from '@chakra-ui/react';
+import { Box, Center, CloseButton, Heading } from '@chakra-ui/react';
 import { ProductT } from '../../types';
+import { CountPill } from './CountPill';
 
 const GridContents = styled.div`
     display: grid;
@@ -46,17 +47,7 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
                 <GridContents>
                     <Box display="flex" alignItems="center">
                         <Box display="inline-block" marginRight="10px">
-                            <Avatar
-                                size='sm'
-                                css={`
-                                    & .chakra-avatar__initials {
-                                        font-size: 0.9rem;
-                                        color: var(--chakra-colors-gray-500);
-                                    }
-                                `}
-                                name={amount.toString()}
-                                backgroundColor="#2b3141"
-                            />
+                            <CountPill count={amount} />
                         </Box>
                         <Box display="inline-flex" height="100%" alignItems="center">
                             <Heading as="h6" size="sm" color="gray.200">

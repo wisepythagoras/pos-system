@@ -12,6 +12,7 @@ import {
     ModalHeader,
     ModalOverlay,
     Spinner,
+    Box,
 } from '@chakra-ui/react';
 import { ProductT, ProductAggregateT, PrinterT } from '../../types';
 import { useGetProducts, useCreateOrder } from '../../hooks';
@@ -19,6 +20,7 @@ import { ProductList } from '../ProductList';
 import { SmallProductCard } from '../SmallProductCard';
 import { useLocalStorage } from 'react-use';
 import { DisplayGrid, TotalProductList } from './styled';
+import { SmallCloseIcon } from '@chakra-ui/icons';
 
 export interface IHomeState {
     selectedProducts: ProductT[];
@@ -90,6 +92,23 @@ export const POSHome = () => {
                 />
             </div>
             <div className="total-column">
+                <Box className="top-actions">
+                    {aggregates.length > 0 ? (
+                        <Button
+                            rightIcon={<SmallCloseIcon />}
+                            colorScheme="grey.200"
+                            variant="ghost"
+                            onClick={() => {
+                                setState({
+                                    ...state,
+                                    selectedProducts: [],
+                                });
+                            }}
+                        >
+                            Clear
+                        </Button>
+                    ) : undefined}
+                </Box>
                 <TotalProductList>
                     {/* Show this label only when no products are selected. */}
                     {aggregates.length === 0 ? (
