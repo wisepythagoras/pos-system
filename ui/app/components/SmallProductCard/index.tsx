@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Heading } from '@chakra-ui/react';
+import { Avatar, Box, Center, Heading } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 
 const GridContents = styled.div`
@@ -26,26 +26,34 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
 
     return (
         <Box
-            borderWidth="1px"
+            borderWidth="0"
             overflow="hidden"
             padding={5}
             borderRadius={5}
-            backgroundColor="rgba(255, 255, 255, 0.1)"
+            backgroundColor="#222836"
         >
             <Box>
                 <GridContents>
                     <div>
-                        <Heading as="h6" size="md">
-                            <Heading color="gray.200" as="span" size="md">
-                                {amount}&times;
-                            </Heading>
-                            {product.name}
+                        <Heading as="h6" size="md" color="gray.200">
+                            <Box display="inline-block" marginRight="10px">
+                                <Avatar
+                                    size='sm'
+                                    name={amount.toString()}
+                                    backgroundColor="#2b3141"
+                                />
+                            </Box>
+                            <Box verticalAlign="sub" display="inline-block">
+                                {product.name}
+                            </Box>
                         </Heading>
                     </div>
                     <div>
-                        <Heading color="gray.200" as="h6" size="md">
-                            ${product.price.toFixed(2)}
-                        </Heading>
+                        <Center height="100%">
+                            <Heading color="rgb(60, 70, 96)" as="h6" size="md" fontWeight="100">
+                                ${(product.price * amount).toFixed(2)}
+                            </Heading>
+                        </Center>
                     </div>
                 </GridContents>
             </Box>
