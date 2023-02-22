@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
-import { Avatar, Box, Center, Heading } from '@chakra-ui/react';
+import { Avatar, Box, Center, CloseButton, Heading } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 
 const GridContents = styled.div`
     display: grid;
-    grid-template-columns: auto 75px;
+    grid-template-columns: auto 75px 25px;
 
     & > div:last-child {
         text-align: right;
@@ -15,6 +15,8 @@ const GridContents = styled.div`
 export interface ISmallProductCardProps {
     product: ProductT;
     amount: number;
+    onDecrease: () => void;
+    onRemove: () => void;
 };
 
 /**
@@ -22,7 +24,8 @@ export interface ISmallProductCardProps {
  * @param props The props.
  */
 export const SmallProductCard = (props: ISmallProductCardProps) => {
-    const { product, amount } = props;
+    const { product, amount, onDecrease, onRemove } = props;
+    const lock = useRef(false);
 
     return (
         <Box
@@ -31,30 +34,47 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
             padding={5}
             borderRadius={5}
             backgroundColor="#222836"
+            onClick={() => {
+                if (!lock.current) {
+                    onDecrease();
+                }
+
+                lock.current = false;
+            }}
         >
             <Box>
                 <GridContents>
-                    <div>
-                        <Heading as="h6" size="md" color="gray.200">
-                            <Box display="inline-block" marginRight="10px">
-                                <Avatar
-                                    size='sm'
-                                    name={amount.toString()}
-                                    backgroundColor="#2b3141"
-                                />
-                            </Box>
-                            <Box verticalAlign="sub" display="inline-block">
+                    <Box display="flex" alignItems="center">
+                        <Box display="inline-block" marginRight="10px">
+                            <Avatar
+                                size='sm'
+                                name={amount.toString()}
+                                backgroundColor="#2b3141"
+                            />
+                        </Box>
+                        <Box display="inline-flex" height="100%" alignItems="center">
+                            <Heading as="h6" size="sm" color="gray.200">
                                 {product.name}
-                            </Box>
-                        </Heading>
-                    </div>
-                    <div>
+                            </Heading>
+                        </Box>
+                    </Box>
+                    <Box>
                         <Center height="100%">
-                            <Heading color="rgb(60, 70, 96)" as="h6" size="md" fontWeight="100">
+                            <Heading color="rgb(60, 70, 96)" as="h6" size="sm" fontWeight="100">
                                 ${(product.price * amount).toFixed(2)}
                             </Heading>
                         </Center>
-                    </div>
+                    </Box>
+                    <Box>
+                        <CloseButton
+                            size='md'
+                            rounded="full"
+                            onClick={() => {
+                                lock.current = true;
+                                onRemove();
+                            }}
+                        />
+                    </Box>
                 </GridContents>
             </Box>
         </Box>

@@ -30,8 +30,7 @@ export const DisplayGrid = styled.div`
 
         & > div:nth-child(2) {
             text-align: center;
-            border-top: 1px solid #11111160;
-            background-color: #1a1a1a60;
+            background-color: #171d28;
             color: #fff;
             display: flex;
             -moz-box-align: center;

@@ -109,19 +109,36 @@ export const POSHome = () => {
                             <div
                                 key={i}
                                 ref={isLast ? lastSelectedProduct : undefined}
-                                onClick={() => {
-                                    const selected = [...state.selectedProducts];
-                                    const index = selected.findIndex((product) => {
-                                        return aggregate.product.id == product.id;
-                                    });
-                                    selected.splice(index, 1);
-                                    setState({
-                                        ...state,
-                                        selectedProducts: selected,
-                                    });
-                                }}
                             >
-                                <SmallProductCard product={product} amount={amount} />
+                                <SmallProductCard
+                                    product={product}
+                                    amount={amount}
+                                    onDecrease={() => {
+                                        const selected = [...state.selectedProducts];
+                                        const index = selected.findIndex((product) => {
+                                            return aggregate.product.id == product.id;
+                                        });
+                                        selected.splice(index, 1);
+                                        setState({
+                                            ...state,
+                                            selectedProducts: selected,
+                                        });
+                                    }}
+                                    onRemove={() => {
+                                        const selected: ProductT[] = [];
+
+                                        state.selectedProducts.forEach((p) => {
+                                            if (aggregate.product.id !== product.id) {
+                                                selected.push(p);
+                                            }
+                                        });
+
+                                        setState({
+                                            ...state,
+                                            selectedProducts: selected,
+                                        });
+                                    }}
+                                />
                             </div>
                         );
                     })}
