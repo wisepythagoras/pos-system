@@ -170,7 +170,8 @@ export const POSHome = () => {
                 <div>
                     <Button
                         variant="solid"
-                        backgroundColor="#246a24"
+                        // Old color: #246a24
+                        backgroundColor="#222a39"
                         color="#fafafa"
                         size="large"
                         isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
@@ -204,21 +205,6 @@ export const POSHome = () => {
                         spinner={<Spinner size="lg" color='white' />}
                     >
                         Checkout
-                    </Button>
-                    <Button
-                        variant="solid"
-                        backgroundColor="#771919"
-                        color="#fafafa"
-                        size="large"
-                        isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
-                        onClick={() => {
-                            setState({
-                                ...state,
-                                selectedProducts: [],
-                            });
-                        }}
-                    >
-                        Clear
                     </Button>
                 </div>
 

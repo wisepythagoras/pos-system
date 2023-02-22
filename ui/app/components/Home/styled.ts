@@ -68,6 +68,8 @@ export const DisplayGrid = styled.div`
         & > div:last-child {
             display: flex;
             width: 100%;
+            padding: 20px;
+            background-color: #171d28;
 
             & > button.MuiButton-containedPrimary:not(:disabled)  {
                 background-color: #287425;
@@ -83,8 +85,7 @@ export const DisplayGrid = styled.div`
             }
 
             & > button {
-                width: 50%;
-                border-radius: 0;
+                width: 100%;
             }
         }
     }
