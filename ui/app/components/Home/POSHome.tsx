@@ -128,7 +128,7 @@ export const POSHome = () => {
                                         const selected: ProductT[] = [];
 
                                         state.selectedProducts.forEach((p) => {
-                                            if (aggregate.product.id !== product.id) {
+                                            if (aggregate.product.id !== p.id) {
                                                 selected.push(p);
                                             }
                                         });

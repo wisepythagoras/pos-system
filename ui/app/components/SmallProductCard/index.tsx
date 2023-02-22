@@ -48,6 +48,12 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
                         <Box display="inline-block" marginRight="10px">
                             <Avatar
                                 size='sm'
+                                css={`
+                                    & .chakra-avatar__initials {
+                                        font-size: 0.9rem;
+                                        color: var(--chakra-colors-gray-500);
+                                    }
+                                `}
                                 name={amount.toString()}
                                 backgroundColor="#2b3141"
                             />
