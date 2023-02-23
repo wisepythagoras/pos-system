@@ -15,7 +15,6 @@ export const DisplayGrid = styled.div`
     & > .total-column {
         display: grid;
         overflow: none;
-        /* grid-template-rows: calc(80vh - 100px) 50px calc(20vh - 50px) 100px; */
         grid-template-rows: 50px calc(80vh - 100px) calc(20vh - 50px) 100px;
 
         @media screen and (max-height: 768px) {
@@ -25,8 +24,9 @@ export const DisplayGrid = styled.div`
         & > div:first-child {
             display: flex;
             align-items: center;
-            justify-content: right;
+            justify-content: space-between;
             padding: 0 10px;
+            user-select: none;
 
             & > button > span {
                 padding-top: 3px;
@@ -93,7 +93,7 @@ export const DisplayGrid = styled.div`
 
 export const TotalProductList = styled.div`
     & > div:not(.hint) {
-        cursor: pointer;
+        /* cursor: pointer; */
         margin-bottom: 5px;
         user-select: none;
     }

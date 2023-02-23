@@ -5,6 +5,7 @@ yarn.lock
 ui/app/dist/
 ui/admin/dist/
 public/js/main.*.js
+public/js/main.*.js.map
 public/js/*.js.LICENSE.txt
 node_modules/
 config.yaml
@@ -13,3 +14,7 @@ config.yaml
 receipts/*.pdf
 receipts/*.html
 __debug_bin
+.vscode
+pos.db.*
+stats/
+yarn-error.log

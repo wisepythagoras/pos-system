@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { 
     Button,
@@ -22,7 +22,7 @@ import { useLocalStorage } from 'react-use';
 import { DisplayGrid, TotalProductList } from './styled';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 
-export interface IHomeState {
+type StateT = {
     selectedProducts: ProductT[];
     orderCreated: number;
     processing: boolean;
@@ -34,7 +34,7 @@ export interface IHomeState {
  * Renders the home route. There should only be one route.
  */
 export const POSHome = () => {
-    const [state, setState] = useState<IHomeState>({
+    const [state, setState] = useState<StateT>({
         selectedProducts: [],
         orderCreated: 0,
         processing: false,
@@ -46,11 +46,60 @@ export const POSHome = () => {
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
     const [printer] = useLocalStorage<PrinterT>('printer');
     const printerRef = useRef<PrinterT | undefined>(printer);
+    const stateRef = useRef<StateT>(state);
+    stateRef.current = state;
+    const lockRef = useRef(false);
     const printerId = printerRef.current ? printerRef.current.id : 1;
 
     useEffect(() => {
+        if (lockRef.current) {
+            lockRef.current = false;
+            return;
+        }
+
         lastSelectedProduct.current?.scrollIntoView();
     }, [state.selectedProducts]);
+
+    const addProduct = useCallback((product: ProductT) => {
+        const selectedProducts = [...stateRef.current.selectedProducts];
+        const selectedPositions: number[] = [];
+        const selectedMap: Record<number, number> = {};
+        let i = 0;
+
+        selectedProducts.forEach((product) => {
+            if (product.id in selectedMap) {
+                const j = selectedMap[product.id];
+                selectedPositions.splice(j + 1, 0, product.id);
+                return;
+            }
+
+            selectedMap[product.id] = i;
+            selectedPositions.push(product.id);
+            i++;
+        });
+
+        const idx = selectedPositions
+            .findIndex((pId) => pId === product.id);
+
+        if (
+            selectedProducts.length > 0 &&
+            idx < selectedProducts.length - 1 &&
+            idx >= 0
+        ) {
+            lockRef.current = true;
+        }
+
+        if (idx >= 0) {
+            selectedProducts.splice(idx + 1, 0, product);
+        } else {
+            selectedProducts.push(product);
+        }
+
+        setState({
+            ...stateRef.current,
+            selectedProducts,
+        });
+    }, []);
 
     // Compute the total price of all products that were selected.
     const total = state.selectedProducts.map((p) => p.price).reduce((a, b) => a + b, 0);
@@ -80,12 +129,7 @@ export const POSHome = () => {
                 ) : null}
                 <ProductList
                     products={products}
-                    onClick={(product) => {
-                        setState({
-                            ...state,
-                            selectedProducts: [ ...state.selectedProducts, product ],
-                        });
-                    }}
+                    onClick={addProduct}
                     onPrinterChange={(p: PrinterT | undefined) => {
                         printerRef.current = p;
                     }}
@@ -94,19 +138,24 @@ export const POSHome = () => {
             <div className="total-column">
                 <Box className="top-actions">
                     {aggregates.length > 0 ? (
-                        <Button
-                            rightIcon={<SmallCloseIcon />}
-                            colorScheme="grey.200"
-                            variant="ghost"
-                            onClick={() => {
-                                setState({
-                                    ...state,
-                                    selectedProducts: [],
-                                });
-                            }}
-                        >
-                            Clear
-                        </Button>
+                        <>
+                            <Box fontWeight={700} color="gray.600">
+                                New Order
+                            </Box>
+                            <Button
+                                rightIcon={<SmallCloseIcon />}
+                                colorScheme="grey.200"
+                                variant="ghost"
+                                onClick={() => {
+                                    setState({
+                                        ...state,
+                                        selectedProducts: [],
+                                    });
+                                }}
+                            >
+                                Clear
+                            </Button>
+                        </>
                     ) : undefined}
                 </Box>
                 <TotalProductList>
@@ -126,12 +175,13 @@ export const POSHome = () => {
 
                         return (
                             <div
-                                key={i}
+                                key={aggregate.product.id}
                                 ref={isLast ? lastSelectedProduct : undefined}
                             >
                                 <SmallProductCard
                                     product={product}
                                     amount={amount}
+                                    onAddProduct={addProduct}
                                     onDecrease={() => {
                                         const selected = [...state.selectedProducts];
                                         const index = selected.findIndex((product) => {
@@ -164,14 +214,17 @@ export const POSHome = () => {
                 </TotalProductList>
                 <div>
                     <Heading as="h2" size="2xl" marginBottom={10}>
-                        ${total.toFixed(2)}
+                        <Box color="gray.600" display="inline-block">$</Box>{total.toFixed(2)}
                     </Heading>
                 </div>
                 <div>
                     <Button
                         variant="solid"
-                        // Old color: #246a24
-                        backgroundColor="#222a39"
+                        backgroundColor={
+                            aggregates.length === 0 ?
+                                '#222a39' :
+                                '#6a2424'
+                        }
                         color="#fafafa"
                         size="large"
                         isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}

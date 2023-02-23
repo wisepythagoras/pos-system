@@ -55,10 +55,14 @@ export const RichOrder = (props: IRichOrderProps) => {
                 </Center>
             </Td>
             <Td>
-                ${order.total.toFixed(2)}
+                <Box color="green.600" fontWeight={700}>
+                    ${order.total.toFixed(2)}
+                </Box>
             </Td>
             <Td>
-                {dayjs(order.order.created_at).format('HH:mm MM-DD-YYYY')}
+                <span title={dayjs(order.order.created_at).format('HH:mm MM-DD-YYYY')}>
+                    {dayjs(order.order.created_at).format('HH:mm dd, M D YYYY')}
+                </span>
             </Td>
         </Tr>
     );

@@ -1,21 +1,38 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Box, Center, CloseButton, Heading } from '@chakra-ui/react';
+import { Box, Center, CloseButton, Heading, IconButton } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 import { CountPill } from './CountPill';
+import { ChevronDownIcon, ChevronUpIcon, MinusIcon } from '@chakra-ui/icons';
 
 const GridContents = styled.div`
     display: grid;
     grid-template-columns: auto 75px 25px;
+
+    & > div:first-child {
+        & > .count-control {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            & > .count-actions {
+                & > button {
+                    height: var(--chakra-sizes-7);
+                    min-width: var(--chakra-sizes-7);
+                }
+            }
+        }
+    }
 
     & > div:last-child {
         text-align: right;
     }
 `;
 
-export interface ISmallProductCardProps {
+type PropsT = {
     product: ProductT;
     amount: number;
+    onAddProduct: (product: ProductT) => void;
     onDecrease: () => void;
     onRemove: () => void;
 };
@@ -24,9 +41,14 @@ export interface ISmallProductCardProps {
  * Renders an inline small product card.
  * @param props The props.
  */
-export const SmallProductCard = (props: ISmallProductCardProps) => {
-    const { product, amount, onDecrease, onRemove } = props;
-    const lock = useRef(false);
+export const SmallProductCard = (props: PropsT) => {
+    const {
+        product,
+        amount,
+        onAddProduct,
+        onDecrease,
+        onRemove,
+    } = props;
 
     return (
         <Box
@@ -35,18 +57,35 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
             padding={5}
             borderRadius={5}
             backgroundColor="#222836"
-            onClick={() => {
-                if (!lock.current) {
-                    onDecrease();
-                }
-
-                lock.current = false;
-            }}
         >
             <Box>
                 <GridContents>
                     <Box display="flex" alignItems="center">
-                        <Box display="inline-block" marginRight="10px">
+                        <Box
+                            className="count-control"
+                            display="inline-block"
+                            marginRight="10px"
+                        >
+                            <Box
+                                className="count-actions"
+                                display="flex"
+                                flexDirection="column"
+                            >
+                                <IconButton
+                                    variant='ghost'
+                                    aria-label='Add item'
+                                    isRound={true}
+                                    icon={<ChevronUpIcon />}
+                                    onClick={() => onAddProduct(product)}
+                                />
+                                <IconButton
+                                    variant='ghost'
+                                    aria-label='Remove item'
+                                    isRound={true}
+                                    icon={<ChevronDownIcon />}
+                                    onClick={onDecrease}
+                                />
+                            </Box>
                             <CountPill count={amount} />
                         </Box>
                         <Box display="inline-flex" height="100%" alignItems="center">
@@ -62,14 +101,11 @@ export const SmallProductCard = (props: ISmallProductCardProps) => {
                             </Heading>
                         </Center>
                     </Box>
-                    <Box>
+                    <Box display="flex" alignItems="center">
                         <CloseButton
                             size='md'
                             rounded="full"
-                            onClick={() => {
-                                lock.current = true;
-                                onRemove();
-                            }}
+                            onClick={onRemove}
                         />
                     </Box>
                 </GridContents>

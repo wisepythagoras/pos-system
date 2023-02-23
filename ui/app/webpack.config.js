@@ -59,7 +59,7 @@ const getConfig = (mode = 'development') => ({
             new TerserPlugin(),
         ]
     } : undefined,
-    devtool: mode === 'production' ? 'eval-source-map' : undefined,
+    devtool: mode === 'production' ? 'eval-source-map' : 'eval-cheap-module-source-map',
 
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
