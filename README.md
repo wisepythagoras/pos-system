@@ -63,7 +63,7 @@ You can fully manage your products from the "Products" tab in the admin page, as
 curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
 ```
 
-Currently, the app only supports the following product types: `food`, `drink`, `pastry`, but this is subject to change at any moment.
+You can create any number of product types/categories via the `PUT` endpoint `/api/product/type`. An admin form for creating and managing these is being built.
 
 ### Startup Service
 
