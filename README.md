@@ -2,7 +2,7 @@
 
 ![Point of sale app screenshot](docs/screenshot.png)
 
-This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops, street fairs, and neighborhood festivals.
+This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops, street fairs, and neighborhood festivals. My goal is to slowly build this into a WordPress for point of sales apps.
 
 ## Building
 
@@ -75,5 +75,5 @@ Read [this](/startup/README.md) guide.
 2. [x] Manage products from the admin panel.
 3. [x] Manage users through the admin panel.
 4. [x] Allow cashiers to select between multiple printers.
-5. [ ] Separate app/page for stations to fulfill orders.
+5. [x] Separate app/page for stations to fulfill orders.
 6. [ ] Extension/module engine.
