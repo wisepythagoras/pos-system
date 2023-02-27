@@ -60,7 +60,7 @@ There is an admin panel for creating and deleting users, but updating them is no
 You can fully manage your products from the "Products" tab in the admin page, as well as create new ones. However, you also have the flexibility of doing this through the API. The following curl is an example of how to create a new product.
 
 ``` sh
-curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
+curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=<ID_OF_PRODUCT_TYPE>' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
 ```
 
 You can create any number of product types/categories via the `PUT` endpoint `/api/product/type`. An admin form for creating and managing these is being built.
