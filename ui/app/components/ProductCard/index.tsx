@@ -18,15 +18,15 @@ export interface IProductProps {
  */
 export const ProductCard = (props: IProductProps) => {
     const { product, type } = props;
-    let badgeScheme: 'green' | 'blue' | 'red';
+    // let badgeScheme: 'green' | 'blue' | 'red';
 
-    if (type === 'drink') {
-        badgeScheme = 'red';
-    } else if (type === 'food') {
-        badgeScheme = 'blue';
-    } else {
-        badgeScheme = 'green';
-    }
+    // if (type === 'drink') {
+    //     badgeScheme = 'red';
+    // } else if (type === 'food') {
+    //     badgeScheme = 'blue';
+    // } else {
+    //     badgeScheme = 'green';
+    // }
 
     return (
         <Box
@@ -52,7 +52,7 @@ export const ProductCard = (props: IProductProps) => {
                     ml="1"
                     fontSize="1.0em"
                     borderRadius="md"
-                    colorScheme={badgeScheme}
+                    colorScheme="gray"
                 >
                     ${product.price.toFixed(2)}
                 </Badge>

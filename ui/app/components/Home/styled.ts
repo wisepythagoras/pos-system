@@ -93,7 +93,6 @@ export const DisplayGrid = styled.div`
 
 export const TotalProductList = styled.div`
     & > div:not(.hint) {
-        /* cursor: pointer; */
         margin-bottom: 5px;
         user-select: none;
     }

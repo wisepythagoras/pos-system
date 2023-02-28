@@ -80,8 +80,13 @@ const ProductCardList = styled.div`
             }
         }
 
+        & > div {
+            background-color: var(--chakra-colors-gray-600);
+        }
+
+        /* Maybe move these into the DB table */
         &.food > div {
-            background-color: #296a6c;
+            background-color: var(--chakra-colors-blue-700);;
         }
 
         &.drink > div {
@@ -194,7 +199,7 @@ export const ProductList = (props: IProductListProps) => {
                 {filteredProducts.map((product, i) => {
                     const classNames: string[] = [product.type];
 
-                    if (product.sold_out) {
+                    if (product.sold_out || product.discontinued) {
                         classNames.push('soldout');
                     }
 
