@@ -2,7 +2,7 @@
 
 ![Point of sale app screenshot](docs/screenshot.png)
 
-This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops, street fairs, and neighborhood festivals.
+This POS app, with its administrative panel, was meant to be a simple to use alternative to all the restrictive paid apps for small shops, street fairs, and neighborhood festivals. My goal is to slowly build this into a WordPress for point of sales apps.
 
 ## Building
 
@@ -60,10 +60,10 @@ There is an admin panel for creating and deleting users, but updating them is no
 You can fully manage your products from the "Products" tab in the admin page, as well as create new ones. However, you also have the flexibility of doing this through the API. The following curl is an example of how to create a new product.
 
 ``` sh
-curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=food' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
+curl -X POST http://localhost:8088/api/product -d 'name=Product Name&price=$9.99&type=<ID_OF_PRODUCT_TYPE>' -H 'x-auth-token: YOUR_ADMIN_AUTH_TOKEN'
 ```
 
-Currently, the app only supports the following product types: `food`, `drink`, `pastry`, but this is subject to change at any moment.
+You can create any number of product types/categories via the `PUT` endpoint `/api/product/type`. An admin form for creating and managing these is being built.
 
 ### Startup Service
 
@@ -75,5 +75,5 @@ Read [this](/startup/README.md) guide.
 2. [x] Manage products from the admin panel.
 3. [x] Manage users through the admin panel.
 4. [x] Allow cashiers to select between multiple printers.
-5. [ ] Separate app/page for stations to fulfill orders.
+5. [x] Separate app/page for stations to fulfill orders.
 6. [ ] Extension/module engine.
