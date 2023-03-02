@@ -18,15 +18,6 @@ export interface IProductProps {
  */
 export const ProductCard = (props: IProductProps) => {
     const { product, type } = props;
-    // let badgeScheme: 'green' | 'blue' | 'red';
-
-    // if (type === 'drink') {
-    //     badgeScheme = 'red';
-    // } else if (type === 'food') {
-    //     badgeScheme = 'blue';
-    // } else {
-    //     badgeScheme = 'green';
-    // }
 
     return (
         <Box
