@@ -77,3 +77,7 @@ Read [this](/startup/README.md) guide.
 4. [x] Allow cashiers to select between multiple printers.
 5. [x] Separate app/page for stations to fulfill orders.
 6. [ ] Extension/module engine.
+
+## License
+
+Although the license for the source code is GNU GPL v3, I prohibit the use of the code herein for the training of any kind of AI model.
