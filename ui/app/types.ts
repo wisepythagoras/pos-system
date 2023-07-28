@@ -11,6 +11,7 @@ export type ProductT = {
     name: string;
     price: number;
     type: ProductTypeOldT;
+    product_type_id: number;
     discontinued: boolean;
     sold_out: boolean;
     fulfilled: boolean;

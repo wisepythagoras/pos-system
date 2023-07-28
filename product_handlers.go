@@ -115,13 +115,13 @@ func (ph *ProductHandlers) ListProducts(c *gin.Context) {
 	if allProducts {
 		ph.DB.
 			Preload("ProductType").
-			Order("type asc").
+			Order("product_type_id asc").
 			Order("name asc").
 			Find(&productObjs)
 	} else {
 		ph.DB.Where("discontinued = 0").
 			Preload("ProductType").
-			Order("type asc").
+			Order("product_type_id asc").
 			Order("name asc").
 			Find(&productObjs)
 	}
@@ -152,7 +152,7 @@ func (ph *ProductHandlers) UpdateProduct(c *gin.Context) {
 
 	name := c.PostForm("name")
 	priceStr := c.PostForm("price")
-	productTypeStr := c.PostForm("type")
+	productTypeStr := c.PostForm("product_type_id")
 	soldOutStr := c.PostForm("sold_out")
 
 	// Convert the price string to a float.

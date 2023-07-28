@@ -33,17 +33,24 @@ export const RichProduct = (props: PropsT) => {
             await fetch(`/api/product/${product.id}`, { method: 'DELETE' });
         }
 
+        const formData = new FormData();
+        formData.set('name', product.name);
+        formData.set('price', product.price.toString());
+        formData.set('product_type_id', product.product_type.id.toString());
+        formData.set('sold_out', product.sold_out.toString());
+
         // Call the save endpoint.
         await fetch(`/api/product/${product.id}`, {
             method: 'PUT',
-            body: new URLSearchParams(product as unknown as Record<string, string>),
+            body: formData,
+            // body: new URLSearchParams(product as unknown as Record<string, string>),
         });
 
         props.onSave(product);
     };
 
     return (
-        <Tr>
+        <Tr backgroundColor={product.discontinued ? 'gray.100' : undefined}>
             <Td>{product.id}</Td>
             <Td>
                 <FormControl variant="outlined">
@@ -65,9 +72,13 @@ export const RichProduct = (props: PropsT) => {
                     <Select
                         value={product.product_type.id}
                         onChange={(e) => {
+                            const productTypeId = parseInt(e.target.value);
+                            const productType = props.productTypes.find((pt) => pt.id === productTypeId) as ProductTypeT;
+
                             setProduct({
                                 ...product,
-                                type: e.target.value as ProductTypeOldT,
+                                product_type_id: productTypeId,
+                                product_type: productType,
                             });
                         }}
                         placeholder="-Select-"
