@@ -17,11 +17,14 @@ import {
     Thead,
     Tr,
     Td,
+    useToast,
 } from '@chakra-ui/react';
 import { RichProduct } from '../RichProduct';
 import { CreateRichProduct } from '../RichProduct/Create';
 import { ProductT, ProductTypeT } from '../../../app/types';
 import { useIsCompactView } from '../../hooks';
+import { RichProductType } from '../RichProductType';
+import { RichProductTypeCreate } from '../RichProductType/Create';
 
 type PropsT = {
     fetchProducts: () => Promise<ProductT[] | null>;
@@ -29,7 +32,7 @@ type PropsT = {
     loadingProducts: boolean;
     loadingProductsError: string | null;
     productTypes: ProductTypeT[];
-    createProductType: (n: string, t: string) => Promise<void>;
+    createProductType: (n: string, t: string, c: string) => Promise<ProductTypeT | undefined>;
     getProductTypes: () => Promise<ProductTypeT[]>;
 };
 
@@ -59,8 +62,10 @@ export const ProductsTab = (props: PropsT) => {
         products,
         productTypes,
         fetchProducts,
+        getProductTypes,
     } = props;
     const isCompactView = useIsCompactView();
+    const toast = useToast();
 
     return (
         <Tabs isManual variant='enclosed'>
@@ -141,18 +146,31 @@ export const ProductsTab = (props: PropsT) => {
                                             <Th>#</Th>
                                             <Th>Name</Th>
                                             <Th>Title</Th>
+                                            <Th>Color</Th>
                                             <Th></Th>
                                         </Tr>
                                     </Thead>
                                     <Tbody>
+                                        <RichProductTypeCreate
+                                            onSave={(_) => {
+                                                getProductTypes();
+                                            }}
+                                            onFail={() => {
+                                                toast({
+                                                    title: 'Error',
+                                                    description: `Error: Unable to create product type`,
+                                                    status: 'error',
+                                                    duration: 5000,
+                                                    isClosable: true,
+                                                });
+                                            }}
+                                        />
                                         {productTypes.map((pt, i) => {
                                             return (
-                                                <Tr key={`pt-${i}`}>
-                                                    <Td>{pt.id}</Td>
-                                                    <Td>{pt.name}</Td>
-                                                    <Td>{pt.title}</Td>
-                                                    <Td></Td>
-                                                </Tr>
+                                                <RichProductType
+                                                    key={`pt-${i}`}
+                                                    productType={pt}
+                                                />
                                             );
                                         })}
                                     </Tbody>

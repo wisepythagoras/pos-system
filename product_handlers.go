@@ -365,6 +365,7 @@ func (ph *ProductHandlers) ListProductTypes(c *gin.Context) {
 			"id":    pt.ID,
 			"name":  pt.Name,
 			"title": pt.Title,
+			"color": pt.Color,
 		}
 		returnableProductTypes = append(returnableProductTypes, ptj)
 	}
@@ -402,6 +403,7 @@ func (ph *ProductHandlers) CreateProductType(c *gin.Context) {
 		apiResponse.Error = "The new product type was not saved"
 	} else {
 		apiResponse.Success = true
+		apiResponse.Data = newProductType
 	}
 
 	c.JSON(http.StatusOK, apiResponse)

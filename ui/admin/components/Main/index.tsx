@@ -154,9 +154,7 @@ export const Main = (props: IMainProps) => {
             width="100%"
             onClick={() => window.location.href = '/logout'}
         >
-            <Box paddingTop="4px">
-                Logout
-            </Box>
+            Logout
         </Button>
     );
 
