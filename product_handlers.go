@@ -379,15 +379,22 @@ func (ph *ProductHandlers) CreateProductType(c *gin.Context) {
 	apiResponse := new(ApiResponse)
 	name := c.PostForm("name")
 	title := c.PostForm("title")
+	color := c.PostForm("color")
 
 	if len(name) == 0 || len(title) == 0 {
 		apiResponse.Success = false
 		apiResponse.Error = "No name or title"
 		c.JSON(http.StatusOK, apiResponse)
 		return
+	} else if len(color) == 0 {
+		color = "#0379a0"
 	}
 
-	newProductType := &ProductType{Name: name, Title: title}
+	newProductType := &ProductType{
+		Name:  name,
+		Title: title,
+		Color: color,
+	}
 	result := ph.DB.Save(newProductType).Commit()
 
 	if result.RowsAffected == 0 {

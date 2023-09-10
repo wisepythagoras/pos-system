@@ -11,6 +11,7 @@ type ProductType struct {
 	ID        uint64    `gorm:"primaryKey; autoIncrement; not_null;" json:"id"`
 	Name      string    `gorm:"uniqueIndex; index; type:mediumtext not null" json:"name"`
 	Title     string    `gorm:"type:mediumtext" json:"title"`
+	Color     string    `gorm:"type:varchar(9)" json:"color"`
 	CreatedAt time.Time `gorm:"autoCreateTime:milli" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoCreateTime:milli" json:"-"`
 }

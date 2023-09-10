@@ -66,5 +66,6 @@ export type ProductTypeT = {
     id: number;
     name: string;
     title: string;
+    color?: string;
     created_at: Date;
 };

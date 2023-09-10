@@ -16,6 +16,7 @@ import {
     Th,
     Thead,
     Tr,
+    Td,
 } from '@chakra-ui/react';
 import { RichProduct } from '../RichProduct';
 import { CreateRichProduct } from '../RichProduct/Create';
@@ -28,6 +29,8 @@ type PropsT = {
     loadingProducts: boolean;
     loadingProductsError: string | null;
     productTypes: ProductTypeT[];
+    createProductType: (n: string, t: string) => Promise<void>;
+    getProductTypes: () => Promise<ProductTypeT[]>;
 };
 
 /**
@@ -124,7 +127,39 @@ export const ProductsTab = (props: PropsT) => {
                     </Container>
                 </TabPanel>
                 <TabPanel>
-                    <p>two!</p>
+                    <Container
+                        maxWidth="170ch"
+                        overflowX="auto"
+                        paddingInlineStart={isCompactView ? 0 : undefined}
+                        paddingInlineEnd={isCompactView ? 0 : undefined}
+                    >
+                        <Box>
+                            <TableContainer>
+                                <Table>
+                                    <Thead>
+                                        <Tr>
+                                            <Th>#</Th>
+                                            <Th>Name</Th>
+                                            <Th>Title</Th>
+                                            <Th></Th>
+                                        </Tr>
+                                    </Thead>
+                                    <Tbody>
+                                        {productTypes.map((pt, i) => {
+                                            return (
+                                                <Tr key={`pt-${i}`}>
+                                                    <Td>{pt.id}</Td>
+                                                    <Td>{pt.name}</Td>
+                                                    <Td>{pt.title}</Td>
+                                                    <Td></Td>
+                                                </Tr>
+                                            );
+                                        })}
+                                    </Tbody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    </Container>
                 </TabPanel>
             </TabPanels>
         </Tabs>

@@ -54,14 +54,12 @@ export const Main = (props: IMainProps) => {
         products,
         fetchProducts,
     } = useGetProductsList();
-    const { productTypes } = useProductTypes();
+    const { productTypes, getProductTypes, createProductType } = useProductTypes();
     const earningsPerDay = useGetEarningsPerDay();
     const earnings = useGetTotalEarnings();
     const isCompactView = useIsCompactView();
     const lastOrderRef = useRef(0);
     const { colorMode, toggleColorMode } = useColorMode();
-
-    console.log(productTypes);
 
     // @ts-ignore
     window._toggle = toggleColorMode;
@@ -259,6 +257,8 @@ export const Main = (props: IMainProps) => {
                             products={products}
                             fetchProducts={fetchProducts}
                             productTypes={productTypes}
+                            getProductTypes={getProductTypes}
+                            createProductType={createProductType}
                         />
                     </TabPanel>
                     <TabPanel>
