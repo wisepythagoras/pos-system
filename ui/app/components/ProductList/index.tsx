@@ -80,7 +80,7 @@ const ProductCardList = styled.div`
             }
         }
 
-        & > div {
+        & > .no-color {
             background-color: var(--chakra-colors-gray-600);
         }
 

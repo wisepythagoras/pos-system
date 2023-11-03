@@ -43,6 +43,7 @@ func ProductFormatter(product *Product) interface{} {
 			"id":    product.ProductType.ID,
 			"name":  product.ProductType.Name,
 			"title": product.ProductType.Title,
+			"color": product.ProductType.Color,
 		},
 	}
 }

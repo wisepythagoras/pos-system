@@ -18,6 +18,7 @@ export interface IProductProps {
  */
 export const ProductCard = (props: IProductProps) => {
     const { product, type } = props;
+    console.log(product.product_type.color);
 
     return (
         <Box
@@ -28,8 +29,10 @@ export const ProductCard = (props: IProductProps) => {
             borderWidth="1px"
             borderRadius="md"
             borderColor="rgba(0, 0, 0, 0.15)"
+            backgroundColor={product.product_type.color}
             overflow="hidden"
             padding="15px"
+            className={!product.product_type.color ? 'no-color' : undefined}
         >
             <Heading
                 as="h3"
