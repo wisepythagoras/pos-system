@@ -166,7 +166,7 @@ interface IGetProductListState {
  * Gets the list of all products.
  * @returns The details.
  */
- export const useGetProductsList = () => {
+export const useGetProductsList = () => {
     const [state, setState] = useState<IGetProductListState>({
         loading: false,
         error: null,
@@ -441,7 +441,7 @@ export const useGetOrdersPastYear = () => {
         }
     };
 
-    const getHexGraph = (): SVGElement => {
+    const getHexGraph = (): HTMLElement | SVGSVGElement => {
         return Plot.plot({
             grid: true,
             inset: 10,
@@ -464,7 +464,7 @@ export const useGetOrdersPastYear = () => {
         });
     };
 
-    const getBoxOpaqueGraph = (): SVGElement => {
+    const getBoxOpaqueGraph = (): HTMLElement | SVGSVGElement => {
         return Plot.plot({
             y: {
                 label: '↑ Amount of orders',
@@ -476,7 +476,7 @@ export const useGetOrdersPastYear = () => {
                         y: 'count',
                     }, {
                         x: 'timeOfDay',
-                        fill: '#1d54a8',
+                        // fill: '#1d54a8',
                     })
                 ),
                 Plot.ruleY([0])
