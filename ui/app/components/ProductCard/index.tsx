@@ -18,7 +18,6 @@ export interface IProductProps {
  */
 export const ProductCard = (props: IProductProps) => {
     const { product, type } = props;
-    console.log(product.product_type.color);
 
     return (
         <Box
