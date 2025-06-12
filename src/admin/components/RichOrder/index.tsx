@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Center, Td, Tr } from '@chakra-ui/react';
+import { Box, Button, Center, Table } from '@chakra-ui/react';
 import { CheckCircleIcon, DeleteIcon } from '@chakra-ui/icons';
 import dayjs from 'dayjs';
 import { OrderProducts } from './OrderProducts';
@@ -24,12 +24,12 @@ export const RichOrder = (props: IRichOrderProps) => {
     };
 
     return (
-        <Tr>
-            <Td>{order.order_id}</Td>
-            <Td>
+        <Table.Row>
+            <Table.Cell>{order.order_id}</Table.Cell>
+            <Table.Cell>
                 <OrderProducts products={order.order.products} />
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <Center>
                     {order.order.cancelled ? (
                         <Button
@@ -51,17 +51,17 @@ export const RichOrder = (props: IRichOrderProps) => {
                         </Button>
                     )}
                 </Center>
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <Box color="green.600" fontWeight={700}>
                     ${order.total.toFixed(2)}
                 </Box>
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <span title={dayjs(order.order.created_at).format('HH:mm MM-DD-YYYY')}>
                     {dayjs(order.order.created_at).format('HH:mm dd, M D YYYY')}
                 </span>
-            </Td>
-        </Tr>
+            </Table.Cell>
+        </Table.Row>
     );
 };

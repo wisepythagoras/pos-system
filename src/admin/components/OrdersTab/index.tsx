@@ -4,22 +4,14 @@ import {
     Button,
     Center,
     Container,
-    Divider,
-    Grid,
-    GridItem,
     Heading,
     HStack,
     IconButton,
     Input,
     InputGroup,
-    InputLeftElement,
+    Separator,
     Spinner,
     Table,
-    TableContainer,
-    Tbody,
-    Th,
-    Thead,
-    Tr,
 } from '@chakra-ui/react';
 import {
     ArrowLeftIcon,
@@ -77,22 +69,18 @@ export const OrdersTab = (props: PropsT) => {
             </Heading>
             <ControlContainer>
                 <Box>
-                    <InputGroup height="100%">
-                        <InputLeftElement
-                            pointerEvents="none"
-                            children={<SearchIcon />}
-                        />
+                    <InputGroup height="100%" startElement={<SearchIcon />}>
                         <Input
                             placeholder="Search order id"
                             variant="outline"
                             onChange={onSearchChange}
-                            size="small"
+                            size="sm"
                             width="300px"
                             borderRadius="5px"
                         />
                     </InputGroup>
                 </Box>
-                <Divider className="divider" orientation="vertical" height="100%" />
+                <Separator orientation="vertical" height="100%" className="divider" />
                 <Button
                     onClick={() => exportTotals()}
                     variant="solid"
@@ -116,7 +104,7 @@ export const OrdersTab = (props: PropsT) => {
             </ControlContainer>
             <div>
                 {!!error ? (
-                    <Heading variant="h4" as="h4">
+                    <Heading size="xl" as="h4">
                         {error}
                     </Heading>
                 ) : null}
@@ -127,47 +115,47 @@ export const OrdersTab = (props: PropsT) => {
                     </Center>
                 ) : (
                     <Box>
-                        <TableContainer>
-                            <Table>
-                                <Thead>
-                                    <Tr>
-                                        <Th>#</Th>
-                                        <Th>Purchased Items</Th>
-                                        <Th></Th>
-                                        <Th>Total</Th>
-                                        <Th>Date Placed</Th>
-                                    </Tr>
-                                </Thead>
-                                <Tbody>
-                                    {orders.map((order, i) => <RichOrder key={i} order={order} />)}
-                                </Tbody>
-                            </Table>
-                            <HStack marginTop="15px">
-                                <Box w="40px">
-                                    <IconButton
-                                        variant="ghost"
-                                        icon={<ChevronLeftIcon />}
-                                        aria-label="Previous page"
-                                        disabled={page === 1}
-                                        onClick={() => onPageChange(page - 1)}
-                                    />
-                                </Box>
-                                <Box width="100%">
-                                    <Center>
-                                        Page {page}
-                                    </Center>
-                                </Box>
-                                <Box w="40px">
-                                    <IconButton
-                                        variant="ghost"
-                                        icon={<ChevronRightIcon />}
-                                        aria-label="Next page"
-                                        disabled={orders.length < 50}
-                                        onClick={() => onPageChange(page + 1)}
-                                    />
-                                </Box>
-                            </HStack>
-                        </TableContainer>
+                        <Table.Root>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.ColumnHeader>#</Table.ColumnHeader>
+                                    <Table.ColumnHeader>Purchased Items</Table.ColumnHeader>
+                                    <Table.ColumnHeader></Table.ColumnHeader>
+                                    <Table.ColumnHeader>Total</Table.ColumnHeader>
+                                    <Table.ColumnHeader>Date Placed</Table.ColumnHeader>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                {orders.map((order, i) => <RichOrder key={i} order={order} />)}
+                            </Table.Body>
+                        </Table.Root>
+                        <HStack marginTop="15px">
+                            <Box w="40px">
+                                <IconButton
+                                    variant="ghost"
+                                    aria-label="Previous page"
+                                    disabled={page === 1}
+                                    onClick={() => onPageChange(page - 1)}
+                                >
+                                    <ChevronLeftIcon />
+                                </IconButton>
+                            </Box>
+                            <Box width="100%">
+                                <Center>
+                                    Page {page}
+                                </Center>
+                            </Box>
+                            <Box w="40px">
+                                <IconButton
+                                    variant="ghost"
+                                    aria-label="Next page"
+                                    disabled={orders.length < 50}
+                                    onClick={() => onPageChange(page + 1)}
+                                >
+                                    <ChevronRightIcon />
+                                </IconButton>
+                            </Box>
+                        </HStack>
                     </Box>
                 )}
             </div>
