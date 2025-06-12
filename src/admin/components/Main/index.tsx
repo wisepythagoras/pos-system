@@ -1,24 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     Box,
     Button,
-    Tab,
-    TabList,
     Tabs,
-    TabPanel,
-    TabPanels,
     Center,
     Drawer,
-    DrawerOverlay,
-    DrawerContent,
-    DrawerCloseButton,
-    DrawerHeader,
-    DrawerBody,
-    DrawerFooter,
     useDisclosure,
     HStack,
     Heading,
-    useColorMode,
+    Theme,
 } from '@chakra-ui/react';
 import { HamburgerIcon, LockIcon } from '@chakra-ui/icons';
 import debounce from 'lodash/debounce';
@@ -47,7 +37,7 @@ export interface IMainProps {};
 export const Main = (props: IMainProps) => {
     const [page, setPage] = useState(1);
     const { loading, error, orders, fetchOrders } = useGetOrdersList(page);
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { open: isOpen, onOpen, onClose } = useDisclosure();
     const {
         loading: loadingProducts,
         error: loadingProductsError,
@@ -59,18 +49,6 @@ export const Main = (props: IMainProps) => {
     const earnings = useGetTotalEarnings();
     const isCompactView = useIsCompactView();
     const lastOrderRef = useRef(0);
-    const { colorMode, toggleColorMode } = useColorMode();
-
-    // @ts-ignore
-    window._toggle = toggleColorMode;
-
-    useEffect(() => {
-        // This ugly solution is needed because Chakra's `LightMode` HOC or `extendTheme` method for setting
-        // the theme to light mode doesn't work, for some reason.
-        if (colorMode !== 'light') {
-            toggleColorMode();
-        }
-    }, [colorMode]);
 
     if (page === 1 && !loading && orders.length > 0) {
         lastOrderRef.current = orders[0].order_id;
@@ -102,48 +80,57 @@ export const Main = (props: IMainProps) => {
     const TabWrapper = isCompactView ? Button : Box;
 
     const tabList = (
-        <TabList
+        // @ts-ignore - Chakra is breaking Typescript
+        <Tabs.List
             mb="1em"
             style={isCompactView ? {
                 display: 'flex',
                 flexDirection: 'column',
             } : undefined}
         >
-            <Tab
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Trigger
                 marginTop={isCompactView ? undefined : '-2px'}
                 onClick={onClose}
+                value="home"
             >
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Home
                 </TabWrapper>
-            </Tab>
-            <Tab onClick={onClose}>
+            </Tabs.Trigger>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Trigger onClick={onClose} value="orders">
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Orders
                 </TabWrapper>
-            </Tab>
-            <Tab onClick={onClose}>
+            </Tabs.Trigger>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Trigger onClick={onClose} value="products">
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Products
                 </TabWrapper>
-            </Tab>
-            <Tab
+            </Tabs.Trigger>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Trigger
                 marginRight={isCompactView ? undefined : '-1px'}
                 onClick={onClose}
+                value="stations"
             >
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Stations
                 </TabWrapper>
-            </Tab>
-            <Tab
+            </Tabs.Trigger>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Trigger
                 marginRight={isCompactView ? undefined : '-1px'}
                 onClick={onClose}
+                value="users"
             >
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Users
                 </TabWrapper>
-            </Tab>
-        </TabList>
+            </Tabs.Trigger>
+        </Tabs.List>
     );
 
     const logoutButton = (
@@ -158,84 +145,86 @@ export const Main = (props: IMainProps) => {
     );
 
     return (
-        <AdminWrapper>
-            {isCompactView ? (
-                <HStack spacing="5px">
-                    <Button
-                        colorScheme="gray"
-                        variant="ghost"
-                        onClick={onOpen}
-                        className="hamburger-menu-btn"
-                    >
-                        <HamburgerIcon />
-                    </Button>
-                    <Heading as="h1" size="md" paddingTop="5px">
-                        POS Admin
-                    </Heading>
-                </HStack>
-            ) : undefined}
-            <Tabs.Root
-                variant="enclosed"
-                display="flex"
-                flexDirection={isCompactView ? 'column' : 'row'}
-                orientation="vertical"
-            >
-                {!isCompactView ? (
-                    <Box
-                        height="100vh"
-                        marginBottom={0}
-                        backgroundColor="gray.100"
-                        border="1px solid rgb(226, 232, 240)"
-                        width="160px"
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="space-between"
-                    >
-                        <Box>
-                            <Box padding="10px">
-                                <Heading size="md" as="h1" userSelect="none">
-                                    POS Admin
-                                </Heading>
-                            </Box>
-                            {tabList}
-                        </Box>
-                        <Box padding="10px">
-                            <Center>
-                                {logoutButton}
-                            </Center>
-                        </Box>
-                    </Box>
-                ) : (
-                    <Drawer
-                        isOpen={isOpen}
-                        onClose={onClose}
-                        placement="left"
-                    >
-                        <DrawerOverlay />
-                        <DrawerContent>
-                            <DrawerCloseButton />
-                            <DrawerHeader>POS Admin</DrawerHeader>
-                            <DrawerBody>
-                                {tabList}
-                            </DrawerBody>
-                            <DrawerFooter>
-                                {logoutButton}
-                            </DrawerFooter>
-                        </DrawerContent>
-                    </Drawer>
-                )}
-                <TabPanels
-                    height={isCompactView ? 'auto' : '100vh'}
-                    paddingTop={isCompactView ? 'initial' : '40px'}
-                    overflowY="auto"
+        <Theme appearance="light">
+            <AdminWrapper>
+                {isCompactView ? (
+                    <HStack spaceX="5px">
+                        <Button
+                            colorScheme="gray"
+                            variant="ghost"
+                            onClick={onOpen}
+                            className="hamburger-menu-btn"
+                        >
+                            <HamburgerIcon />
+                        </Button>
+                        <Heading as="h1" size="md" paddingTop="5px">
+                            POS Admin
+                        </Heading>
+                    </HStack>
+                ) : undefined}
+                <Tabs.Root
+                    variant="enclosed"
+                    display="flex"
+                    flexDirection={isCompactView ? 'column' : 'row'}
+                    orientation="vertical"
                 >
-                    <TabPanel>
+                    {!isCompactView ? (
+                        <Box
+                            height="100vh"
+                            marginBottom={0}
+                            backgroundColor="gray.100"
+                            border="1px solid rgb(226, 232, 240)"
+                            width="160px"
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="space-between"
+                        >
+                            <Box>
+                                <Box padding="10px">
+                                    <Heading size="md" as="h1" userSelect="none">
+                                        POS Admin
+                                    </Heading>
+                                </Box>
+                                {tabList}
+                            </Box>
+                            <Box padding="10px">
+                                <Center>
+                                    {logoutButton}
+                                </Center>
+                            </Box>
+                        </Box>
+                    ) : (
+                        <Drawer.Root placement="start" isOpen={isOpen} onClose={onClose}>
+                            <Drawer.Backdrop />
+                            <Drawer.Trigger />
+                            <Drawer.Positioner>
+                                <Drawer.Content>
+                                <Drawer.CloseTrigger />
+                                <Drawer.Header>
+                                    <Drawer.Title>POS Admin</Drawer.Title>
+                                </Drawer.Header>
+                                <Drawer.Body>
+                                    {tabList}
+                                </Drawer.Body>
+                                <Drawer.Footer>
+                                    {logoutButton}
+                                </Drawer.Footer>
+                                </Drawer.Content>
+                            </Drawer.Positioner>
+                        </Drawer.Root>
+                    )}
+                    {/* <TabPanels
+                        height={isCompactView ? 'auto' : '100vh'}
+                        paddingTop={isCompactView ? 'initial' : '40px'}
+                        overflowY="auto"
+                    > */}
+                    <Tabs.Content value="home">
                         <HomeTab
                             earnings={earnings}
                             earningsPerDay={earningsPerDay}
                         />
-                    </TabPanel>
-                    <TabPanel>
+                    </Tabs.Content>
+                    <Tabs.Content value="orders">
                         <OrdersTab
                             error={error}
                             exportTotals={exportTotals}
@@ -246,8 +235,8 @@ export const Main = (props: IMainProps) => {
                             orders={orders}
                             page={page}
                         />
-                    </TabPanel>
-                    <TabPanel>
+                    </Tabs.Content>
+                    <Tabs.Content value="products">
                         <ProductsTab
                             loadingProducts={loadingProducts}
                             loadingProductsError={loadingProductsError}
@@ -257,15 +246,16 @@ export const Main = (props: IMainProps) => {
                             getProductTypes={getProductTypes}
                             createProductType={createProductType}
                         />
-                    </TabPanel>
-                    <TabPanel>
+                    </Tabs.Content>
+                    <Tabs.Content value="stations">
                         <StationsTab />
-                    </TabPanel>
-                    <TabPanel>
+                    </Tabs.Content>
+                    <Tabs.Content value="users">
                         <UsersTab />
-                    </TabPanel>
-                </TabPanels>
-            </Tabs.Root>
-        </AdminWrapper>
+                    </Tabs.Content>
+                    {/* </TabPanels> */}
+                </Tabs.Root>
+            </AdminWrapper>
+        </Theme>
     );
 };

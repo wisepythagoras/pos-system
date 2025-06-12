@@ -1,34 +1,21 @@
 import React, { useCallback, useRef, useState } from 'react';
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     Box,
     Button,
     Container,
-    FormControl,
-    FormHelperText,
-    FormLabel,
     Heading,
     HStack,
     Input,
-    Select,
     Table,
-    TableContainer,
-    Tbody,
-    Td,
-    Th,
-    Thead,
-    Tr,
     useDisclosure,
-    useToast,
     VStack,
+    NativeSelect,
+    Field,
+    Dialog,
 } from '@chakra-ui/react';
 import { useStations, useIsCompactView, useUsers } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
+import { toaster } from '../../../components/ui/toaster';
 
 const stubUserObj = {
     username: '',
@@ -44,8 +31,7 @@ export const UsersTab = (props: PropsT) => {
     const isCompactView = useIsCompactView();
     const { stations } = useStations();
     const { createUser, deleteUser, users } = useUsers();
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast();
+    const { open: isOpen, onOpen, onClose } = useDisclosure();
     const userIdToDeleteRef = useRef<number | undefined>();
     const cancelRef = useRef<any>();
 
@@ -61,7 +47,7 @@ export const UsersTab = (props: PropsT) => {
         if (res.success) {
             onClose();
 
-            toast({
+            toaster.create({
                 title: 'Success',
                 description: `User ${userIdToDeleteRef.current} was deleted`,
                 status: 'success',
@@ -69,7 +55,7 @@ export const UsersTab = (props: PropsT) => {
                 isClosable: true,
             });
         } else {
-            toast({
+            toaster.create({
                 title: 'Error',
                 description: `Error: ${res.error}`,
                 status: 'error',
@@ -92,12 +78,10 @@ export const UsersTab = (props: PropsT) => {
                 <Heading as='h3' size='lg' marginBottom="15px">
                     Create a User
                 </Heading>
-                <FormControl>
-                    <FormLabel htmlFor="user-form">
-                        User details
-                    </FormLabel>
-                    <VStack id="user-form" spacing={3} align={isCompactView ? 'stretch' : 'start'}>
-                        <TargetStack spacing={3} align={isCompactView ? 'stretch' : 'start'}>
+                <Field.Root>
+                    <Field.Label>User details</Field.Label>
+                    <VStack id="user-form" spaceY={3} align={isCompactView ? 'stretch' : 'start'}>
+                        <TargetStack spaceX={3} spaceY={3} align={isCompactView ? 'stretch' : 'start'}>
                             <Box>
                                 <Input
                                     type="text"
@@ -106,7 +90,7 @@ export const UsersTab = (props: PropsT) => {
                                     value={newUser.username}
                                     onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                                 />
-                                <FormHelperText>This needs to be unique.</FormHelperText>
+                                <Field.HelperText>This needs to be unique.</Field.HelperText>
                             </Box>
                             <Box>
                                 <Input
@@ -116,9 +100,9 @@ export const UsersTab = (props: PropsT) => {
                                     value={newUser.password}
                                     onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                                 />
-                                <FormHelperText>
+                                <Field.HelperText>
                                     Passwords should be 8 characters or more.
-                                </FormHelperText>
+                                </Field.HelperText>
                             </Box>
                             <Box>
                                 <Input
@@ -130,34 +114,34 @@ export const UsersTab = (props: PropsT) => {
                                     onChange={(e) => setNewUser({ ...newUser, confirmPassword: e.target.value })}
                                 />
                                 {newUser.password !== newUser.confirmPassword ? (
-                                    <FormHelperText textColor="red">
-                                        The passwords need to match.
-                                    </FormHelperText>
+                                    <Field.HelperText>The passwords need to match.</Field.HelperText>
                                 ) : undefined}
                             </Box>
                         </TargetStack>
                         <Box>
-                            <Select
-                                onChange={(e) => {
-                                    setNewUser({
-                                        ...newUser,
-                                        stationId: parseInt(e.target.value, 10),
-                                    });
-                                }}
-                                value={newUser.stationId}
-                            >
-                                <option value="0">Not assigned</option>
-                                {stations.map((station) => {
-                                    return (
-                                        <option value={station.id} key={`station_${station.id}`}>
-                                            {station.name}
-                                        </option>
-                                    );
-                                })}
-                            </Select>
-                            <FormHelperText>
+                            <NativeSelect.Root>
+                                <NativeSelect.Field
+                                    onChange={(e) => {
+                                        setNewUser({
+                                            ...newUser,
+                                            stationId: parseInt(e.target.value, 10),
+                                        });
+                                    }}
+                                    value={newUser.stationId}
+                                >
+                                    <option value="0">Not assigned</option>
+                                    {stations.map((station) => {
+                                        return (
+                                            <option value={station.id} key={`station_${station.id}`}>
+                                                {station.name}
+                                            </option>
+                                        );
+                                    })}
+                                </NativeSelect.Field>
+                            </NativeSelect.Root>
+                            <Field.HelperText>
                                 Select a station name, if you need to assign your user to one.
-                            </FormHelperText>
+                            </Field.HelperText>
                         </Box>
                     </VStack>
                     <Button
@@ -171,7 +155,7 @@ export const UsersTab = (props: PropsT) => {
                             );
 
                             if (res.success) {
-                                toast({
+                                toaster.create({
                                     title: 'Created new station',
                                     description: `User "${newUser.username}" was created`,
                                     status: 'success',
@@ -180,7 +164,7 @@ export const UsersTab = (props: PropsT) => {
                                 });
                                 setNewUser(stubUserObj);
                             } else {
-                                toast({
+                                toaster.create({
                                     title: 'Uh, oh!',
                                     description: 'Unable to create user',
                                     status: 'error',
@@ -199,29 +183,29 @@ export const UsersTab = (props: PropsT) => {
                     >
                         <AddIcon /> Create 
                     </Button>
-                </FormControl>
+                </Field.Root>
             </Box>
             <Box>
-                <TableContainer>
-                    <Table>
-                        <Thead>
-                            <Tr>
-                                <Th>#</Th>
-                                <Th>Username</Th>
-                                <Th>Role</Th>
-                                <Th></Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
+                <Box>
+                    <Table.Root>
+                        <Table.Header>
+                            <Table.Row>
+                                <Table.ColumnHeader>#</Table.ColumnHeader>
+                                <Table.ColumnHeader>Username</Table.ColumnHeader>
+                                <Table.ColumnHeader>Role</Table.ColumnHeader>
+                                <Table.ColumnHeader></Table.ColumnHeader>
+                            </Table.Row>
+                        </Table.Header>
+                        <Table.Body>
                             {users.map((user) => {
                                 return (
-                                    <Tr key={user.id}>
-                                        <Td>{user.id}</Td>
-                                        <Td>{user.username}</Td>
-                                        <Td>
+                                    <Table.Row key={user.id}>
+                                        <Table.Cell>{user.id}</Table.Cell>
+                                        <Table.Cell>{user.username}</Table.Cell>
+                                        <Table.Cell>
                                             {user.station?.name || 'Not assigned'}
-                                        </Td>
-                                        <Td>
+                                        </Table.Cell>
+                                        <Table.Cell>
                                             <Button
                                                 colorScheme='red'
                                                 ml={3}
@@ -232,37 +216,41 @@ export const UsersTab = (props: PropsT) => {
                                             >
                                                 Delete
                                             </Button>
-                                        </Td>
-                                    </Tr>
+                                        </Table.Cell>
+                                    </Table.Row>
                                 );
                             })}
-                        </Tbody>
-                    </Table>
-                </TableContainer>
-                <AlertDialog
+                        </Table.Body>
+                    </Table.Root>
+                </Box>
+                <Dialog.Root
+                    role='alertdialog'
                     isOpen={isOpen}
                     onClose={onClose}
                     leastDestructiveRef={cancelRef}
                 >
-                    <AlertDialogOverlay>
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+                    <Dialog.Trigger />
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                        <Dialog.Content>
+                            <Dialog.CloseTrigger />
+                            <Dialog.Header fontSize='lg' fontWeight='bold'>
                                 Delete Station
-                            </AlertDialogHeader>
-                            <AlertDialogBody>
+                            </Dialog.Header>
+                            <Dialog.Body>
                                 Are you sure you want to delete this user?
-                            </AlertDialogBody>
-                            <AlertDialogFooter>
+                            </Dialog.Body>
+                            <Dialog.Footer>
                                 <Button ref={cancelRef} onClick={onClose}>
                                     Cancel
                                 </Button>
                                 <Button colorScheme='red' onClick={onDelete} ml={3}>
                                     Delete
                                 </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog>
+                            </Dialog.Footer>
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Dialog.Root>
             </Box>
         </Container>
     );

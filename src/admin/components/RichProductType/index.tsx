@@ -1,5 +1,5 @@
 import React from 'react';
-import { Td, Tr } from '@chakra-ui/react';
+import { Table } from '@chakra-ui/react';
 import { ProductTypeT } from '../../../app/types';
 
 const fontColorFromBackgroundColor = (color: string) => {
@@ -23,17 +23,17 @@ export const RichProductType = (props: PropsT) => {
         : '#000';
 
     return (
-        <Tr>
-            <Td>{productType.id}</Td>
-            <Td>{productType.name}</Td>
-            <Td>{productType.title}</Td>
-            <Td
+        <Table.Row>
+            <Table.Cell>{productType.id}</Table.Cell>
+            <Table.Cell>{productType.name}</Table.Cell>
+            <Table.Cell>{productType.title}</Table.Cell>
+            <Table.Cell
                 backgroundColor={productType.color}
                 color={fontColor}
             >
                 {productType.color}
-            </Td>
-            <Td></Td>
-        </Tr>
+            </Table.Cell>
+            <Table.Cell></Table.Cell>
+        </Table.Row>
     );
 };

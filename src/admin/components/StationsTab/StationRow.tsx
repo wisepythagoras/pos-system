@@ -1,16 +1,10 @@
 import React, { useCallback, useRef } from 'react';
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogContent,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogOverlay,
     Box,
     Button,
-    Select,
-    Td,
-    Tr,
+    Dialog,
+    NativeSelect,
+    Table,
     useDisclosure,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
@@ -26,7 +20,7 @@ type PropsT = {
 };
 
 export const StationRow = (props: PropsT) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { open: isOpen, onOpen, onClose } = useDisclosure();
     const cancelRef = useRef<any>();
 
     const onDelete = useCallback(async () => {
@@ -38,14 +32,14 @@ export const StationRow = (props: PropsT) => {
     }, [props.station]);
 
     return (
-        <Tr>
-            <Td width="150px">
+        <Table.Row>
+            <Table.Cell width="150px">
                 {props.station.id}
-            </Td>
-            <Td width="250px">
+            </Table.Cell>
+            <Table.Cell width="250px">
                 {props.station.name}
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <Box>
                     <StationProducts
                         products={props.station.products}
@@ -56,32 +50,39 @@ export const StationRow = (props: PropsT) => {
                     />
                 </Box>
                 <Box>
-                    <Select
+                    <NativeSelect.Root
                         maxWidth="300px"
-                        placeholder="Select a product"
                         size="md"
-                        onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-                            return props.addProductToStation(props.station.id, parseInt(e.target.value, 10));
-                        }, [props.station])}
+                        // onSelect={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+                        //     return props.addProductToStation(props.station.id, parseInt(e.target.value, 10));
+                        // }, [props.station])}
                     >
-                        {props.products
-                            .filter((p) => {
-                                return props.station.products.findIndex((sp) => {
-                                    return sp.id === p.id;
-                                }) < 0 && !p.discontinued;
-                            })
-                            .map((p) => {
-                                return (
-                                    <option value={p.id} key={p.id}>
-                                        {p.name}
-                                    </option>
-                                );
-                            })
-                        }
-                    </Select>
+                        <NativeSelect.Field
+                            placeholder="Select a product"
+                            onChange={useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+                                return props.addProductToStation(props.station.id, parseInt(e.target.value, 10));
+                            }, [props.station])}
+                        >
+                            {props.products
+                                .filter((p) => {
+                                    return props.station.products.findIndex((sp) => {
+                                        return sp.id === p.id;
+                                    }) < 0 && !p.discontinued;
+                                })
+                                .map((p) => {
+                                    return (
+                                        <option value={p.id} key={p.id}>
+                                            {p.name}
+                                        </option>
+                                    );
+                                })
+                            }
+                        </NativeSelect.Field>
+                        <NativeSelect.Indicator />
+                    </NativeSelect.Root>
                 </Box>
-            </Td>
-            <Td width="136px">
+            </Table.Cell>
+            <Table.Cell width="136px">
                 <Button
                     colorScheme="red"
                     size="sm"
@@ -89,31 +90,34 @@ export const StationRow = (props: PropsT) => {
                 >
                     <DeleteIcon /> Delete
                 </Button>
-                <AlertDialog
+                <Dialog.Root
                     isOpen={isOpen}
                     onClose={onClose}
                     leastDestructiveRef={cancelRef}
                 >
-                    <AlertDialogOverlay>
-                        <AlertDialogContent>
-                            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
-                                Delete Station
-                            </AlertDialogHeader>
-                            <AlertDialogBody>
+                    <Dialog.Trigger />
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                        <Dialog.Content>
+                            <Dialog.CloseTrigger />
+                            <Dialog.Header fontSize='lg' fontWeight='bold'>
+                                <Dialog.Title>Delete Station</Dialog.Title>
+                            </Dialog.Header>
+                            <Dialog.Body>
                                 Are you sure you want to delete this station?
-                            </AlertDialogBody>
-                            <AlertDialogFooter>
+                            </Dialog.Body>
+                            <Dialog.Footer>
                                 <Button ref={cancelRef} onClick={onClose}>
                                     Cancel
                                 </Button>
                                 <Button colorScheme='red' onClick={onDelete} ml={3}>
                                     Delete
                                 </Button>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialogOverlay>
-                </AlertDialog>
-            </Td>
-        </Tr>
+                            </Dialog.Footer>
+                        </Dialog.Content>
+                    </Dialog.Positioner>
+                </Dialog.Root>
+            </Table.Cell>
+        </Table.Row>
     );
 };

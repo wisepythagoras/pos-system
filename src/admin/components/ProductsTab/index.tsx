@@ -6,18 +6,7 @@ import {
     Heading,
     Spinner,
     Table,
-    TableContainer,
-    TabList,
-    Tab,
-    TabPanel,
-    TabPanels,
     Tabs,
-    Tbody,
-    Th,
-    Thead,
-    Tr,
-    Td,
-    useToast,
 } from '@chakra-ui/react';
 import { RichProduct } from '../RichProduct';
 import { CreateRichProduct } from '../RichProduct/Create';
@@ -25,6 +14,7 @@ import { ProductT, ProductTypeT } from '../../../app/types';
 import { useIsCompactView } from '../../hooks';
 import { RichProductType } from '../RichProductType';
 import { RichProductTypeCreate } from '../RichProductType/Create';
+import { toaster } from '../../../components/ui/toaster';
 
 type PropsT = {
     fetchProducts: () => Promise<ProductT[] | null>;
@@ -65,121 +55,122 @@ export const ProductsTab = (props: PropsT) => {
         getProductTypes,
     } = props;
     const isCompactView = useIsCompactView();
-    const toast = useToast();
 
     return (
-        <Tabs isManual variant='enclosed'>
-            <TabList>
-                <Tab>Products</Tab>
-                <Tab>Product Types</Tab>
-            </TabList>
-            <TabPanels>
-                <TabPanel>
-                    <Container
-                        maxWidth="170ch"
-                        overflowX="auto"
-                        paddingInlineStart={isCompactView ? 0 : undefined}
-                        paddingInlineEnd={isCompactView ? 0 : undefined}
-                    >
-                        <div>
-                            {!!loadingProductsError ? (
-                                <Heading variant="h4" as="h4">
-                                    {loadingProductsError}
-                                </Heading>
-                            ) : null}
+        <Tabs.Root variant='enclosed'>
+            <Tabs.List>
+                {/* @ts-ignore - Chakra is breaking Typescript */}
+                <Tabs.Trigger value="tab-1">
+                    Products
+                </Tabs.Trigger>
+                {/* @ts-ignore - Chakra is breaking Typescript */}
+                <Tabs.Trigger value="tab-2">
+                    Product Types
+                </Tabs.Trigger>
+            </Tabs.List>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Content value="tab-1">
+                <Container
+                    maxWidth="170ch"
+                    overflowX="auto"
+                    paddingInlineStart={isCompactView ? 0 : undefined}
+                    paddingInlineEnd={isCompactView ? 0 : undefined}
+                >
+                    <div>
+                        {!!loadingProductsError ? (
+                            <Heading size="xl" as="h4">
+                                {loadingProductsError}
+                            </Heading>
+                        ) : null}
 
-                            {loadingProducts && products.length === 0 ? (
-                                <Center>
-                                    <Spinner size="lg" color='#1a90ff' />
-                                </Center>
-                            ) : (
-                                <Box>
-                                    <TableContainer>
-                                        <Table>
-                                            <Thead>
-                                                <Tr>
-                                                    <Th>#</Th>
-                                                    <Th>Name</Th>
-                                                    <Th>Type</Th>
-                                                    <Th>Price</Th>
-                                                    <Th>Sold Out</Th>
-                                                    <Th>Dicontinued</Th>
-                                                    <Th></Th>
-                                                </Tr>
-                                            </Thead>
-                                            <Tbody>
-                                                <CreateRichProduct
-                                                    onSave={(_) => fetchProducts()}
-                                                    productTypes={productTypes}
-                                                />
-                                                {products.map((product, i) => {
-                                                    return (
-                                                        <RichProduct
-                                                            key={i}
-                                                            product={product}
-                                                            productTypes={productTypes}
-                                                            onSave={(_) => fetchProducts()}
-                                                        />
-                                                    );
-                                                })}
-                                            </Tbody>
-                                        </Table>
-                                    </TableContainer>
-                                </Box>
-                            )}
-                        </div>
-                        <br />
-                    </Container>
-                </TabPanel>
-                <TabPanel>
-                    <Container
-                        maxWidth="170ch"
-                        overflowX="auto"
-                        paddingInlineStart={isCompactView ? 0 : undefined}
-                        paddingInlineEnd={isCompactView ? 0 : undefined}
-                    >
-                        <Box>
-                            <TableContainer>
-                                <Table>
-                                    <Thead>
-                                        <Tr>
-                                            <Th>#</Th>
-                                            <Th>Name</Th>
-                                            <Th>Title</Th>
-                                            <Th>Color</Th>
-                                            <Th></Th>
-                                        </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        <RichProductTypeCreate
-                                            onSave={(_) => {
-                                                getProductTypes();
-                                            }}
-                                            onFail={() => {
-                                                toast({
-                                                    title: 'Error',
-                                                    description: `Error: Unable to create product type`,
-                                                    status: 'error',
-                                                    duration: 5000,
-                                                    isClosable: true,
-                                                });
-                                            }}
+                        {loadingProducts && products.length === 0 ? (
+                            <Center>
+                                <Spinner size="lg" color='#1a90ff' />
+                            </Center>
+                        ) : (
+                            <Box>
+                                <Table.Root>
+                                    <Table.Header>
+                                        <Table.Row>
+                                            <Table.ColumnHeader>#</Table.ColumnHeader>
+                                            <Table.ColumnHeader>Name</Table.ColumnHeader>
+                                            <Table.ColumnHeader>Type</Table.ColumnHeader>
+                                            <Table.ColumnHeader>Price</Table.ColumnHeader>
+                                            <Table.ColumnHeader>Sold Out</Table.ColumnHeader>
+                                            <Table.ColumnHeader>Dicontinued</Table.ColumnHeader>
+                                            <Table.ColumnHeader></Table.ColumnHeader>
+                                        </Table.Row>
+                                    </Table.Header>
+                                    <Table.Body>
+                                        <CreateRichProduct
+                                            onSave={(_) => fetchProducts()}
+                                            productTypes={productTypes}
                                         />
-                                        {productTypes.map((pt, i) => {
+                                        {products.map((product, i) => {
                                             return (
-                                                <RichProductType
-                                                    key={`pt-${i}`}
-                                                    productType={pt}
+                                                <RichProduct
+                                                    key={i}
+                                                    product={product}
+                                                    productTypes={productTypes}
+                                                    onSave={(_) => fetchProducts()}
                                                 />
                                             );
                                         })}
-                                    </Tbody>
-                                </Table>
-                            </TableContainer>
-                        </Box>
-                    </Container>
-                </TabPanel>
-            </TabPanels>
-        </Tabs>
+                                    </Table.Body>
+                                </Table.Root>
+                            </Box>
+                        )}
+                    </div>
+                    <br />
+                </Container>
+            </Tabs.Content>
+            {/* @ts-ignore - Chakra is breaking Typescript */}
+            <Tabs.Content value="tab-2">
+                <Container
+                    maxWidth="170ch"
+                    overflowX="auto"
+                    paddingInlineStart={isCompactView ? 0 : undefined}
+                    paddingInlineEnd={isCompactView ? 0 : undefined}
+                >
+                    <Box>
+                        <Table.Root>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.ColumnHeader>#</Table.ColumnHeader>
+                                    <Table.ColumnHeader>Name</Table.ColumnHeader>
+                                    <Table.ColumnHeader>Title</Table.ColumnHeader>
+                                    <Table.ColumnHeader>Color</Table.ColumnHeader>
+                                    <Table.ColumnHeader></Table.ColumnHeader>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                <RichProductTypeCreate
+                                    onSave={(_) => {
+                                        getProductTypes();
+                                    }}
+                                    onFail={() => {
+                                        toaster.create({
+                                            title: 'Error',
+                                            description: `Error: Unable to create product type`,
+                                            type: 'error',
+                                            duration: 5000,
+                                            closable: true,
+                                        });
+                                    }}
+                                />
+                                {productTypes.map((pt, i) => {
+                                    return (
+                                        <RichProductType
+                                            key={`pt-${i}`}
+                                            productType={pt}
+                                        />
+                                    );
+                                })}
+                            </Table.Body>
+                        </Table.Root>
+                    </Box>
+                </Container>
+            </Tabs.Content>
+        </Tabs.Root>
     );
 };

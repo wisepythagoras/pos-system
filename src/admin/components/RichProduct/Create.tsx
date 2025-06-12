@@ -3,13 +3,11 @@ import { useForm } from 'react-hook-form';
 import { ProductT, ProductTypeT } from '../../../app/types';
 import {
     Button,
-    FormControl,
+    Field,
     Input,
     InputGroup,
-    InputLeftElement,
-    Select,
-    Td,
-    Tr,
+    NativeSelect,
+    Table,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 
@@ -55,19 +53,19 @@ export const CreateRichProduct = (props: PropsT) => {
     };
 
     return (
-        <Tr>
-            <Td></Td>
-            <Td>
-                <FormControl variant="outlined">
+        <Table.Row>
+            <Table.Cell></Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
                     <Input
                         {...register('name', { required: true })}
                         placeholder="Product Name"
                     />
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl variant="outlined" size="small">
-                    <Select
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined" size="small">
+                    <NativeSelect.Root
                         {...register('type', { required: true })}
                         defaultValue="food"
                     >
@@ -78,28 +76,22 @@ export const CreateRichProduct = (props: PropsT) => {
                                 </option>
                             );
                         })}
-                    </Select>
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl variant="outlined">
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents="none"
-                            color="gray.200"
-                            fontSize="1.2em"
-                            children="$"
-                        />
+                    </NativeSelect.Root>
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
+                    <InputGroup startElement="$" endElement="USD">
                         <Input
                             {...register('price', { required: true })}
                             placeholder="0.00"
                         />
                     </InputGroup>
-                </FormControl>
-            </Td>
-            <Td></Td>
-            <Td></Td>
-            <Td>
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell></Table.Cell>
+            <Table.Cell>
                 <Button
                     colorScheme="blue"
                     // @ts-ignore
@@ -107,7 +99,7 @@ export const CreateRichProduct = (props: PropsT) => {
                 >
                     <AddIcon /> Save
                 </Button>
-            </Td>
-        </Tr>
+            </Table.Cell>
+        </Table.Row>
     );
 };

@@ -3,13 +3,11 @@ import {
     Button,
     Center,
     Checkbox,
-    FormControl,
+    Field,
     Input,
     InputGroup,
-    InputLeftElement,
-    Select,
-    Td,
-    Tr,
+    NativeSelect,
+    Table,
 } from '@chakra-ui/react';
 import { CheckIcon } from '@chakra-ui/icons';
 import { ProductT, ProductTypeOldT, ProductTypeT } from '../../../app/types';
@@ -50,10 +48,10 @@ export const RichProduct = (props: PropsT) => {
     };
 
     return (
-        <Tr backgroundColor={product.discontinued ? 'gray.100' : undefined}>
-            <Td>{product.id}</Td>
-            <Td>
-                <FormControl variant="outlined">
+        <Table.Row backgroundColor={product.discontinued ? 'gray.100' : undefined}>
+            <Table.Cell>{product.id}</Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
                     <Input
                         value={product.name}
                         onChange={(e) => {
@@ -65,44 +63,42 @@ export const RichProduct = (props: PropsT) => {
                         borderColor="gray.300"
                         placeholder="Product name"
                     />
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl variant="outlined" size="small">
-                    <Select
-                        value={product.product_type.id}
-                        onChange={(e) => {
-                            const productTypeId = parseInt(e.target.value);
-                            const productType = props.productTypes.find((pt) => pt.id === productTypeId) as ProductTypeT;
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined" size="small">
+                    {/* The lib select is so broken that I was forced to add more code to support what was possible with less code before */}
+                    <NativeSelect.Root>
+                        <NativeSelect.Field
+                            placeholder="Select"
+                            value={product.product_type.id}
+                            onChange={(e) => {
+                                const productTypeId = parseInt(e.target.value);
+                                const productType = props.productTypes.find((pt) => pt.id === productTypeId) as ProductTypeT;
 
-                            setProduct({
-                                ...product,
-                                product_type_id: productTypeId,
-                                product_type: productType,
-                            });
-                        }}
-                        placeholder="-Select-"
-                    >
-                        {props.productTypes.map((pt) => {
-                            return (
-                                <option value={pt.id} key={pt.id}>
-                                    {pt.title}
-                                </option>
-                            );
-                        })}
-                    </Select>
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl variant="outlined">
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents="none"
-                            color="gray.200"
-                            fontSize="1.2em"
-                            children="$"
-                        />
+                                setProduct({
+                                    ...product,
+                                    product_type_id: productTypeId,
+                                    product_type: productType,
+                                });
+                            }}
+                        >
+                            {props.productTypes.map((pt) => {
+                                return (
+                                    <option value={pt.id} key={pt.id}>
+                                        {pt.title}
+                                    </option>
+                                );
+                            })}
+                        </NativeSelect.Field>
+                    </NativeSelect.Root>
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
+                    <InputGroup startElement="$" endElement="USD">
                         <Input
+                            placeholder="0.00"
                             value={product.price.toFixed(2)}
                             onChange={(e) => {
                                 const priceString = e.target.value.replace(/\.{2,}/, '.');
@@ -119,11 +115,11 @@ export const RichProduct = (props: PropsT) => {
                             }}
                         />
                     </InputGroup>
-                </FormControl>
-            </Td>
-            <Td>
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
                 <Center>
-                    <Checkbox
+                    <Checkbox.Root
                         checked={product.sold_out}
                         onChange={() => {
                             setProduct({
@@ -135,10 +131,10 @@ export const RichProduct = (props: PropsT) => {
                         defaultChecked={product.sold_out}
                     />
                 </Center>
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <Center>
-                    <Checkbox
+                    <Checkbox.Root
                         checked={product.discontinued}
                         onChange={() => {
                             setProduct({
@@ -150,8 +146,8 @@ export const RichProduct = (props: PropsT) => {
                         defaultChecked={product.discontinued}
                     />
                 </Center>
-            </Td>
-            <Td>
+            </Table.Cell>
+            <Table.Cell>
                 <Button
                     colorScheme="blue"
                     disabled={(() => {
@@ -171,7 +167,7 @@ export const RichProduct = (props: PropsT) => {
                 >
                     <CheckIcon /> Save
                 </Button>
-            </Td>
-        </Tr>
+            </Table.Cell>
+        </Table.Row>
     );
 };

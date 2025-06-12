@@ -6,19 +6,9 @@ import {
     CloseButton,
     Input,
     InputGroup,
-    InputLeftElement,
-    InputRightElement,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalCloseButton,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     useDisclosure,
     List,
-    ListItem,
-    ListIcon,
+    Dialog,
 } from '@chakra-ui/react';
 import { CheckCircleIcon, MinusIcon, Search2Icon, SettingsIcon } from '@chakra-ui/icons';
 import { ProductT } from '../../types';
@@ -122,7 +112,7 @@ export interface IProductListProps {
  * @param props The props.
  */
 export const ProductList = (props: IProductListProps) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { open: isOpen, onOpen, onClose } = useDisclosure();
     const { printers, getPrinters } = useGetPrinters();
     const [
         selectedPrinter,
@@ -157,25 +147,15 @@ export const ProductList = (props: IProductListProps) => {
         <div>
             <SearchField>
                 <Box>
-                    <InputGroup>
-                        <InputLeftElement
-                            pointerEvents="none"
-                            children={<Search2Icon color="gray.300" />}
-                        />
-                        <Input
-                            placeholder="Search"
-                            // @ts-ignore
-                            ref={searchInputRef}
-                            value={search || ''}
-                            onChange={(e) => {
-                                setSearch(e.target.value);
-                            }}
-                            bg="gray.700"
-                        />
-                            <InputRightElement
-                                width="auto"
+                    <InputGroup
+                        startElement={<Search2Icon color="gray.300" />}
+                        endElement={(
+                            <span
                                 className="input-buttons"
-                                marginRight="4px"
+                                style={{
+                                    width: 'auto',
+                                    marginRight: '4px',
+                                }}
                             >
                                 {!!search && !!search.length ? (
                                     <CloseButton
@@ -191,7 +171,19 @@ export const ProductList = (props: IProductListProps) => {
                                 <Button size="sm" onClick={onOpen}>
                                     <SettingsIcon /> Printer (<b>{!selectedPrinter ? '-' : selectedPrinter.id}</b>)
                                 </Button>
-                            </InputRightElement>
+                            </span>
+                        )}
+                    >
+                        <Input
+                            placeholder="Search"
+                            // @ts-ignore
+                            ref={searchInputRef}
+                            value={search || ''}
+                            onChange={(e) => {
+                                setSearch(e.target.value);
+                            }}
+                            bg="gray.700"
+                        />
                     </InputGroup>
                 </Box>
             </SearchField>
@@ -221,51 +213,59 @@ export const ProductList = (props: IProductListProps) => {
                 })}
             </ProductCardList>
 
-            <Modal isOpen={isOpen} onClose={onPrinterModalClose} isCentered>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>
-                        Select a printer
-                    </ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <Box>
-                            {printers.map((p, i) => {
-                                return (
-                                    <List spacing={3} key={`printer-${i}`}>
-                                        <ListItem
-                                            onClick={() => setSelectedPrinter(p)}
-                                            cursor="pointer"
-                                            padding="5px"
-                                            borderRadius="5px"
-                                            _hover={{
-                                                background: 'rgba(255, 255, 255, 0.1)',
-                                            }}
-                                        >
-                                            {p.id === selectedPrinter?.id ?
-                                                <ListIcon as={CheckCircleIcon} color="green.500" verticalAlign="middle" /> :
-                                                <ListIcon as={MinusIcon} color="gray.500" verticalAlign="middle" />
-                                            }
-                                            {p.name}
-                                        </ListItem>
-                                    </List>
-                                );
-                            })}
-                        </Box>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button colorScheme="ghost" onClick={onPrinterModalClose}>
-                            Cancel
-                        </Button>
-                        <Button colorScheme="blue" mr={3} onClick={() => {
-                            props.onPrinterChange?.(selectedPrinter);
-                            onClose();
-                        }}>
-                            Ok
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+            <Dialog.Root isOpen={isOpen} onClose={onPrinterModalClose} isCentered>
+                <Dialog.Trigger />
+                <Dialog.Backdrop />
+                <Dialog.Positioner>
+                    <Dialog.Content>
+                        <Dialog.CloseTrigger />
+                        <Dialog.Header>
+                            <Dialog.Title>Select a printer</Dialog.Title>
+                        </Dialog.Header>
+                        <Dialog.CloseTrigger />
+                        <Dialog.Body>
+                            <Box>
+                                {printers.map((p, i) => {
+                                    return (
+                                        <List.Root spaceX={3} spaceY={3} key={`printer-${i}`}>
+                                            <List.Item
+                                                onClick={() => setSelectedPrinter(p)}
+                                                cursor="pointer"
+                                                padding="5px"
+                                                borderRadius="5px"
+                                                _hover={{
+                                                    background: 'rgba(255, 255, 255, 0.1)',
+                                                }}
+                                            >
+                                                {p.id === selectedPrinter?.id ?
+                                                    <List.Indicator color="green.500" verticalAlign="middle">
+                                                        <CheckCircleIcon />
+                                                    </List.Indicator> :
+                                                    <List.Indicator color="gray.500" verticalAlign="middle">
+                                                        <MinusIcon />
+                                                    </List.Indicator>
+                                                }
+                                                {p.name}
+                                            </List.Item>
+                                        </List.Root>
+                                    );
+                                })}
+                            </Box>
+                        </Dialog.Body>
+                        <Dialog.Footer>
+                            <Button colorScheme="ghost" onClick={onPrinterModalClose}>
+                                Cancel
+                            </Button>
+                            <Button colorScheme="blue" mr={3} onClick={() => {
+                                props.onPrinterChange?.(selectedPrinter);
+                                onClose();
+                            }}>
+                                Ok
+                            </Button>
+                        </Dialog.Footer>
+                    </Dialog.Content>
+                </Dialog.Positioner>
+            </Dialog.Root>
         </div>
     );
 };

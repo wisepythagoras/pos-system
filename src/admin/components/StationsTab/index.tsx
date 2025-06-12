@@ -2,22 +2,15 @@ import React, { useRef, useState } from 'react';
 import { Box,
     Button,
     Container,
-    FormControl,
-    FormHelperText,
-    FormLabel,
+    Field,
     Heading,
     Input,
     Table,
-    TableContainer,
-    Tbody,
-    Th,
-    Thead,
-    Tr,
-    useToast,
 } from '@chakra-ui/react';
 import { useStations, useIsCompactView, useGetProductsList } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
 import { StationRow } from './StationRow';
+import { toaster } from '../../../components/ui/toaster';
 
 type PropsT = {};
 
@@ -32,7 +25,6 @@ export const StationsTab = (props: PropsT) => {
         addProductToStation,
         removeProductFromStation,
     } = useStations();
-    const toast = useToast();
 
     return (
         <Container
@@ -45,10 +37,8 @@ export const StationsTab = (props: PropsT) => {
                 <Heading as='h3' size='lg' marginBottom="15px">
                     Create a station
                 </Heading>
-                <FormControl>
-                    <FormLabel htmlFor="station-name">
-                        Station Name
-                    </FormLabel>
+                <Field.Root>
+                    <Field.Label>Station Name</Field.Label>
                     <Input
                         id="station-name"
                         type="text"
@@ -57,7 +47,7 @@ export const StationsTab = (props: PropsT) => {
                         value={newStationName}
                         onChange={(e) => setNewStationName(e.target.value)}
                     />
-                    <FormHelperText>This needs to be unique.</FormHelperText>
+                    <Field.HelperText>This needs to be unique.</Field.HelperText>
                     <Button
                         colorScheme="blue"
                         variant="solid"
@@ -66,7 +56,7 @@ export const StationsTab = (props: PropsT) => {
 
                             if (res.success && res.data) {
                                 setNewStationName('');
-                                toast({
+                                toaster.create({
                                     title: 'Created new station',
                                     description: `Station "${res.data.name}" with id ${res.data.id}`,
                                     status: 'success',
@@ -74,7 +64,7 @@ export const StationsTab = (props: PropsT) => {
                                     isClosable: true,
                                 });
                             } else {
-                                toast({
+                                toaster.create({
                                     title: 'Uh, oh!',
                                     description: 'Unable to create station',
                                     status: 'error',
@@ -88,35 +78,33 @@ export const StationsTab = (props: PropsT) => {
                     >
                         <AddIcon /> Create 
                     </Button>
-                </FormControl>
+                </Field.Root>
             </Box>
             <Box>
-                <TableContainer>
-                    <Table>
-                        <Thead>
-                            <Tr>
-                                <Th>#</Th>
-                                <Th>Name</Th>
-                                <Th>Products</Th>
-                                <Th></Th>
-                            </Tr>
-                        </Thead>
-                        <Tbody>
-                            {stations.map((station, i) => {
-                                return (
-                                    <StationRow
-                                        key={i}
-                                        station={station}
-                                        products={products}
-                                        deleteStation={deleteStation}
-                                        addProductToStation={addProductToStation}
-                                        removeProductFromStation={removeProductFromStation}
-                                    />
-                                );
-                            })}
-                        </Tbody>
-                    </Table>
-                </TableContainer>
+                <Table.Root>
+                    <Table.Header>
+                        <Table.Row>
+                            <Table.ColumnHeader>#</Table.ColumnHeader>
+                            <Table.ColumnHeader>Name</Table.ColumnHeader>
+                            <Table.ColumnHeader>Products</Table.ColumnHeader>
+                            <Table.ColumnHeader></Table.ColumnHeader>
+                        </Table.Row>
+                    </Table.Header>
+                    <Table.Body>
+                        {stations.map((station, i) => {
+                            return (
+                                <StationRow
+                                    key={i}
+                                    station={station}
+                                    products={products}
+                                    deleteStation={deleteStation}
+                                    addProductToStation={addProductToStation}
+                                    removeProductFromStation={removeProductFromStation}
+                                />
+                            );
+                        })}
+                    </Table.Body>
+                </Table.Root>
             </Box>
         </Container>
     );

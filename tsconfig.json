@@ -1,26 +1,27 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "esnext"
-        ],
-        "outDir": "../public/js/",
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "forceConsistentCasingInFileNames": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "jsx": "react-jsx",
-        "sourceMap": true
+      "lib": ["ESNext", "DOM"],
+      "target": "esnext",
+      "module": "ESNext",
+      "moduleResolution": "Bundler",
+      "paths": {
+        "@/*": ["./src/*"],
+        "@hooks/*": ["./src/app/hooks/*"]
+      },
+      "strict": true,
+      "downlevelIteration": true,
+      "skipLibCheck": true,
+      "jsx": "react-jsx",
+      "allowSyntheticDefaultImports": true,
+      "forceConsistentCasingInFileNames": true,
+      "sourceMap": true,
+      "allowJs": true,
+      "types": [
+        "bun-types", // add Bun global
+        "@types/web"
+      ],
+      "outDir": "../public/js/",
     },
-    "include": [
-        ".",
-    ]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "src/**/*.spec.ts", "build"]
 }

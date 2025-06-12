@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FormControl, Input, Td, Tr } from '@chakra-ui/react';
+import { Button, Field, Input, Table } from '@chakra-ui/react';
 import { ProductTypeT } from '../../../app/types';
 import { useForm } from 'react-hook-form';
 import { useProductTypes } from '../../hooks';
@@ -49,34 +49,34 @@ export const RichProductTypeCreate = (props: PropsT) => {
     };
 
     return (
-        <Tr>
-            <Td></Td>
-            <Td>
-                <FormControl variant="outlined">
+        <Table.Row>
+            <Table.Cell></Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
                     <Input
                         {...register('name', { required: true })}
                         placeholder="Product Type Name"
                     />
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl variant="outlined">
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root variant="outlined">
                     <Input
                         {...register('title', { required: true })}
                         placeholder="Product Type Title"
                     />
-                </FormControl>
-            </Td>
-            <Td>
-                <FormControl position="relative" variant="outlined">
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
+                <Field.Root position="relative" variant="outlined">
                     <Input
                         {...register('color', { required: true })}
                         type="color"
                         padding="5px"
                     />
-                </FormControl>
-            </Td>
-            <Td>
+                </Field.Root>
+            </Table.Cell>
+            <Table.Cell>
                 <Button
                     colorScheme="blue"
                     // @ts-ignore
@@ -84,7 +84,7 @@ export const RichProductTypeCreate = (props: PropsT) => {
                 >
                     <AddIcon /> Save
                 </Button>
-            </Td>
-        </Tr>
+            </Table.Cell>
+        </Table.Row>
     );
 };

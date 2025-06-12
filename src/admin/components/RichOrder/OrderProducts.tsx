@@ -25,7 +25,7 @@ export const OrderProducts = (props: IOrderProductsProps) => {
                 margin-bottom: 5px !important;
             }
         }
-    ` as Interpolation<{}>;
+    `;
 
     for (let i in products) {
         const product = products[i];
@@ -58,14 +58,16 @@ export const OrderProducts = (props: IOrderProductsProps) => {
         }
 
         productPills.push(
-            <Tag
+            <Tag.Root
                 key={i}
                 size="md"
                 variant="solid"
                 colorScheme={colorSheme}
             >
-                <b>{pa.amount}</b>&nbsp;{pa.product.name}
-            </Tag>
+                <Tag.Label>
+                    <b>{pa.amount}</b>&nbsp;{pa.product.name}
+                </Tag.Label>
+            </Tag.Root>
         );
     });
 

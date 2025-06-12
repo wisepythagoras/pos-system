@@ -1,7 +1,6 @@
 import React from 'react';
-import { Interpolation } from '@emotion/react';
 import { css } from 'styled-components';
-import { HStack, Tag, TagCloseButton, TagLabel } from '@chakra-ui/react';
+import { HStack, Tag } from '@chakra-ui/react';
 import { ProductT } from '../../../app/types';
 
 export type PropsT = {
@@ -22,7 +21,7 @@ export const StationProducts = (props: PropsT) => {
             margin-inline-end: 0.5rem !important;
             margin-bottom: 5px !important;
         }
-    ` as Interpolation<{}>;
+    `;
 
     products.forEach((product, i) => {
         let colorSheme;
@@ -40,17 +39,19 @@ export const StationProducts = (props: PropsT) => {
         }
 
         productPills.push(
-            <Tag
+            <Tag.Root
                 key={i}
                 size="md"
                 variant="solid"
                 colorScheme={colorSheme}
             >
-                <TagLabel>
+                <Tag.Label>
                     {product.name}
-                </TagLabel>
-                <TagCloseButton onClick={() => onRemove(product.id)} />
-            </Tag>
+                </Tag.Label>
+                <Tag.EndElement>
+                    <Tag.CloseTrigger onClick={() => onRemove(product.id)} />
+                </Tag.EndElement>
+            </Tag.Root>
         );
     });
 

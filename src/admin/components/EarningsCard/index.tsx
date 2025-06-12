@@ -2,11 +2,9 @@ import React from 'react';
 import dayjs from 'dayjs';
 import {
     Box,
+    FormatNumber,
     Stat,
-    StatArrow,
     StatHelpText,
-    StatLabel,
-    StatNumber,
 } from '@chakra-ui/react';
 
 export interface IEarningsCardProps {
@@ -38,22 +36,22 @@ export const EarningsCard = (props: IEarningsCardProps) => {
             minWidth="210px"
             p="6"
         >
-            <Stat>
-                <StatLabel>
+            <Stat.Root>
+                <Stat.Label>
                     {date.format('dddd, MMMM DD, YYYY')}
-                </StatLabel>
-                <StatNumber>
-                    ${props.amount.toFixed(2)}
-                </StatNumber>
+                </Stat.Label>
+                <Stat.ValueText>
+                    <FormatNumber value={props.amount} style="currency" currency="USD" />
+                </Stat.ValueText>
                 <StatHelpText>
                     {props.amount > props.prevAmount ? (
-                        <StatArrow type="increase" />
+                        <Stat.UpIndicator />
                     ) : (
-                        <StatArrow type="decrease" />
+                        <Stat.DownIndicator />
                     )}
                     {props.prevAmount === 0 && props.amount > 0 ? '100%' : `${increase}%`}
                 </StatHelpText>
-            </Stat>
+            </Stat.Root>
         </Box>
     );
 };

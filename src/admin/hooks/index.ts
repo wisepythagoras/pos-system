@@ -74,6 +74,7 @@ export const useGetOrdersList = (page: number) => {
                 setState({
                     ...state,
                     loading: false,
+                    // @ts-ignore
                     orders: [resp.data] || [],
                 });
 
