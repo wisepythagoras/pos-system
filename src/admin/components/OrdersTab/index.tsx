@@ -94,21 +94,21 @@ export const OrdersTab = (props: PropsT) => {
                 </Box>
                 <Divider className="divider" orientation="vertical" height="100%" />
                 <Button
-                    leftIcon={<DownloadIcon />}
                     onClick={() => exportTotals()}
                     variant="solid"
                     color="teal"
                 >
+                    <DownloadIcon />
                     <Box paddingTop="4px">
                         Export Sales YTD
                     </Box>
                 </Button>
                 <Button
-                    leftIcon={<DownloadIcon />}
                     onClick={() => exportTotals(true)}
                     variant="solid"
                     color="teal"
                 >
+                    <DownloadIcon />
                     <Box paddingTop="4px">
                         Export Sales Past Day
                     </Box>

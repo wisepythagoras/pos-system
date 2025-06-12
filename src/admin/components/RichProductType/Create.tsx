@@ -78,12 +78,11 @@ export const RichProductTypeCreate = (props: PropsT) => {
             </Td>
             <Td>
                 <Button
-                    leftIcon={<AddIcon />}
                     colorScheme="blue"
                     // @ts-ignore
                     onClick={handleSubmit(onSubmit)}
                 >
-                    Save
+                    <AddIcon /> Save
                 </Button>
             </Td>
         </Tr>

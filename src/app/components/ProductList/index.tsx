@@ -188,8 +188,8 @@ export const ProductList = (props: IProductListProps) => {
                                         }} 
                                     />
                                 ) : null}
-                                <Button size="sm" leftIcon={<SettingsIcon />} onClick={onOpen}>
-                                    Printer (<b>{!selectedPrinter ? '-' : selectedPrinter.id}</b>)
+                                <Button size="sm" onClick={onOpen}>
+                                    <SettingsIcon /> Printer (<b>{!selectedPrinter ? '-' : selectedPrinter.id}</b>)
                                 </Button>
                             </InputRightElement>
                     </InputGroup>

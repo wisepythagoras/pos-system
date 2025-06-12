@@ -36,20 +36,18 @@ export const RichOrder = (props: IRichOrderProps) => {
                             colorScheme="gray"
                             onClick={onToggle}
                             variant="solid"
-                            leftIcon={<CheckCircleIcon />}
                             size="sm"
                         >
-                            <Box paddingTop="4px">Reactivate</Box>
+                            <CheckCircleIcon /> <Box paddingTop="4px">Reactivate</Box>
                         </Button>
                     ) : (
                         <Button
                             colorScheme="red"
                             onClick={onToggle}
                             variant="solid"
-                            leftIcon={<DeleteIcon />}
                             size="sm"
                         >
-                            <Box paddingTop="4px">Cancel</Box>
+                            <DeleteIcon /> <Box paddingTop="4px">Cancel</Box>
                         </Button>
                     )}
                 </Center>

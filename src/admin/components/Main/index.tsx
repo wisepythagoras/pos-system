@@ -148,13 +148,12 @@ export const Main = (props: IMainProps) => {
 
     const logoutButton = (
         <Button
-            leftIcon={<LockIcon />}
             colorScheme="red"
             variant="solid"
             width="100%"
             onClick={() => window.location.href = '/logout'}
         >
-            Logout
+            <LockIcon /> Logout
         </Button>
     );
 
@@ -175,8 +174,8 @@ export const Main = (props: IMainProps) => {
                     </Heading>
                 </HStack>
             ) : undefined}
-            <Tabs
-                variant="enclosed-colored"
+            <Tabs.Root
+                variant="enclosed"
                 display="flex"
                 flexDirection={isCompactView ? 'column' : 'row'}
                 orientation="vertical"
@@ -266,7 +265,7 @@ export const Main = (props: IMainProps) => {
                         <UsersTab />
                     </TabPanel>
                 </TabPanels>
-            </Tabs>
+            </Tabs.Root>
         </AdminWrapper>
     );
 };

@@ -153,7 +153,6 @@ export const RichProduct = (props: PropsT) => {
             </Td>
             <Td>
                 <Button
-                    leftIcon={<CheckIcon />}
                     colorScheme="blue"
                     disabled={(() => {
                         return (
@@ -170,7 +169,7 @@ export const RichProduct = (props: PropsT) => {
                     })()}
                     onClick={onSave}
                 >
-                    Save
+                    <CheckIcon /> Save
                 </Button>
             </Td>
         </Tr>

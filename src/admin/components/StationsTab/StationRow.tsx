@@ -83,12 +83,11 @@ export const StationRow = (props: PropsT) => {
             </Td>
             <Td width="136px">
                 <Button
-                    leftIcon={<DeleteIcon />}
                     colorScheme="red"
                     size="sm"
                     onClick={onOpen}
                 >
-                    Delete
+                    <DeleteIcon /> Delete
                 </Button>
                 <AlertDialog
                     isOpen={isOpen}

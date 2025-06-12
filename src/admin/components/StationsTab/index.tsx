@@ -59,7 +59,6 @@ export const StationsTab = (props: PropsT) => {
                     />
                     <FormHelperText>This needs to be unique.</FormHelperText>
                     <Button
-                        leftIcon={<AddIcon />}
                         colorScheme="blue"
                         variant="solid"
                         onClick={async () => {
@@ -87,7 +86,7 @@ export const StationsTab = (props: PropsT) => {
                         disabled={!newStationName}
                         marginTop="10px"
                     >
-                        Create 
+                        <AddIcon /> Create 
                     </Button>
                 </FormControl>
             </Box>

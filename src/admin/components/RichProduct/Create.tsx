@@ -101,12 +101,11 @@ export const CreateRichProduct = (props: PropsT) => {
             <Td></Td>
             <Td>
                 <Button
-                    leftIcon={<AddIcon />}
                     colorScheme="blue"
                     // @ts-ignore
                     onClick={handleSubmit(onSubmit)}
                 >
-                    Save
+                    <AddIcon /> Save
                 </Button>
             </Td>
         </Tr>

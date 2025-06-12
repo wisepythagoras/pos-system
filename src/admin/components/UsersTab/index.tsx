@@ -161,7 +161,6 @@ export const UsersTab = (props: PropsT) => {
                         </Box>
                     </VStack>
                     <Button
-                        leftIcon={<AddIcon />}
                         colorScheme="blue"
                         variant="solid"
                         onClick={async () => {
@@ -198,7 +197,7 @@ export const UsersTab = (props: PropsT) => {
                         }
                         marginTop="10px"
                     >
-                        Create 
+                        <AddIcon /> Create 
                     </Button>
                 </FormControl>
             </Box>
