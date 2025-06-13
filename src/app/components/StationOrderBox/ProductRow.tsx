@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Checkbox, HStack, Spinner, useBoolean } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Checkbox, HStack, Spinner } from '@chakra-ui/react';
 import { ProductT } from '../../types';
 import { DEEP_BLUE, WHITE } from '../Home/stationTheme';
 
@@ -11,7 +11,7 @@ type PropsT = {
 
 export const ProductRow = (props: PropsT) => {
     const { amount, product, onToggle } = props;
-    const [isLoading, setIsLoading] = useBoolean(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     return (
         <Box
@@ -26,15 +26,15 @@ export const ProductRow = (props: PropsT) => {
                 <Box>&times;{amount}</Box>
                 <Box width="100%">{product.name}</Box>
                 <Box>
-                    <Checkbox
+                    <Checkbox.Root
                         colorScheme="green"
                         size="lg"
                         checked={product.fulfilled}
                         defaultChecked={product.fulfilled}
                         onChange={async (e) => {
-                            setIsLoading.toggle();
+                            setIsLoading(true);
                             await onToggle(!product.fulfilled);
-                            setIsLoading.toggle();
+                            setIsLoading(false);
                         }}
                         display={isLoading ? 'none' : 'visible'}
                     />

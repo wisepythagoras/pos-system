@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/fs"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/asaskevich/EventBus"
@@ -13,7 +15,13 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/wisepythagoras/pos-system/crypto"
 )
+
+type AssetManifest struct {
+	Files       map[string]string `json:"files"`
+	EntryPoints []string          `json:"entrypoints"`
+}
 
 // parseConfig parses the configuration either from the same folder, or
 // from an explicit path.
@@ -109,6 +117,30 @@ func main() {
 		Config: config,
 	}
 
+	manifsetFileName := "build/asset-manifest.json"
+	var info fs.FileInfo
+
+	// TODO: Maybe add a command line param for this.
+	if info, err = os.Stat(manifsetFileName); os.IsNotExist(err) {
+		fmt.Println("You need to build the UI code.")
+		os.Exit(1)
+	}
+
+	assetManifest := new(AssetManifest)
+	assetManifestBt, err := os.ReadFile(manifsetFileName)
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	} else {
+		err = json.Unmarshal(assetManifestBt, assetManifest)
+
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	}
+
 	// Start listeningfor messages and send them to the clients, if there are any.
 	productHandlers.StartWSHandler()
 
@@ -133,17 +165,43 @@ func main() {
 			return
 		}
 
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "POS",
-			"admin": false,
-		})
+		// c.HTML(http.StatusOK, "index.html", gin.H{
+		// 	"title": "POS",
+		// 	"admin": false,
+		// })
+
+		showNewLanding := c.Query("_nlp") == "1"
+		params := gin.H{}
+		params["showNewLanding"] = showNewLanding
+		params["title"] = "POS"
+		params["entrypoint"] = assetManifest.EntryPoints[0]
+		params["admin"] = false
+
+		formatted := strconv.FormatInt(info.ModTime().UnixMilli(), 16)
+		hash, _ := crypto.GetSHA3512Hash([]byte(formatted))
+		params["ts"] = crypto.ByteArrayToHex(hash)
+
+		c.HTML(http.StatusOK, "index.html", params)
 	})
 
 	router.GET("/admin", authHandler(true, adminAuthToken), func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Admin",
-			"admin": true,
-		})
+		// c.HTML(http.StatusOK, "index.html", gin.H{
+		// 	"title": "Admin",
+		// 	"admin": true,
+		// })
+
+		showNewLanding := c.Query("_nlp") == "1"
+		params := gin.H{}
+		params["showNewLanding"] = showNewLanding
+		params["title"] = "POS Admin"
+		params["entrypoint"] = assetManifest.EntryPoints[0]
+		params["admin"] = true
+
+		formatted := strconv.FormatInt(info.ModTime().UnixMilli(), 16)
+		hash, _ := crypto.GetSHA3512Hash([]byte(formatted))
+		params["ts"] = crypto.ByteArrayToHex(hash)
+
+		c.HTML(http.StatusOK, "index.html", params)
 	})
 
 	router.POST("/login", userHandlers.Login)

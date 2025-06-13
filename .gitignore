@@ -18,3 +18,4 @@ __debug_bin
 pos.db.*
 stats/
 yarn-error.log
+build/

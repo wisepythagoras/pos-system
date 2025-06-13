@@ -5,8 +5,7 @@
       "module": "ESNext",
       "moduleResolution": "Bundler",
       "paths": {
-        "@/*": ["./src/*"],
-        "@hooks/*": ["./src/app/hooks/*"]
+        "@/*": ["./src/*"]
       },
       "strict": true,
       "downlevelIteration": true,
@@ -20,8 +19,8 @@
         "bun-types", // add Bun global
         "@types/web"
       ],
-      "outDir": "../public/js/",
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules", "src/**/*.spec.ts", "build"]
-}
+  }
+  
