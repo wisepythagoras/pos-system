@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
+import React, {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { 
     Button,
     Center,
     Heading,
-    Modal,
-    ModalBody,
-    ModalContent,
-    ModalCloseButton,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
     Spinner,
     Box,
+    Dialog,
+    Portal,
 } from '@chakra-ui/react';
 import { ProductT, ProductAggregateT, PrinterT } from '../../types';
 import { useGetProducts, useCreateOrder } from '../../hooks';
@@ -143,7 +142,6 @@ export const POSHome = () => {
                                 New Order
                             </Box>
                             <Button
-                                rightIcon={<SmallCloseIcon />}
                                 colorScheme="grey.200"
                                 variant="ghost"
                                 onClick={() => {
@@ -153,7 +151,7 @@ export const POSHome = () => {
                                     });
                                 }}
                             >
-                                Clear
+                                Clear <SmallCloseIcon />
                             </Button>
                         </>
                     ) : undefined}
@@ -213,7 +211,7 @@ export const POSHome = () => {
                     })}
                 </TotalProductList>
                 <div>
-                    <Heading as="h2" size="2xl" marginBottom={10}>
+                    <Heading as="h2" size="6xl" marginBottom={10}>
                         <Box color="gray.600" display="inline-block">$</Box>{total.toFixed(2)}
                     </Heading>
                 </div>
@@ -226,8 +224,8 @@ export const POSHome = () => {
                                 '#6a2424'
                         }
                         color="#fafafa"
-                        size="large"
-                        isDisabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                        size="2xl"
+                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
                         onClick={async () => {
                             const productIds = state.selectedProducts.map((p) => p.id);
                             const order = await createOrder(productIds);
@@ -254,49 +252,54 @@ export const POSHome = () => {
                                 cashPayment: '',
                             });
                         }}
-                        isLoading={state.processing}
+                        loading={state.processing}
                         spinner={<Spinner size="lg" color='white' />}
                     >
                         Checkout
                     </Button>
                 </div>
 
-                <Modal
-                    isOpen={!!state.orderCreated}
-                    onClose={() => setState({ ...state, orderCreated: 0 })}
-                    isCentered
+                <Dialog.Root
+                    open={!!state.orderCreated}
+                    onEscapeKeyDown={() => setState({ ...state, orderCreated: 0 })}
+                    onInteractOutside={() => setState({ ...state, orderCreated: 0 })}
+                    onExitComplete={() => setState({ ...state, orderCreated: 0 })}
+                    closeOnInteractOutside
+                    closeOnEscape
                 >
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>
-                            Order Created
-                        </ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <div>
-                                Order {state.orderCreated} was created.
-                            </div>
-                            <div>
-                                <b>Remember to extract the receipt.</b>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button
-                                colorScheme="ghost"
-                                onClick={() => fetch(`/api/order/${state.orderCreated}/receipt/${printerId}`)}
-                            >
-                                Retry Receipt
-                            </Button>
-                            <Button
-                                colorScheme="blue"
-                                mr={3}
-                                onClick={() => setState({ ...state, orderCreated: 0 })}
-                            >
-                                Ok
-                            </Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </Modal>
+                    <Portal>
+                        <Dialog.Backdrop />
+                        <Dialog.Positioner>
+                        <Dialog.Content>
+                            <Dialog.Header>
+                                <Dialog.Title>Order Created</Dialog.Title>
+                            </Dialog.Header>
+                            <Dialog.Body>
+                                <div>
+                                    Order {state.orderCreated} was created.
+                                </div>
+                                <div>
+                                    <b>Remember to extract the receipt.</b>
+                                </div>
+                            </Dialog.Body>
+                            <Dialog.Footer>
+                                <Button
+                                    colorPalette="ghost"
+                                    onClick={() => fetch(`/api/order/${state.orderCreated}/receipt/${printerId}`)}
+                                >
+                                    Retry Receipt
+                                </Button>
+                                <Button
+                                    colorPalette="blue"
+                                    onClick={() => setState({ ...state, orderCreated: 0 })}
+                                >
+                                    Ok
+                                </Button>
+                            </Dialog.Footer>
+                        </Dialog.Content>
+                        </Dialog.Positioner>
+                    </Portal>
+                </Dialog.Root>
             </div>
         </DisplayGrid>
     );

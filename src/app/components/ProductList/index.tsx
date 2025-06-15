@@ -10,6 +10,7 @@ import {
     List,
     Dialog,
 } from '@chakra-ui/react';
+import { LuSearch } from 'react-icons/lu';
 import { CheckCircleIcon, MinusIcon, Search2Icon, SettingsIcon } from '@chakra-ui/icons';
 import { ProductT } from '../../types';
 import { ProductCard } from '../ProductCard';
@@ -148,17 +149,18 @@ export const ProductList = (props: IProductListProps) => {
             <SearchField>
                 <Box>
                     <InputGroup
-                        startElement={<Search2Icon color="gray.300" />}
+                        startElement={<LuSearch />}
                         endElement={(
                             <span
                                 className="input-buttons"
                                 style={{
                                     width: 'auto',
-                                    marginRight: '4px',
+                                    marginRight: '-10px',
                                 }}
                             >
                                 {!!search && !!search.length ? (
                                     <CloseButton
+                                        size="sm"
                                         onClick={() => {
                                             setSearch(null);
 
@@ -213,7 +215,14 @@ export const ProductList = (props: IProductListProps) => {
                 })}
             </ProductCardList>
 
-            <Dialog.Root isOpen={isOpen} onClose={onPrinterModalClose} isCentered>
+            <Dialog.Root
+                open={isOpen}
+                onEscapeKeyDown={onPrinterModalClose}
+                onInteractOutside={onPrinterModalClose}
+                onExitComplete={onPrinterModalClose}
+                closeOnInteractOutside
+                closeOnEscape
+            >
                 <Dialog.Trigger />
                 <Dialog.Backdrop />
                 <Dialog.Positioner>

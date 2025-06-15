@@ -153,10 +153,6 @@ func main() {
 	store := cookie.NewStore([]byte(config.Secret))
 	router.Use(sessions.Sessions("mysession", store))
 
-	// Set the static/public path.
-	router.Use(static.Serve("/", static.LocalFile("./public", false)))
-	router.Use(static.Serve("/static", static.LocalFile("./build/static", false)))
-
 	router.Any("/", func(c *gin.Context) {
 		session := sessions.Default(c)
 		userCookie := session.Get("user")
@@ -186,10 +182,13 @@ func main() {
 	})
 
 	router.GET("/admin", authHandler(true, adminAuthToken), func(c *gin.Context) {
-		// c.HTML(http.StatusOK, "index.html", gin.H{
-		// 	"title": "Admin",
-		// 	"admin": true,
-		// })
+		session := sessions.Default(c)
+		userCookie := session.Get("user")
+
+		if userCookie == nil || userCookie == "" {
+			c.Redirect(http.StatusMovedPermanently, "/login")
+			return
+		}
 
 		showNewLanding := c.Query("_nlp") == "1"
 		params := gin.H{}
@@ -204,6 +203,10 @@ func main() {
 
 		c.HTML(http.StatusOK, "index.html", params)
 	})
+
+	// Set the static/public path.
+	router.Use(static.Serve("/", static.LocalFile("./public", false)))
+	router.Use(static.Serve("/static", static.LocalFile("./build/static", false)))
 
 	router.POST("/login", userHandlers.Login)
 	router.GET("/login", userHandlers.LoginPage)

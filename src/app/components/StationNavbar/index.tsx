@@ -24,7 +24,7 @@ export const StationNavbar = (props: PropsT) => {
             color={WHITE}
         >
             <Container maxW="8xl">
-                <Stack direction={['column', 'row']} spacing='24px'>
+                <Stack direction={['column', 'row']} spaceY='24px'>
                     <Box w="100%">
                         <Heading size="lg">
                             Tap on each order item to complete it.

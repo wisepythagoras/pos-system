@@ -74,17 +74,19 @@ export const SmallProductCard = (props: PropsT) => {
                                 <IconButton
                                     variant='ghost'
                                     aria-label='Add item'
-                                    isRound={true}
-                                    icon={<ChevronUpIcon />}
                                     onClick={() => onAddProduct(product)}
-                                />
+                                    rounded="full"
+                                >
+                                    <ChevronUpIcon />
+                                </IconButton>
                                 <IconButton
                                     variant='ghost'
                                     aria-label='Remove item'
-                                    isRound={true}
-                                    icon={<ChevronDownIcon />}
                                     onClick={onDecrease}
-                                />
+                                    rounded="full"
+                                >
+                                    <ChevronDownIcon />
+                                </IconButton>
                             </Box>
                             <CountPill count={amount} />
                         </Box>

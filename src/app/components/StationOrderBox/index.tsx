@@ -45,7 +45,7 @@ export const StationOrderBox = (props: PropsT) => {
                 Order number #{order.id}
             </Heading>
             <Box marginTop="10px">
-                <VStack spacing="10px">
+                <VStack spaceX="10px">
                     {products.map((p) => {
                         return (
                             <ProductRow
