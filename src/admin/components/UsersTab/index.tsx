@@ -50,17 +50,17 @@ export const UsersTab = (props: PropsT) => {
             toaster.create({
                 title: 'Success',
                 description: `User ${userIdToDeleteRef.current} was deleted`,
-                status: 'success',
+                type: 'success',
                 duration: 5000,
-                isClosable: true,
+                closable: true,
             });
         } else {
             toaster.create({
                 title: 'Error',
                 description: `Error: ${res.error}`,
-                status: 'error',
+                type: 'error',
                 duration: 5000,
-                isClosable: true,
+                closable: true,
             });
         }
 
@@ -81,8 +81,12 @@ export const UsersTab = (props: PropsT) => {
                 <Field.Root>
                     <Field.Label>User details</Field.Label>
                     <VStack id="user-form" spaceY={3} align={isCompactView ? 'stretch' : 'start'}>
-                        <TargetStack spaceX={3} spaceY={3} align={isCompactView ? 'stretch' : 'start'}>
-                            <Box>
+                        <TargetStack
+                            spaceX={!isCompactView ? 3 : undefined}
+                            spaceY={isCompactView ? 3 : undefined}
+                            align={isCompactView ? 'stretch' : 'start'}
+                        >
+                            <Box flex={1}>
                                 <Input
                                     type="text"
                                     maxWidth="400px"
@@ -92,7 +96,7 @@ export const UsersTab = (props: PropsT) => {
                                 />
                                 <Field.HelperText>This needs to be unique.</Field.HelperText>
                             </Box>
-                            <Box>
+                            <Box flex={1}>
                                 <Input
                                     type="password"
                                     maxWidth="400px"
@@ -104,7 +108,7 @@ export const UsersTab = (props: PropsT) => {
                                     Passwords should be 8 characters or more.
                                 </Field.HelperText>
                             </Box>
-                            <Box>
+                            <Box flex={1}>
                                 <Input
                                     type="password"
                                     maxWidth="400px"
@@ -138,6 +142,7 @@ export const UsersTab = (props: PropsT) => {
                                         );
                                     })}
                                 </NativeSelect.Field>
+                                <NativeSelect.Indicator />
                             </NativeSelect.Root>
                             <Field.HelperText>
                                 Select a station name, if you need to assign your user to one.
@@ -158,18 +163,18 @@ export const UsersTab = (props: PropsT) => {
                                 toaster.create({
                                     title: 'Created new station',
                                     description: `User "${newUser.username}" was created`,
-                                    status: 'success',
+                                    type: 'success',
                                     duration: 5000,
-                                    isClosable: true,
+                                    closable: true,
                                 });
                                 setNewUser(stubUserObj);
                             } else {
                                 toaster.create({
                                     title: 'Uh, oh!',
                                     description: 'Unable to create user',
-                                    status: 'error',
+                                    type: 'error',
                                     duration: 5000,
-                                    isClosable: true,
+                                    closable: true,
                                 });
                             }
                         }}
@@ -225,9 +230,12 @@ export const UsersTab = (props: PropsT) => {
                 </Box>
                 <Dialog.Root
                     role='alertdialog'
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    leastDestructiveRef={cancelRef}
+                    open={isOpen}
+                    closeOnInteractOutside
+                    closeOnEscape
+                    onEscapeKeyDown={onClose}
+                    onExitComplete={onClose}
+                    onInteractOutside={onClose}
                 >
                     <Dialog.Trigger />
                     <Dialog.Backdrop />
@@ -244,7 +252,7 @@ export const UsersTab = (props: PropsT) => {
                                 <Button ref={cancelRef} onClick={onClose}>
                                     Cancel
                                 </Button>
-                                <Button colorScheme='red' onClick={onDelete} ml={3}>
+                                <Button colorPalette='red' onClick={onDelete} ml={3}>
                                     Delete
                                 </Button>
                             </Dialog.Footer>

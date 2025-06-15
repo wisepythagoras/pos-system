@@ -56,7 +56,7 @@ export const CreateRichProduct = (props: PropsT) => {
         <Table.Row>
             <Table.Cell></Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <Input
                         {...register('name', { required: true })}
                         placeholder="Product Name"
@@ -64,23 +64,26 @@ export const CreateRichProduct = (props: PropsT) => {
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined" size="small">
+                <Field.Root>
                     <NativeSelect.Root
                         {...register('type', { required: true })}
                         defaultValue="food"
                     >
-                        {props.productTypes.map((pt) => {
-                            return (
-                                <option value={pt.id} key={pt.id}>
-                                    {pt.title}
-                                </option>
-                            );
-                        })}
+                        <NativeSelect.Field>
+                            {props.productTypes.map((pt) => {
+                                return (
+                                    <option value={pt.id} key={pt.id}>
+                                        {pt.title}
+                                    </option>
+                                );
+                            })}
+                            </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                     </NativeSelect.Root>
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <InputGroup startElement="$" endElement="USD">
                         <Input
                             {...register('price', { required: true })}

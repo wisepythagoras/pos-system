@@ -8,12 +8,13 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
-import { ApiResponse, ProductT, StationT } from '../../../app/types';
+import { ApiResponse, ProductT, ProductTypeT, StationT } from '../../../app/types';
 import { StationProducts } from './StationProducts';
 
 type PropsT = {
     station: StationT;
     products: ProductT[];
+    productTypes: ProductTypeT[];
     deleteStation: (id: number) => Promise<ApiResponse<null>>;
     addProductToStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
     removeProductFromStation: (sId: number, pId: number) => Promise<ApiResponse<null>>;
@@ -43,6 +44,7 @@ export const StationRow = (props: PropsT) => {
                 <Box>
                     <StationProducts
                         products={props.station.products}
+                        productTypes={props.productTypes}
                         onRemove={(productId) => {
                             console.log(props.station);
                             return props.removeProductFromStation(props.station.id, productId);
@@ -91,9 +93,12 @@ export const StationRow = (props: PropsT) => {
                     <DeleteIcon /> Delete
                 </Button>
                 <Dialog.Root
-                    isOpen={isOpen}
-                    onClose={onClose}
-                    leastDestructiveRef={cancelRef}
+                    open={isOpen}
+                    onEscapeKeyDown={onClose}
+                    onInteractOutside={onClose}
+                    onExitComplete={onClose}
+                    closeOnInteractOutside
+                    closeOnEscape
                 >
                     <Dialog.Trigger />
                     <Dialog.Backdrop />

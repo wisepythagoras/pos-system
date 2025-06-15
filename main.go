@@ -155,6 +155,7 @@ func main() {
 
 	// Set the static/public path.
 	router.Use(static.Serve("/", static.LocalFile("./public", false)))
+	router.Use(static.Serve("/static", static.LocalFile("./build/static", false)))
 
 	router.Any("/", func(c *gin.Context) {
 		session := sessions.Default(c)

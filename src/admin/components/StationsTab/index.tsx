@@ -7,7 +7,7 @@ import { Box,
     Input,
     Table,
 } from '@chakra-ui/react';
-import { useStations, useIsCompactView, useGetProductsList } from '../../hooks';
+import { useStations, useIsCompactView, useGetProductsList, useProductTypes } from '../../hooks';
 import { AddIcon } from '@chakra-ui/icons';
 import { StationRow } from './StationRow';
 import { toaster } from '../../../components/ui/toaster';
@@ -25,6 +25,7 @@ export const StationsTab = (props: PropsT) => {
         addProductToStation,
         removeProductFromStation,
     } = useStations();
+    const { productTypes } = useProductTypes();
 
     return (
         <Container
@@ -59,17 +60,17 @@ export const StationsTab = (props: PropsT) => {
                                 toaster.create({
                                     title: 'Created new station',
                                     description: `Station "${res.data.name}" with id ${res.data.id}`,
-                                    status: 'success',
+                                    type: 'success',
                                     duration: 5000,
-                                    isClosable: true,
+                                    closable: true,
                                 });
                             } else {
                                 toaster.create({
                                     title: 'Uh, oh!',
                                     description: 'Unable to create station',
-                                    status: 'error',
+                                    type: 'error',
                                     duration: 5000,
-                                    isClosable: true,
+                                    closable: true,
                                 });
                             }
                         }}
@@ -100,6 +101,7 @@ export const StationsTab = (props: PropsT) => {
                                     deleteStation={deleteStation}
                                     addProductToStation={addProductToStation}
                                     removeProductFromStation={removeProductFromStation}
+                                    productTypes={productTypes}
                                 />
                             );
                         })}

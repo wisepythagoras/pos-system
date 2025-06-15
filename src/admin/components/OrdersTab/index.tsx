@@ -14,8 +14,6 @@ import {
     Table,
 } from '@chakra-ui/react';
 import {
-    ArrowLeftIcon,
-    ArrowRightIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     DownloadIcon,
@@ -27,6 +25,7 @@ import { EarningsCard } from '../EarningsCard';
 import { ControlContainer } from './styled';
 import { RichOrderT } from '../../../app/types';
 import { useIsCompactView } from '../../hooks';
+import { LuSearch } from 'react-icons/lu';
 
 type PropsT = {
     error: string | null;
@@ -69,12 +68,11 @@ export const OrdersTab = (props: PropsT) => {
             </Heading>
             <ControlContainer>
                 <Box>
-                    <InputGroup height="100%" startElement={<SearchIcon />}>
+                    <InputGroup height="100%" startElement={<LuSearch />}>
                         <Input
                             placeholder="Search order id"
                             variant="outline"
                             onChange={onSearchChange}
-                            size="sm"
                             width="300px"
                             borderRadius="5px"
                         />
@@ -84,7 +82,7 @@ export const OrdersTab = (props: PropsT) => {
                 <Button
                     onClick={() => exportTotals()}
                     variant="solid"
-                    color="teal"
+                    colorPalette="teal"
                 >
                     <DownloadIcon />
                     <Box paddingTop="4px">
@@ -94,7 +92,7 @@ export const OrdersTab = (props: PropsT) => {
                 <Button
                     onClick={() => exportTotals(true)}
                     variant="solid"
-                    color="teal"
+                    colorPalette="teal"
                 >
                     <DownloadIcon />
                     <Box paddingTop="4px">

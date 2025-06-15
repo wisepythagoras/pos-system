@@ -51,7 +51,7 @@ export const RichProduct = (props: PropsT) => {
         <Table.Row backgroundColor={product.discontinued ? 'gray.100' : undefined}>
             <Table.Cell>{product.id}</Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <Input
                         value={product.name}
                         onChange={(e) => {
@@ -66,7 +66,7 @@ export const RichProduct = (props: PropsT) => {
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined" size="small">
+                <Field.Root>
                     {/* The lib select is so broken that I was forced to add more code to support what was possible with less code before */}
                     <NativeSelect.Root>
                         <NativeSelect.Field
@@ -91,11 +91,12 @@ export const RichProduct = (props: PropsT) => {
                                 );
                             })}
                         </NativeSelect.Field>
+                        <NativeSelect.Indicator />
                     </NativeSelect.Root>
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <InputGroup startElement="$" endElement="USD">
                         <Input
                             placeholder="0.00"

@@ -52,7 +52,7 @@ export const RichProductTypeCreate = (props: PropsT) => {
         <Table.Row>
             <Table.Cell></Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <Input
                         {...register('name', { required: true })}
                         placeholder="Product Type Name"
@@ -60,7 +60,7 @@ export const RichProductTypeCreate = (props: PropsT) => {
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root variant="outlined">
+                <Field.Root>
                     <Input
                         {...register('title', { required: true })}
                         placeholder="Product Type Title"
@@ -68,7 +68,7 @@ export const RichProductTypeCreate = (props: PropsT) => {
                 </Field.Root>
             </Table.Cell>
             <Table.Cell>
-                <Field.Root position="relative" variant="outlined">
+                <Field.Root position="relative">
                     <Input
                         {...register('color', { required: true })}
                         type="color"

@@ -87,12 +87,14 @@ export const Main = (props: IMainProps) => {
                 display: 'flex',
                 flexDirection: 'column',
             } : undefined}
+            width="100%"
         >
             {/* @ts-ignore - Chakra is breaking Typescript */}
             <Tabs.Trigger
                 marginTop={isCompactView ? undefined : '-2px'}
                 onClick={onClose}
                 value="home"
+                defaultChecked
             >
                 <TabWrapper colorScheme="teal" variant="ghost" width="100%">
                     Home
@@ -167,6 +169,7 @@ export const Main = (props: IMainProps) => {
                     display="flex"
                     flexDirection={isCompactView ? 'column' : 'row'}
                     orientation="vertical"
+                    defaultValue="home"
                 >
                     {!isCompactView ? (
                         <Box
@@ -218,13 +221,13 @@ export const Main = (props: IMainProps) => {
                         paddingTop={isCompactView ? 'initial' : '40px'}
                         overflowY="auto"
                     > */}
-                    <Tabs.Content value="home">
+                    <Tabs.Content value="home" pt="10px">
                         <HomeTab
                             earnings={earnings}
                             earningsPerDay={earningsPerDay}
                         />
                     </Tabs.Content>
-                    <Tabs.Content value="orders">
+                    <Tabs.Content value="orders" pt="10px">
                         <OrdersTab
                             error={error}
                             exportTotals={exportTotals}
@@ -236,7 +239,7 @@ export const Main = (props: IMainProps) => {
                             page={page}
                         />
                     </Tabs.Content>
-                    <Tabs.Content value="products">
+                    <Tabs.Content value="products" pt="10px">
                         <ProductsTab
                             loadingProducts={loadingProducts}
                             loadingProductsError={loadingProductsError}
@@ -247,10 +250,10 @@ export const Main = (props: IMainProps) => {
                             createProductType={createProductType}
                         />
                     </Tabs.Content>
-                    <Tabs.Content value="stations">
+                    <Tabs.Content value="stations" pt="10px">
                         <StationsTab />
                     </Tabs.Content>
-                    <Tabs.Content value="users">
+                    <Tabs.Content value="users" pt="10px">
                         <UsersTab />
                     </Tabs.Content>
                     {/* </TabPanels> */}

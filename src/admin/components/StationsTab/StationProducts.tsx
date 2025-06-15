@@ -1,10 +1,11 @@
 import React from 'react';
 import { css } from 'styled-components';
 import { HStack, Tag } from '@chakra-ui/react';
-import { ProductT } from '../../../app/types';
+import { ProductT, ProductTypeT } from '../../../app/types';
 
 export type PropsT = {
     products: ProductT[];
+    productTypes: ProductTypeT[];
     onRemove: (productId: number) => void;
 };
 
@@ -24,26 +25,15 @@ export const StationProducts = (props: PropsT) => {
     `;
 
     products.forEach((product, i) => {
-        let colorSheme;
-
-        switch (product.type) {
-            case 'drink':
-                colorSheme = 'orange';
-                break;
-            case 'food':
-                colorSheme = 'teal';
-                break;
-            case 'drink':
-            default:
-                colorSheme = 'green';
-        }
+        const productType = props.productTypes.find((pt) => pt.name === product.type);
 
         productPills.push(
             <Tag.Root
                 key={i}
                 size="md"
                 variant="solid"
-                colorScheme={colorSheme}
+                // colorPalette={colorPalette}
+                backgroundColor={productType?.color ?? '#222'}
             >
                 <Tag.Label>
                     {product.name}

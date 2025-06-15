@@ -57,19 +57,16 @@ export const ProductsTab = (props: PropsT) => {
     const isCompactView = useIsCompactView();
 
     return (
-        <Tabs.Root variant='enclosed'>
-            <Tabs.List>
-                {/* @ts-ignore - Chakra is breaking Typescript */}
-                <Tabs.Trigger value="tab-1">
+        <Tabs.Root variant='enclosed' defaultValue="products">
+            <Tabs.List width="100%">
+                <Tabs.Trigger value="products">
                     Products
                 </Tabs.Trigger>
-                {/* @ts-ignore - Chakra is breaking Typescript */}
-                <Tabs.Trigger value="tab-2">
+                <Tabs.Trigger value="product-types">
                     Product Types
                 </Tabs.Trigger>
             </Tabs.List>
-            {/* @ts-ignore - Chakra is breaking Typescript */}
-            <Tabs.Content value="tab-1">
+            <Tabs.Content value="products" width="100%">
                 <Container
                     maxWidth="170ch"
                     overflowX="auto"
@@ -124,8 +121,7 @@ export const ProductsTab = (props: PropsT) => {
                     <br />
                 </Container>
             </Tabs.Content>
-            {/* @ts-ignore - Chakra is breaking Typescript */}
-            <Tabs.Content value="tab-2">
+            <Tabs.Content value="product-types" width="100%">
                 <Container
                     maxWidth="170ch"
                     overflowX="auto"
