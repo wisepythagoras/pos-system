@@ -4,10 +4,6 @@
   "description": "",
   "main": "src/index.tsx",
   "scripts": {
-    "o-build": "cd src/app && ../../node_modules/webpack-cli/bin/cli.js --mode=production",
-    "o-build-dev": "cd src/app && ../../node_modules/webpack-cli/bin/cli.js --mode=development",
-    "o-build-admin": "cd src/admin && ../../node_modules/webpack-cli/bin/cli.js --mode=production",
-    "o-build-admin-dev": "cd src/admin && ../../node_modules/webpack-cli/bin/cli.js --mode=development",
     "build": "react-scripts build"
   },
   "repository": {
