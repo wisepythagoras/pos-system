@@ -4,7 +4,8 @@ export const DisplayGrid = styled.div`
     display: grid;
     grid-template-columns: auto 400px;
     height: 100vh;
-    background: var(--chakra-colors-gray-800);
+    /* background: var(--chakra-colors-gray-800); */
+    background: #09090b;
 
     & > .product-list {
         padding: 10px;
@@ -36,7 +37,8 @@ export const DisplayGrid = styled.div`
         & > div:nth-child(2) {
             padding: 10px;
             overflow: auto;
-            background-color: var(--chakra-colors-gray-800);
+            /* background: var(--chakra-colors-gray-800); */
+            background: #09090b;
         }
 
         & > div:nth-child(3) {
