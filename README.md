@@ -81,3 +81,5 @@ Read [this](/startup/README.md) guide.
 ## License
 
 Although the license for the source code is GNU GPL v3, I prohibit the use of the code herein for the training of any kind of AI model.
+
+The GNU GPL v3 license excludes the files in `src/components/`, which retain whatever license they come with.
