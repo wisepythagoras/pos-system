@@ -65,11 +65,10 @@ export const CreateRichProduct = (props: PropsT) => {
             </Table.Cell>
             <Table.Cell>
                 <Field.Root>
-                    <NativeSelect.Root
-                        {...register('type', { required: true })}
-                        defaultValue="food"
-                    >
-                        <NativeSelect.Field>
+                    <NativeSelect.Root defaultValue="food">
+                        <NativeSelect.Field
+                            {...register('type', { required: true })}
+                        >
                             {props.productTypes.map((pt) => {
                                 return (
                                     <option value={pt.id} key={pt.id}>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import {
     Box,
@@ -9,10 +9,12 @@ import {
     useDisclosure,
     List,
     Dialog,
+    Heading,
+    VStack,
 } from '@chakra-ui/react';
 import { LuSearch } from 'react-icons/lu';
 import { CheckCircleIcon, MinusIcon, Search2Icon, SettingsIcon } from '@chakra-ui/icons';
-import { ProductT } from '../../types';
+import { ProductT, ProductTypeT } from '../../types';
 import { ProductCard } from '../ProductCard';
 import { useLocalStorage, useLockBodyScroll } from 'react-use';
 import { useGetPrinters } from '../../hooks';
@@ -75,19 +77,6 @@ const ProductCardList = styled.div`
             background-color: var(--chakra-colors-gray-600);
         }
 
-        /* Maybe move these into the DB table */
-        &.food > div {
-            background-color: var(--chakra-colors-blue-700);;
-        }
-
-        &.drink > div {
-            background-color: #aa5438;
-        }
-
-        &.pastry > div {
-            background-color: #366a36;
-        }
-
         &.soldout {
             cursor: auto;
         }
@@ -104,6 +93,7 @@ const ProductCardList = styled.div`
 
 export interface IProductListProps {
     products: ProductT[];
+    productTypes: ProductTypeT[];
     onClick: (product: ProductT) => void;
     onPrinterChange?: (p: PrinterT | undefined) => void;
 };
@@ -131,6 +121,20 @@ export const ProductList = (props: IProductListProps) => {
 
     // Don't scroll the background if the modal is open.
     useLockBodyScroll(isOpen, productListRef);
+
+    const categoriesAndProducts = useMemo(() => {
+        return props.productTypes.reduce((acc, pt) => {
+            const products = props.products.filter((p) => {
+                return p.product_type.id === pt.id && (!search || p.name.toLowerCase().indexOf(search.toLowerCase()) >= 0);
+            });
+
+            if (products.length > 0) {
+                acc[pt.name] = products;
+            }
+
+            return acc;
+        }, {} as Record<string, ProductT[]>);
+    }, [search, props.products, props.productTypes]);
 
     useEffect(() => {
         selectedPrinterRef.current = selectedPrinter;
@@ -189,31 +193,44 @@ export const ProductList = (props: IProductListProps) => {
                     </InputGroup>
                 </Box>
             </SearchField>
-            <ProductCardList ref={productListRef}>
-                {filteredProducts.map((product, i) => {
-                    const classNames: string[] = [product.type];
-
-                    if (product.sold_out || product.discontinued) {
-                        classNames.push('soldout');
-                    }
-
+            <VStack spaceY="20px" mt="30px" alignItems="flex-start">
+                {Object.entries(categoriesAndProducts).map(([title, products]) => {
                     return (
-                        <div
-                            key={i}
-                            onClick={() => {
-                                if (product.sold_out) {
-                                    return;
-                                }
+                        <Box width="100%">
+                            <Box mb="10px">
+                                <Heading size="xl">{title}</Heading>
+                            </Box>
+                            <Box>
+                                <ProductCardList ref={productListRef}>
+                                    {products.map((product, i) => {
+                                        const classNames: string[] = [product.type];
 
-                                onClick(product);
-                            }}
-                            className={classNames.join(' ')}
-                        >
-                            <ProductCard product={product} type={product.type} />
-                        </div>
+                                        if (product.sold_out || product.discontinued) {
+                                            classNames.push('soldout');
+                                        }
+
+                                        return (
+                                            <ProductCard
+                                                key={i}
+                                                product={product}
+                                                type={product.type}
+                                                className={classNames.join(' ')}
+                                                onClick={() => {
+                                                    if (product.sold_out) {
+                                                        return;
+                                                    }
+
+                                                    onClick(product);
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </ProductCardList>
+                            </Box>
+                        </Box>
                     );
                 })}
-            </ProductCardList>
+            </VStack>
 
             <Dialog.Root
                 open={isOpen}

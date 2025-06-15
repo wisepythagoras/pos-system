@@ -10,6 +10,8 @@ export interface IProductProps {
     product: ProductT;
     type: ProductTypeOldT;
     isSoldOut?: boolean;
+    className?: string | undefined;
+    onClick?: () => void;
 }
 
 /**
@@ -31,21 +33,27 @@ export const ProductCard = (props: IProductProps) => {
             backgroundColor={product.product_type.color}
             overflow="hidden"
             padding="15px"
-            className={!product.product_type.color ? 'no-color' : undefined}
+            onClick={props.onClick}
+            className={`${!product.product_type.color ? 'no-color' : undefined} ${props.className}`}
         >
-            <Heading
-                as="h3"
-                size="md"
-                color="white"
-            >
-                {product.name}
-            </Heading>
             <Box>
+                <Heading
+                    as="h3"
+                    size="xl"
+                    color="white"
+                >
+                    {product.name}
+                </Heading>
+            </Box>
+            <Box flex={0} ml="auto">
                 <Badge
                     ml="1"
-                    fontSize="1.0em"
                     borderRadius="md"
                     colorScheme="gray"
+                    size="lg"
+                    fontSize="1.1em"
+                    height="35px"
+                    pt="5px"
                 >
                     ${product.price.toFixed(2)}
                 </Badge>

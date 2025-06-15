@@ -7,8 +7,6 @@ import { POSApp } from './app';
 const rootElement = document.getElementById('root') as unknown as Element | DocumentFragment;
 const root = createRoot(rootElement);
 
-console.log('Hello, world!');
-
 root.render((
     <Provider>
         {window.location.pathname === '/admin'

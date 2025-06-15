@@ -20,6 +20,7 @@ import { SmallProductCard } from '../SmallProductCard';
 import { useLocalStorage } from 'react-use';
 import { DisplayGrid, TotalProductList } from './styled';
 import { SmallCloseIcon } from '@chakra-ui/icons';
+import { useProductTypes } from '../../../admin/hooks';
 
 type StateT = {
     selectedProducts: ProductT[];
@@ -41,6 +42,7 @@ export const POSHome = () => {
         cashPaymentError: null,
     });
     const { loading, products } = useGetProducts();
+    const { productTypes } = useProductTypes();
     const { createOrder, loading: loadingCreation } = useCreateOrder();
     const lastSelectedProduct = useRef<HTMLDivElement>(null);
     const [printer] = useLocalStorage<PrinterT>('printer');
@@ -128,6 +130,7 @@ export const POSHome = () => {
                 ) : null}
                 <ProductList
                     products={products}
+                    productTypes={productTypes}
                     onClick={addProduct}
                     onPrinterChange={(p: PrinterT | undefined) => {
                         printerRef.current = p;
