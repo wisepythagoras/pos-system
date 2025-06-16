@@ -33,7 +33,7 @@ export const RichOrder = (props: IRichOrderProps) => {
                 <Center>
                     {order.order.cancelled ? (
                         <Button
-                            colorScheme="gray"
+                            colorPalette="gray"
                             onClick={onToggle}
                             variant="solid"
                             size="sm"
@@ -42,7 +42,7 @@ export const RichOrder = (props: IRichOrderProps) => {
                         </Button>
                     ) : (
                         <Button
-                            colorScheme="red"
+                            colorPalette="red"
                             onClick={onToggle}
                             variant="solid"
                             size="sm"
