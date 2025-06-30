@@ -122,7 +122,7 @@ export const RichProduct = (props: PropsT) => {
                 <Center>
                     <Checkbox.Root
                         checked={product.sold_out}
-                        onChange={() => {
+                        onClick={() => {
                             setProduct({
                                 ...product,
                                 sold_out: !product.sold_out,
@@ -130,22 +130,26 @@ export const RichProduct = (props: PropsT) => {
                         }}
                         size="lg"
                         defaultChecked={product.sold_out}
-                    />
+                    >
+                        <Checkbox.Control />
+                    </Checkbox.Root>
                 </Center>
             </Table.Cell>
             <Table.Cell>
                 <Center>
                     <Checkbox.Root
+                        size="lg"
                         checked={product.discontinued}
-                        onChange={() => {
+                        defaultChecked={product.discontinued}
+                        onClick={() => {
                             setProduct({
                                 ...product,
                                 discontinued: !product.discontinued,
                             });
                         }}
-                        size="lg"
-                        defaultChecked={product.discontinued}
-                    />
+                    >
+                        <Checkbox.Control />
+                    </Checkbox.Root>
                 </Center>
             </Table.Cell>
             <Table.Cell>

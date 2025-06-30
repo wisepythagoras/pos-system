@@ -198,7 +198,7 @@ export const ProductList = (props: IProductListProps) => {
                     return (
                         <Box width="100%">
                             <Box mb="10px">
-                                <Heading size="xl">{title}</Heading>
+                                <Heading ml="5px" size="xl">{title}</Heading>
                             </Box>
                             <Box>
                                 <ProductCardList ref={productListRef}>
