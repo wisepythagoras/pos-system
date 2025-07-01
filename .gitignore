@@ -1,6 +1,7 @@
 *.db
 populate.sh
 bin/pos-*
+bin/printing-service
 yarn.lock
 ui/app/dist/
 ui/admin/dist/

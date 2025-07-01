@@ -30,3 +30,10 @@ type Config struct {
 	Address2    string
 	CCSurcharge uint
 }
+
+type PrintingConfig struct {
+	Listener struct {
+		Token string
+		Host  string
+	}
+}

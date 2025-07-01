@@ -1,12 +1,17 @@
+.PHONY: all pos printing
+
 ARCH := $(uname -m)
 
 pos:
 	@ go build -o bin/pos-system cmd/pos-system/main.go
 
+printing:
+	@ go build -o bin/printing-service cmd/printing-service/main.go
+
 pos_cgo:
 	@ CGO_ENABLED=1 go build -o bin/pos-system cmd/pos-system/main.go
 
-all: pos
+all: pos printing
 
 # all:
 # 	@ GOOS=linux GOARCH=amd64 go build -o bin/pos-linux_amd64
