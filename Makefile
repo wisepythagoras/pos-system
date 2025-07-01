@@ -1,7 +1,7 @@
 ARCH := $(uname -m)
 
 current_arch:
-	@ go build -o bin/pos-system
+	@ go build -o bin/pos-system cmd/pos-system/main.go
 
 current_arch_cgo:
 	@ CGO_ENABLED=1 go build -o bin/pos-system

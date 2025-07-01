@@ -15,6 +15,7 @@ import (
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/wisepythagoras/pos-system/core"
 	"github.com/wisepythagoras/pos-system/crypto"
 )
 
@@ -25,7 +26,7 @@ type AssetManifest struct {
 
 // parseConfig parses the configuration either from the same folder, or
 // from an explicit path.
-func parseConfig(customConfig *string) (*Config, error) {
+func parseConfig(customConfig *string) (*core.Config, error) {
 	if customConfig == nil || len(*customConfig) == 0 {
 		viper.SetConfigName("config")
 		viper.SetConfigType("yaml")
@@ -34,7 +35,7 @@ func parseConfig(customConfig *string) (*Config, error) {
 		viper.SetConfigFile(*customConfig)
 	}
 
-	var config Config
+	var config core.Config
 
 	// Try to read the configuration file.
 	if err := viper.ReadInConfig(); err != nil {
@@ -64,7 +65,7 @@ func authHandler(isAdmin bool, configAuthToken string) gin.HandlerFunc {
 			c.AbortWithStatus(http.StatusForbidden)
 		} else {
 			if isAdmin && xAuthToken != configAuthToken {
-				user := &UserStruct{}
+				user := &core.UserStruct{}
 				json.Unmarshal([]byte(userCookie.(string)), &user)
 
 				// Prevent anyone who is not logged in to view this page.
@@ -83,7 +84,7 @@ func main() {
 	customConfig := flag.String("config", "", "The path to a custom config file")
 	flag.Parse()
 
-	db, err := ConnectDB()
+	db, err := core.ConnectDB()
 
 	if err != nil {
 		panic(err)
@@ -99,20 +100,20 @@ func main() {
 	bus := EventBus.New()
 
 	// Instanciate all of the route handlers here.
-	productHandlers := &ProductHandlers{
+	productHandlers := &core.ProductHandlers{
 		DB:  db,
 		Bus: bus,
 	}
-	orderHandlers := &OrderHandlers{
+	orderHandlers := &core.OrderHandlers{
 		DB:     db,
 		Bus:    bus,
 		Config: config,
 	}
-	userHandlers := &UserHandlers{
+	userHandlers := &core.UserHandlers{
 		DB:     db,
 		Config: config,
 	}
-	stationHandlers := &StationHandlers{
+	stationHandlers := &core.StationHandlers{
 		DB:     db,
 		Config: config,
 	}
@@ -245,7 +246,7 @@ func main() {
 	router.GET("/api/stations", authHandler(false, adminAuthToken), stationHandlers.Stations)
 
 	router.GET("/api/printers", func(c *gin.Context) {
-		c.JSON(http.StatusOK, &ApiResponse{
+		c.JSON(http.StatusOK, &core.ApiResponse{
 			Data:    config.Printers,
 			Success: true,
 		})

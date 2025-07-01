@@ -1,4 +1,4 @@
-package main
+package core
 
 // UserStruct defines the user object type.
 type UserStruct struct {
