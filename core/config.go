@@ -20,15 +20,16 @@ type Printer struct {
 }
 
 type Config struct {
-	Server      ServerConfig
-	Admin       AdminUser
-	Printers    []Printer
-	Secret      string
-	Key         string
-	Name        string
-	Address1    string
-	Address2    string
-	CCSurcharge uint
+	Server          ServerConfig
+	Admin           AdminUser
+	Printers        []Printer
+	DisablePrinting bool `yaml:"disable_printing"`
+	Secret          string
+	Key             string
+	Name            string
+	Address1        string
+	Address2        string
+	CCSurcharge     uint
 }
 
 type PrintingConfig struct {

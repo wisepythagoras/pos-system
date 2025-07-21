@@ -11,6 +11,8 @@ admin:
     # Generate a random token for the admin.
     token: "Preferably a SHA256 digest"
 
+disable_printing: false
+
 # Ideally, pick a secret, get its SHA hash and put that here.
 secret: "this is a test"
 
