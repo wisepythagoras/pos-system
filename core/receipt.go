@@ -35,12 +35,12 @@ type Receipt struct {
 	Total     float64
 	Config    *Config
 	Client    *ipp.IPPClient
-	printerId int
+	PrinterId int
 }
 
 // GetPrinter returns the index of the selected printer in the configuration array.
 func (r *Receipt) GetPrinter() int {
-	printerId := r.printerId
+	printerId := r.PrinterId
 
 	if printerId <= 0 {
 		printerId = 1

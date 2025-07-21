@@ -741,7 +741,7 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 		Order:     orderJSON,
 		Total:     totalCost,
 		Config:    oh.Config,
-		printerId: printerId,
+		PrinterId: printerId,
 	}
 	receipt.ConnectToPrinter()
 	_, err = receipt.Print()

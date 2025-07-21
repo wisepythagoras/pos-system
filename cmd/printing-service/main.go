@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -42,6 +43,38 @@ func parseConfig(customConfig *string) (*core.PrintingConfig, error) {
 	}
 
 	return &config, nil
+}
+
+func printReceipt(
+	printerId int,
+	order *core.OrderJSON,
+	config *core.Config,
+) error {
+	totalCost := 0.0
+
+	for _, orderProduct := range order.Products {
+		if orderProduct.ID == 0 {
+			continue
+		}
+
+		totalCost += orderProduct.Price
+	}
+
+	// Create a new receipt.
+	receipt := &core.Receipt{
+		Order:     order,
+		Total:     totalCost,
+		Config:    config,
+		PrinterId: printerId,
+	}
+	receipt.ConnectToPrinter()
+	_, err := receipt.Print()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
@@ -86,7 +119,30 @@ func main() {
 			cleanLine := string(line)
 
 			if strings.HasPrefix(cleanLine, "data:") {
-				log.Println(cleanLine[5:])
+				orderJSON := &core.OrderJSON{}
+				err := json.Unmarshal([]byte(cleanLine[5:]), orderJSON)
+
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				log.Println(cleanLine[5:], orderJSON)
+
+				rawConfig := &core.Config{
+					Key:      config.Key,
+					Address1: config.Address1,
+					Address2: config.Address2,
+					Name:     config.Name,
+					Printers: config.Printers,
+				}
+
+				err = printReceipt(0, orderJSON, rawConfig)
+
+				if err != nil {
+					log.Println(err)
+					continue
+				}
 			}
 		}
 	}

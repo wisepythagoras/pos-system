@@ -33,6 +33,11 @@ type Config struct {
 }
 
 type PrintingConfig struct {
+	Key      string
+	Name     string
+	Address1 string
+	Address2 string
+	Printers []Printer
 	Listener struct {
 		Token string
 		Host  string
