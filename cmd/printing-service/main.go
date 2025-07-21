@@ -88,7 +88,7 @@ func main() {
 		return
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/orders/stream", config.Listener.Host), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/printing/stream", config.Listener.Host), nil)
 
 	if err != nil {
 		fmt.Println("Request error:", err)
@@ -119,15 +119,15 @@ func main() {
 			cleanLine := string(line)
 
 			if strings.HasPrefix(cleanLine, "data:") {
-				orderJSON := &core.OrderJSON{}
-				err := json.Unmarshal([]byte(cleanLine[5:]), orderJSON)
+				printingJob := &core.PrintingJob{}
+				err := json.Unmarshal([]byte(cleanLine[5:]), printingJob)
 
 				if err != nil {
 					log.Println(err)
 					continue
 				}
 
-				log.Println(cleanLine[5:], orderJSON)
+				log.Println(cleanLine[5:], printingJob.Order)
 
 				rawConfig := &core.Config{
 					Key:      config.Key,
@@ -137,7 +137,7 @@ func main() {
 					Printers: config.Printers,
 				}
 
-				err = printReceipt(0, orderJSON, rawConfig)
+				err = printReceipt(printingJob.PrinterID, &printingJob.Order, rawConfig)
 
 				if err != nil {
 					log.Println(err)

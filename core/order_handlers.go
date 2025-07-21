@@ -736,6 +736,12 @@ func (oh *OrderHandlers) PrintReceipt(c *gin.Context) {
 		return
 	}
 
+	if oh.Config.DisablePrinting {
+		// Send to the printing service.
+		oh.Bus.Publish("printing_jobs", &PrintingJob{*orderJSON, printerId})
+		return
+	}
+
 	// Create a new receipt.
 	receipt := &Receipt{
 		Order:     orderJSON,
@@ -772,6 +778,31 @@ func (oh *OrderHandlers) OrderStream(c *gin.Context) {
 				return
 			default:
 				streamUpdates = make(chan *OrderJSON)
+			}
+		})
+	}()
+
+	c.Stream(func(w io.Writer) bool {
+		if msg, ok := <-streamUpdates; ok {
+			c.SSEvent("message", msg)
+			return true
+		} else {
+			fmt.Println("Something happened here")
+			return false
+		}
+	})
+}
+
+func (oh *OrderHandlers) PrintingStream(c *gin.Context) {
+	streamUpdates := make(chan *PrintingJob)
+
+	go func() {
+		oh.Bus.Subscribe("printing_jobs", func(u *PrintingJob) {
+			select {
+			case streamUpdates <- u:
+				return
+			default:
+				streamUpdates = make(chan *PrintingJob)
 			}
 		})
 	}()

@@ -87,6 +87,11 @@ type OrderJSON struct {
 	Products  []OrderProductJSON `json:"products"`
 }
 
+type PrintingJob struct {
+	Order     OrderJSON
+	PrinterID int
+}
+
 type StationJSON struct {
 	ID        uint64        `json:"id"`
 	Name      string        `json:"name"`

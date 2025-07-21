@@ -23,7 +23,7 @@ type Config struct {
 	Server          ServerConfig
 	Admin           AdminUser
 	Printers        []Printer
-	DisablePrinting bool `yaml:"disable_printing"`
+	DisablePrinting bool
 	Secret          string
 	Key             string
 	Name            string

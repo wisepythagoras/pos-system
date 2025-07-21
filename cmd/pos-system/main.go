@@ -256,6 +256,7 @@ func main() {
 	router.GET("/api/products/ws", authHandler(false, adminAuthToken), productHandlers.ProductUpdateWS)
 	router.GET("/api/products/stream", authHandler(false, adminAuthToken), productHandlers.ProductUpdateStream)
 	router.GET("/api/orders/stream", authHandler(false, adminAuthToken), orderHandlers.OrderStream)
+	router.GET("/api/printing/stream", authHandler(false, adminAuthToken), orderHandlers.PrintingStream)
 
 	router.Run(":" + strconv.Itoa(config.Server.Port))
 }
