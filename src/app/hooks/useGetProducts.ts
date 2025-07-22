@@ -113,7 +113,8 @@ export const useGetProducts = () => {
         }
 
         const host = window.location.host;
-        const socket = new WebSocket(`ws://${host}/api/products/ws`);
+        const proto = window.location.protocol === 'https:' ? 'wss' : 'ws'
+        const socket = new WebSocket(`${proto}://${host}/api/products/ws`);
         wsRef.current = socket;
 
         socket.onmessage = onSocketMessage;
