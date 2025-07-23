@@ -88,7 +88,9 @@ func main() {
 		return
 	}
 
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/printing/stream", config.Listener.Host), nil)
+	url := fmt.Sprintf("%s/api/printing/stream", config.Listener.Host)
+	req, err := http.NewRequest("GET", url, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0")
 
 	if err != nil {
 		fmt.Println("Request error:", err)
@@ -107,16 +109,24 @@ func main() {
 		}
 
 		reader := bufio.NewReader(resp.Body)
+		errs := 0
 
 		for {
 			line, err := reader.ReadBytes('\n')
 
 			if err != nil {
-				log.Println("Read error:", err)
+				log.Println("Read error:", err, url, string(line), resp.Status, resp.StatusCode)
+				errs += 1
+
+				if errs > 20 {
+					break
+				}
+
 				continue
 			}
 
 			cleanLine := string(line)
+			errs = 0
 
 			if strings.HasPrefix(cleanLine, "data:") {
 				printingJob := &core.PrintingJob{}

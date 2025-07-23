@@ -1,6 +1,7 @@
 import React, {
     useCallback,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -17,7 +18,7 @@ import { ProductT, ProductAggregateT, PrinterT } from '../../types';
 import { useGetProducts, useCreateOrder } from '../../hooks';
 import { ProductList } from '../ProductList';
 import { SmallProductCard } from '../SmallProductCard';
-import { useLocalStorage } from 'react-use';
+import { useLocalStorage, useWindowSize } from 'react-use';
 import { DisplayGrid, TotalProductList } from './styled';
 import { SmallCloseIcon } from '@chakra-ui/icons';
 import { useProductTypes } from '../../../admin/hooks';
@@ -51,6 +52,9 @@ export const POSHome = () => {
     stateRef.current = state;
     const lockRef = useRef(false);
     const printerId = printerRef.current ? printerRef.current.id : 1;
+
+    // TODO: Consider moving to a dedicated hook.
+    const size = useWindowSize();
 
     useEffect(() => {
         if (lockRef.current) {
@@ -104,21 +108,26 @@ export const POSHome = () => {
 
     // Compute the total price of all products that were selected.
     const total = state.selectedProducts.map((p) => p.price).reduce((a, b) => a + b, 0);
-    const aggregates: ProductAggregateT[] = [];
+    
+    const aggregates = useMemo(() => {
+        const aggregates: ProductAggregateT[] = [];
 
-    for (let i in state.selectedProducts) {
-        const product = state.selectedProducts[i];
-        const index = aggregates.findIndex((p) => p.product.id === product.id);
+        for (let i in state.selectedProducts) {
+            const product = state.selectedProducts[i];
+            const index = aggregates.findIndex((p) => p.product.id === product.id);
 
-        if (index < 0) {
-            aggregates.push({
-                product,
-                amount: 1,
-            });
-        } else {
-            aggregates[index].amount += 1;
+            if (index < 0) {
+                aggregates.push({
+                    product,
+                    amount: 1,
+                });
+            } else {
+                aggregates[index].amount += 1;
+            }
         }
-    }
+
+        return aggregates;
+    }, [state]);
 
     return (
         <DisplayGrid>
@@ -141,9 +150,11 @@ export const POSHome = () => {
                 <Box className="top-actions">
                     {aggregates.length > 0 ? (
                         <>
-                            <Box fontWeight={700} color="gray.600">
-                                New Order
-                            </Box>
+                            {size.width > 800 ? (
+                                <Box fontWeight={700} color="gray.600">
+                                    New Order
+                                </Box>
+                            ) : undefined}
                             <Button
                                 colorScheme="grey.200"
                                 variant="ghost"
@@ -164,7 +175,7 @@ export const POSHome = () => {
                     {aggregates.length === 0 ? (
                         <div className="hint">
                             <Heading size="md" as="h3" color="gray.700">
-                                To create a new order select products from the left.
+                                To create a new order select products from the {size.width > 800 ? 'left' : 'top'}.
                             </Heading>
                         </div>
                     ) : null}
@@ -213,53 +224,55 @@ export const POSHome = () => {
                         );
                     })}
                 </TotalProductList>
-                <div>
-                    <Heading as="h2" size="6xl" marginBottom={10}>
-                        <Box color="gray.600" display="inline-block">$</Box>{total.toFixed(2)}
-                    </Heading>
-                </div>
-                <div>
-                    <Button
-                        variant="solid"
-                        backgroundColor={
-                            aggregates.length === 0 ?
-                                '#222a39' :
-                                '#6a2424'
-                        }
-                        color="#fafafa"
-                        size="2xl"
-                        disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
-                        onClick={async () => {
-                            const productIds = state.selectedProducts.map((p) => p.id);
-                            const order = await createOrder(productIds);
-                            setState({
-                                ...state,
-                                processing: true,
-                            });
-
-                            if (!order) {
-                                alert('Unable to create order');
-                                return;
+                <div className="action-info">
+                    <div>
+                        <Heading as="h2">
+                            <Box color="gray.600" display="inline-block">$</Box>{total.toFixed(2)}
+                        </Heading>
+                    </div>
+                    <div>
+                        <Button
+                            variant="solid"
+                            backgroundColor={
+                                aggregates.length === 0 ?
+                                    '#222a39' :
+                                    '#6a2424'
                             }
+                            color="#fafafa"
+                            size="2xl"
+                            disabled={state.selectedProducts.length === 0 || loadingCreation || state.processing}
+                            onClick={async () => {
+                                const productIds = state.selectedProducts.map((p) => p.id);
+                                const order = await createOrder(productIds);
+                                setState({
+                                    ...state,
+                                    processing: true,
+                                });
 
-                            // Now print the order's receipt.
-                            await fetch(`/api/order/${order.id}/receipt/${printerId}`);
+                                if (!order) {
+                                    alert('Unable to create order');
+                                    return;
+                                }
 
-                            // Since the order was created, empty the list of selected products, open up the
-                            // receipt dialog, and set processing to false.
-                            setState({
-                                ...state,
-                                processing: false,
-                                orderCreated: order.id,
-                                selectedProducts: [],
-                                cashPayment: '',
-                            });
-                        }}
-                        loading={state.processing}
-                        spinner={<Spinner size="lg" color='white' />}
-                    >
-                        Checkout
-                    </Button>
+                                // Now print the order's receipt.
+                                await fetch(`/api/order/${order.id}/receipt/${printerId}`);
+
+                                // Since the order was created, empty the list of selected products, open up the
+                                // receipt dialog, and set processing to false.
+                                setState({
+                                    ...state,
+                                    processing: false,
+                                    orderCreated: order.id,
+                                    selectedProducts: [],
+                                    cashPayment: '',
+                                });
+                            }}
+                            loading={state.processing}
+                            spinner={<Spinner size="lg" color='white' />}
+                        >
+                            Checkout
+                        </Button>
+                    </div>
                 </div>
 
                 <Dialog.Root
